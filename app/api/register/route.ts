@@ -115,13 +115,67 @@ export async function POST(request: Request) {
 
     // 6. Insert into Supabase Shared Cloud Database (Website 1, 2, 3 shared DB)
     try {
+      // Find matching events in Supabase by slug
+      let supaTechId: string | null = null;
+      let supaNonTechId: string | null = null;
+
+      const { data: sTech } = await supabase
+        .from("events")
+        .select("id")
+        .eq("slug", techEvent.slug)
+        .maybeSingle();
+
+      const { data: sNonTech } = await supabase
+        .from("events")
+        .select("id")
+        .eq("slug", nonTechEvent.slug)
+        .maybeSingle();
+
+      if (sTech) supaTechId = sTech.id;
+      if (sNonTech) supaNonTechId = sNonTech.id;
+
+      // If events don't exist in Supabase yet, insert them
+      if (!supaTechId) {
+        const { data: newTech } = await supabase
+          .from("events")
+          .insert({
+            slug: techEvent.slug,
+            title: techEvent.title,
+            category: techEvent.category,
+            short_desc: techEvent.shortDesc,
+            full_desc: techEvent.fullDesc,
+            min_members: techEvent.minMembers,
+            max_members: techEvent.maxMembers,
+          })
+          .select()
+          .single();
+        if (newTech) supaTechId = newTech.id;
+      }
+
+      if (!supaNonTechId) {
+        const { data: newNonTech } = await supabase
+          .from("events")
+          .insert({
+            slug: nonTechEvent.slug,
+            title: nonTechEvent.title,
+            category: nonTechEvent.category,
+            short_desc: nonTechEvent.shortDesc,
+            full_desc: nonTechEvent.fullDesc,
+            min_members: nonTechEvent.minMembers,
+            max_members: nonTechEvent.maxMembers,
+          })
+          .select()
+          .single();
+        if (newNonTech) supaNonTechId = newNonTech.id;
+      }
+
       const { data: supaReg, error: regError } = await supabase
         .from("registrations")
         .insert({
           registration_code: regCode,
           registration_type: regType,
-          technical_event_id: techEvent.id,
-          non_technical_event_id: nonTechEvent.id,
+          technical_event_id: supaTechId,
+          non_technical_event_id: supaNonTechId,
           team_name: validatedData.teamName || null,
           status: "CONFIRMED",
         })
@@ -129,8 +183,9 @@ export async function POST(request: Request) {
         .single();
 
       if (regError) {
-        console.warn("Supabase Registration insert warning:", regError.message);
+        console.error("Supabase Registration insert error:", regError);
       } else if (supaReg) {
+        console.log("✅ Supabase Registration inserted successfully:", supaReg.registration_code);
         const supaParticipants = normalizedParticipants.map((p) => ({
           registration_id: supaReg.id,
           full_name: p.fullName,
@@ -146,12 +201,13 @@ export async function POST(request: Request) {
           .insert(supaParticipants);
 
         if (partError) {
-          console.warn("Supabase Participants insert warning:", partError.message);
+          console.error("Supabase Participants insert error:", partError);
+        } else {
+          console.log("✅ Supabase Participants inserted successfully:", supaParticipants.length);
         }
       }
     } catch (supaErr) {
-      console.warn("Supabase connection warning:", supaErr);
-      // Fallback: Local database insert succeeded
+      console.error("Supabase connection exception:", supaErr);
     }
 
     return NextResponse.json(
