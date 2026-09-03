@@ -1,0 +1,173 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+}
+
+model Participant {
+  id             String         @id @default(uuid())
+  registrationId String         @unique
+  name           String
+  email          String         @unique
+  phone          String
+  college        String
+  department     String
+  year           String
+  gender         String?
+  createdAt      DateTime       @default(now())
+  registrations  Registration[]
+  quizAttempts   QuizAttempt[]
+}
+
+model Event {
+  id               String         @id @default(uuid())
+  slug             String         @unique
+  title            String
+  category         String // TECHNICAL, NON_TECHNICAL, WORKSHOP, QUIZ
+  shortDesc        String
+  fullDesc         String
+  rules            String
+  eligibility      String
+  teamSize         String
+  maxTeams         Int            @default(100)
+  rounds           String
+  date             String
+  time             String
+  venue            String
+  coordinatorName  String
+  coordinatorPhone String
+  status           String         @default("OPEN") // OPEN, CLOSED, UPCOMING
+  image            String?
+  registrations    Registration[]
+  createdAt        DateTime       @default(now())
+}
+
+model Registration {
+  id            String       @id @default(uuid())
+  participantId String
+  participant   Participant  @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  eventId       String
+  event         Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  teamName      String?
+  status        String       @default("CONFIRMED")
+  createdAt     DateTime     @default(now())
+  teamMembers   TeamMember[]
+
+  @@unique([participantId, eventId])
+}
+
+model TeamMember {
+  id             String       @id @default(uuid())
+  registrationId String
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  memberName     String
+  memberEmail    String
+  memberPhone    String?
+  isLeader       Boolean      @default(false)
+}
+
+model Quiz {
+  id              String        @id @default(uuid())
+  title           String
+  description     String
+  durationMinutes Int           @default(15)
+  totalQuestions  Int           @default(15)
+  isActive        Boolean       @default(true)
+  questions       Question[]
+  attempts        QuizAttempt[]
+  createdAt       DateTime      @default(now())
+}
+
+model Question {
+  id           String       @id @default(uuid())
+  quizId       String
+  quiz         Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  questionText String
+  category     String       @default("Electronics & Tech")
+  points       Int          @default(10)
+  options      QuizOption[]
+  answers      QuizAnswer[]
+}
+
+model QuizOption {
+  id         String       @id @default(uuid())
+  questionId String
+  question   Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  optionText String
+  isCorrect  Boolean      @default(false)
+  answers    QuizAnswer[]
+}
+
+model QuizAttempt {
+  id               String       @id @default(uuid())
+  participantId    String
+  participant      Participant  @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  quizId           String
+  quiz             Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  score            Int
+  totalQuestions   Int
+  timeTakenSeconds Int
+  completedAt      DateTime     @default(now())
+  answers          QuizAnswer[]
+}
+
+model QuizAnswer {
+  id               String      @id @default(uuid())
+  attemptId        String
+  attempt          QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId       String
+  question         Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedOptionId String?
+  selectedOption   QuizOption? @relation(fields: [selectedOptionId], references: [id], onDelete: SetNull)
+  isCorrect        Boolean
+}
+
+model Coordinator {
+  id          String  @id @default(uuid())
+  name        String
+  role        String // FACULTY or STUDENT
+  designation String?
+  department  String  @default("ECE")
+  phone       String
+  email       String
+  avatar      String?
+  eventName   String?
+}
+
+model Sponsor {
+  id         String  @id @default(uuid())
+  name       String
+  tier       String // PLATINUM, GOLD, SILVER, MEDIA
+  logoUrl    String?
+  websiteUrl String?
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+  status    String   @default("UNREAD")
+}
+
+model Announcement {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  priority  String   @default("NORMAL") // HIGH, NORMAL
+  date      DateTime @default(now())
+}
