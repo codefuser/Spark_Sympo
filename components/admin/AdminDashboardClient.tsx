@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { Search, Download, Users, Users2, Info } from "lucide-react";
 
+import { Select } from "@/components/ui/Select";
+
 export function AdminDashboardClient({
   initialParticipants,
   events,
@@ -63,18 +65,16 @@ export function AdminDashboardClient({
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-          <select
-            value={selectedEventId}
-            onChange={(e) => setSelectedEventId(e.target.value)}
-            className="rounded-lg bg-background border border-primary/20 px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-primary"
-          >
-            <option value="ALL">All Event Tracks</option>
-            {events.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.title}
-              </option>
-            ))}
-          </select>
+          <div className="w-56">
+            <Select
+              value={selectedEventId}
+              onChange={(e) => setSelectedEventId(e.target.value)}
+              options={[
+                { label: "All Event Tracks", value: "ALL" },
+                ...events.map((e) => ({ label: e.title, value: e.id })),
+              ]}
+            />
+          </div>
 
           <Button
             variant="outline"
