@@ -156,7 +156,7 @@ export function HomePageClient({
             </div>
           </div>
 
-          <CountdownTimer targetDate="2026-03-28T09:00:00" />
+          <CountdownTimer targetDate="2026-09-16T09:00:00" />
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Button

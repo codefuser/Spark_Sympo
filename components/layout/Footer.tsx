@@ -63,7 +63,7 @@ export function Footer() {
             National Level Technical Symposium organized by the Department of Electronics and Communication Engineering (ECE). Empowering next-gen innovators.
           </p>
           <div className="pt-2 text-xs font-mono text-primary flex items-center space-x-2">
-            <span>March 28, 2026</span>
+            <span>September 16, 2026</span>
             <span>•</span>
             <span>ECE Campus Auditorium</span>
           </div>

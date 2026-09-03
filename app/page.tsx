@@ -50,7 +50,7 @@ export default async function HomePage() {
   const studentCoordinators = await prisma.coordinator.findMany({ where: { role: "STUDENT" } });
   const announcements = await prisma.announcement.findMany({ orderBy: { date: "desc" } });
 
-  const symposiumDate = process.env.NEXT_PUBLIC_SYMPOSIUM_DATE || "March 28, 2026";
+  const symposiumDate = process.env.NEXT_PUBLIC_SYMPOSIUM_DATE || "September 16, 2026";
   const collegeName = process.env.NEXT_PUBLIC_COLLEGE_NAME || "St. Joseph's Institute of Technology";
   const venue = process.env.NEXT_PUBLIC_VENUE || "ECE Block Auditorium & Advanced Labs";
 
