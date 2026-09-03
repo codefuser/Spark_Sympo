@@ -7,7 +7,16 @@ import { AdminDashboardClient } from "@/components/admin/AdminDashboardClient";
 
 export const revalidate = 0; // Always fresh live registration data
 
+const DEFAULT_EVENTS = [
+  { id: "1", title: "Paper Presentation", slug: "paper-presentation", category: "TECHNICAL" },
+  { id: "2", title: "Technical Quiz", slug: "technical-quiz", category: "TECHNICAL" },
+  { id: "3", title: "Circuit Debugging", slug: "circuit-debugging", category: "TECHNICAL" },
+  { id: "4", title: "Rythemania", slug: "rythemania", category: "NON_TECHNICAL" },
+  { id: "5", title: "E-Sports", slug: "e-sports", category: "NON_TECHNICAL" },
+];
+
 export default async function AdminDashboardPage() {
+  // Check admin auth session
   const session = await getAdminSession();
 
   if (!session) {
@@ -57,25 +66,48 @@ export default async function AdminDashboardPage() {
         })),
       }));
     } else {
-      // Fallback: Query Prisma if Supabase Cloud table is empty or loading
-      const localRegs = await prisma.registration.findMany({
-        orderBy: { createdAt: "desc" },
-        include: {
-          technicalEvent: true,
-          nonTechnicalEvent: true,
-          participants: true,
-        },
-      });
-      registrations = localRegs as any[];
+      try {
+        const localRegs = await prisma.registration.findMany({
+          orderBy: { createdAt: "desc" },
+          include: {
+            technicalEvent: true,
+            nonTechnicalEvent: true,
+            participants: true,
+          },
+        });
+        registrations = localRegs as any[];
+      } catch (prismaErr) {
+        registrations = [];
+      }
     }
   } catch (err) {
     console.error("Error fetching Supabase admin data:", err);
   }
 
-  // 2. Fetch Events for filter dropdown
-  const events = await prisma.event.findMany({
-    select: { id: true, title: true, slug: true, category: true },
-  });
+  // 2. Fetch Events from Supabase Cloud DB or Fallback
+  let events: any[] = DEFAULT_EVENTS;
+  try {
+    const { data: supaEvents, error: evErr } = await supabase
+      .from("events")
+      .select("id, title, slug, category");
+
+    if (!evErr && supaEvents && supaEvents.length > 0) {
+      events = supaEvents;
+    } else {
+      try {
+        const localEvents = await prisma.event.findMany({
+          select: { id: true, title: true, slug: true, category: true },
+        });
+        if (localEvents && localEvents.length > 0) {
+          events = localEvents;
+        }
+      } catch (pErr) {
+        events = DEFAULT_EVENTS;
+      }
+    }
+  } catch (eErr) {
+    events = DEFAULT_EVENTS;
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground circuit-bg p-4 sm:p-8">
