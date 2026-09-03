@@ -1,7 +1,6 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { getAdminSession } from "@/lib/auth/jwt";
-import { prisma } from "@/lib/database/prisma";
 import { supabase } from "@/lib/database/supabase";
 import { AdminDashboardClient } from "@/components/admin/AdminDashboardClient";
 
@@ -16,105 +15,77 @@ const DEFAULT_EVENTS = [
 ];
 
 export default async function AdminDashboardPage() {
-  // Check admin auth session
-  const session = await getAdminSession();
+  // 1. Authenticate Admin Session
+  let session = null;
+  try {
+    session = await getAdminSession();
+  } catch (authErr) {
+    session = null;
+  }
 
   if (!session) {
     redirect("/admin/login");
   }
 
-  // 1. Fetch Live Registrations Directly from Supabase Shared Cloud Database
-  let registrations: any[] = [];
-  try {
-    const { data: supaRegs, error: supaErr } = await supabase
-      .from("registrations")
-      .select(`
-        id,
-        registration_code,
-        registration_type,
-        technical_event_id,
-        non_technical_event_id,
-        team_name,
-        status,
-        created_at,
-        technical_event:events!technical_event_id(id, title, category, slug),
-        non_technical_event:events!non_technical_event_id(id, title, category, slug),
-        participants(id, full_name, email, phone, college, food_preference, is_team_leader)
-      `)
-      .order("created_at", { ascending: false });
-
-    if (!supaErr && supaRegs && supaRegs.length > 0) {
-      registrations = supaRegs.map((r: any) => ({
-        id: r.id,
-        registrationCode: r.registration_code,
-        registrationType: r.registration_type || "online",
-        technicalEventId: r.technical_event_id,
-        nonTechnicalEventId: r.non_technical_event_id,
-        teamName: r.team_name,
-        status: r.status,
-        createdAt: r.created_at,
-        technicalEvent: r.technical_event,
-        nonTechnicalEvent: r.non_technical_event,
-        participants: (r.participants || []).map((p: any) => ({
-          id: p.id,
-          fullName: p.full_name,
-          email: p.email,
-          phone: p.phone,
-          college: p.college,
-          foodPreference: p.food_preference,
-          isTeamLeader: p.is_team_leader,
-        })),
-      }));
-    } else {
-      try {
-        const localRegs = await prisma.registration.findMany({
-          orderBy: { createdAt: "desc" },
-          include: {
-            technicalEvent: true,
-            nonTechnicalEvent: true,
-            participants: true,
-          },
-        });
-        registrations = localRegs as any[];
-      } catch (prismaErr) {
-        registrations = [];
-      }
-    }
-  } catch (err) {
-    console.error("Error fetching Supabase admin data:", err);
-  }
-
-  // 2. Fetch Events from Supabase Cloud DB or Fallback
-  let events: any[] = DEFAULT_EVENTS;
+  // 2. Fetch Events from Supabase Cloud DB
+  let eventsList: any[] = DEFAULT_EVENTS;
   try {
     const { data: supaEvents, error: evErr } = await supabase
       .from("events")
       .select("id, title, slug, category");
 
     if (!evErr && supaEvents && supaEvents.length > 0) {
-      events = supaEvents;
-    } else {
-      try {
-        const localEvents = await prisma.event.findMany({
-          select: { id: true, title: true, slug: true, category: true },
-        });
-        if (localEvents && localEvents.length > 0) {
-          events = localEvents;
-        }
-      } catch (pErr) {
-        events = DEFAULT_EVENTS;
-      }
+      eventsList = supaEvents;
     }
   } catch (eErr) {
-    events = DEFAULT_EVENTS;
+    eventsList = DEFAULT_EVENTS;
+  }
+
+  const eventsMap = new Map(eventsList.map((e) => [e.id, e]));
+
+  // 3. Fetch Live Registrations & Participants from Supabase Shared Cloud Database
+  let registrations: any[] = [];
+  try {
+    const { data: supaRegs, error: supaErr } = await supabase
+      .from("registrations")
+      .select("*, participants(*)")
+      .order("created_at", { ascending: false });
+
+    if (!supaErr && supaRegs && supaRegs.length > 0) {
+      registrations = supaRegs.map((r: any) => ({
+        id: r.id,
+        registrationCode: r.registration_code || "SPK-2K26-PASS",
+        registrationType: r.registration_type || "online",
+        technicalEventId: r.technical_event_id,
+        nonTechnicalEventId: r.non_technical_event_id,
+        teamName: r.team_name || null,
+        status: r.status || "CONFIRMED",
+        createdAt: r.created_at || new Date().toISOString(),
+        technicalEvent: eventsMap.get(r.technical_event_id) || { title: "Technical Track" },
+        nonTechnicalEvent: eventsMap.get(r.non_technical_event_id) || { title: "Non-Technical Track" },
+        participants: (r.participants || []).map((p: any) => ({
+          id: p.id,
+          fullName: p.full_name || "Participant",
+          email: p.email || "",
+          phone: p.phone || "",
+          college: p.college || "",
+          department: p.department || "ECE",
+          foodPreference: p.food_preference || "Veg",
+          isTeamLeader: p.is_team_leader ?? false,
+        })),
+      }));
+    }
+  } catch (err) {
+    console.error("Error fetching Supabase admin registrations:", err);
+    registrations = [];
   }
 
   return (
     <div className="min-h-screen bg-background text-foreground circuit-bg p-4 sm:p-8">
       <AdminDashboardClient
         initialRegistrations={registrations}
-        events={events as any}
-        session={session as any}
+        events={eventsList}
+        session={session}
       />
     </div>
   );
