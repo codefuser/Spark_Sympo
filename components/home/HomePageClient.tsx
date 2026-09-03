@@ -122,11 +122,11 @@ export function HomePageClient({
   return (
     <div className="space-y-24 pb-20">
       {/* SECTION 1: HERO */}
-      <section id="hero" className="relative pt-12 pb-20 overflow-hidden border-b border-primary/10">
+      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-6 sm:py-12 md:py-16 overflow-hidden border-b border-primary/10">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
         <div className="absolute top-1/3 right-10 w-[300px] h-[250px] bg-cyan/10 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center space-y-8">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center space-y-6 sm:space-y-8 my-auto">
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-mono tracking-widest uppercase shadow-glow animate-pulse">
             <Zap className="w-4 h-4 text-primary" />
             <span>Department of Electronics & Communication Engineering</span>
@@ -136,7 +136,7 @@ export function HomePageClient({
             <p className="text-sm sm:text-base font-mono text-cyan uppercase tracking-widest">
               {collegeName} Presents
             </p>
-            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black font-mono tracking-tight text-white uppercase">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black font-mono tracking-tight text-white uppercase">
               SPARK<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan to-cyan-glow">TRON</span>{" "}
               <span className="text-primary font-sans">2K26</span>
             </h1>

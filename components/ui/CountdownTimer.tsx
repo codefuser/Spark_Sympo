@@ -40,16 +40,16 @@ export function CountdownTimer({ targetDate }: { targetDate: string }) {
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-3 sm:gap-4 max-w-lg mx-auto my-6">
+    <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-lg mx-auto my-4 sm:my-6 w-full">
       {units.map((unit) => (
         <div
           key={unit.label}
-          className="flex flex-col items-center justify-center p-3 rounded-xl bg-card border border-primary/20 shadow-glow backdrop-blur-md"
+          className="flex flex-col items-center justify-center p-2.5 sm:p-4 rounded-xl bg-card/90 border border-primary/20 shadow-glow backdrop-blur-md transition-transform hover:scale-105"
         >
-          <span className="text-2xl sm:text-4xl font-extrabold font-mono text-primary tracking-tight">
+          <span className="text-xl sm:text-3xl md:text-4xl font-extrabold font-mono text-primary tracking-tight">
             {unit.value.toString().padStart(2, "0")}
           </span>
-          <span className="text-[10px] sm:text-xs font-mono text-secondary-foreground tracking-widest mt-1">
+          <span className="text-[9px] sm:text-xs font-mono text-secondary-foreground tracking-widest mt-0.5 sm:mt-1 uppercase">
             {unit.label}
           </span>
         </div>
