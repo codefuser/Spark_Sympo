@@ -11,6 +11,7 @@ export const participantSchema = z.object({
     .min(10, "Phone number must be at least 10 digits")
     .regex(/^[0-9+\-\s]+$/, "Invalid phone number format"),
   college: z.string().min(2, "College/Institution name is required"),
+  department: z.string().optional().default("ECE"),
   foodPreference: z.enum(["Veg", "Non-Veg"], {
     required_error: "Please select food preference",
   }),

@@ -86,6 +86,7 @@ export function RegistrationModal({
           email: "",
           phone: "",
           college: "",
+          department: "ECE",
           foodPreference: "Veg",
           isTeamLeader: true,
         },
@@ -283,6 +284,7 @@ export function RegistrationModal({
                       email: "",
                       phone: "",
                       college: "",
+                      department: "ECE",
                       foodPreference: "Veg",
                       isTeamLeader: false,
                     })

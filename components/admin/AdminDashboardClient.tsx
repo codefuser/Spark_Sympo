@@ -19,17 +19,57 @@ import {
   UserPlus,
   PlusCircle,
   ArrowRight,
+  ArrowLeft,
   CheckCircle2,
   Trash2,
   Layers,
+  Copy,
+  Sparkles,
+  Award,
+  Calendar,
+  Laptop,
+  LogOut,
 } from "lucide-react";
+
+const POPULAR_COLLEGES = [
+  "St. Joseph's Institute of Technology",
+  "St. Joseph's College of Engineering",
+  "SRM Institute of Science and Technology",
+  "SSN College of Engineering",
+  "Anna University (CEG / MIT)",
+  "Sathyabama Institute of Science and Technology",
+  "SRM Valliammai Engineering College",
+  "Rajalakshmi Engineering College",
+  "Loyola-ICAM College of Engineering",
+  "PSG College of Technology",
+  "Vellore Institute of Technology (VIT)",
+  "RMK Engineering College",
+  "EASWARI Engineering College",
+  "Sri Sairam Engineering College",
+];
+
+const DEPARTMENTS = [
+  { label: "ECE - Electronics & Communication", value: "ECE" },
+  { label: "EEE - Electrical & Electronics", value: "EEE" },
+  { label: "EIE - Electronics & Instrumentation", value: "EIE" },
+  { label: "CSE - Computer Science & Engineering", value: "CSE" },
+  { label: "IT - Information Technology", value: "IT" },
+  { label: "AI & DS - Artificial Intelligence & Data Science", value: "AIDS" },
+  { label: "AI & ML - Artificial Intelligence & Machine Learning", value: "AIML" },
+  { label: "Mechanical Engineering", value: "Mechanical" },
+  { label: "Civil Engineering", value: "Civil" },
+  { label: "Mechatronics", value: "Mechatronics" },
+  { label: "Other / Diploma", value: "Other" },
+];
 
 export function AdminDashboardClient({
   initialRegistrations,
   events,
+  session,
 }: {
   initialRegistrations: any[];
   events: any[];
+  session?: { name: string; email: string; role: string };
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -39,9 +79,12 @@ export function AdminDashboardClient({
   const [selectedType, setSelectedType] = useState<string>("ALL");
   const [selectedRegistration, setSelectedRegistration] = useState<any | null>(null);
 
-  // Offline Spot Registration Modal State
-  const [isOfflineModalOpen, setIsOfflineModalOpen] = useState(false);
+  // Full Screen Offline Spot Desk Mode Toggle
+  const [isOfflineDeskView, setIsOfflineDeskView] = useState(false);
   const [submittingOffline, setSubmittingOffline] = useState(false);
+
+  // Live registrations list for instant real-time UI updates
+  const [registrationsList, setRegistrationsList] = useState<any[]>(initialRegistrations);
 
   const technicalEvents = events.filter(
     (e) => e.category === "TECHNICAL" || e.slug === "paper-presentation" || e.slug === "technical-quiz" || e.slug === "circuit-debugging"
@@ -57,14 +100,15 @@ export function AdminDashboardClient({
         fullName: "",
         email: "",
         phone: "",
-        college: "",
+        college: POPULAR_COLLEGES[0],
+        department: "ECE",
         foodPreference: "Veg",
         isTeamLeader: true,
       },
     ],
   });
 
-  const filteredRegistrations = initialRegistrations.filter((r) => {
+  const filteredRegistrations = registrationsList.filter((r) => {
     const term = searchTerm.toLowerCase();
 
     const matchesSearch =
@@ -109,7 +153,25 @@ export function AdminDashboardClient({
     setOfflineForm({ ...offlineForm, participants: updated });
   };
 
+  // Quick Action: Copy Leader's College to All Teammates
+  const handleCopyCollegeToAll = () => {
+    const leaderCollege = offlineForm.participants[0]?.college;
+    if (!leaderCollege) {
+      showToast("Notice", "Please enter Leader's college first", "error");
+      return;
+    }
+
+    const updated = offlineForm.participants.map((p) => ({
+      ...p,
+      college: leaderCollege,
+    }));
+
+    setOfflineForm({ ...offlineForm, participants: updated });
+    showToast("College Copied", `Applied '${leaderCollege}' to all members`, "success");
+  };
+
   const addOfflineParticipant = () => {
+    const leaderCollege = offlineForm.participants[0]?.college || POPULAR_COLLEGES[0];
     setOfflineForm({
       ...offlineForm,
       participants: [
@@ -118,7 +180,8 @@ export function AdminDashboardClient({
           fullName: "",
           email: "",
           phone: "",
-          college: "",
+          college: leaderCollege,
+          department: "ECE",
           foodPreference: "Veg",
           isTeamLeader: false,
         },
@@ -152,11 +215,41 @@ export function AdminDashboardClient({
 
       if (res.ok && result.success) {
         showToast(
-          "Offline Pass Generated!",
+          "Offline Spot Pass Generated!",
           `Pass Code: ${result.registrationId}`,
           "success"
         );
-        setIsOfflineModalOpen(false);
+
+        // Prepend new offline registration to live stream list
+        const techEv = events.find((ev) => ev.id === offlineForm.technicalEventId);
+        const nonTechEv = events.find((ev) => ev.id === offlineForm.nonTechnicalEventId);
+
+        const newRegObj = {
+          id: result.registrationId,
+          registrationCode: result.registrationId,
+          registrationType: "offline",
+          technicalEventId: offlineForm.technicalEventId,
+          nonTechnicalEventId: offlineForm.nonTechnicalEventId,
+          teamName: offlineForm.teamName,
+          status: "CONFIRMED",
+          createdAt: new Date().toISOString(),
+          technicalEvent: techEv,
+          nonTechnicalEvent: nonTechEv,
+          participants: offlineForm.participants.map((p) => ({
+            id: Math.random().toString(),
+            fullName: p.fullName,
+            email: p.email,
+            phone: p.phone,
+            college: p.college,
+            department: p.department,
+            foodPreference: p.foodPreference,
+            isTeamLeader: p.isTeamLeader,
+          })),
+        };
+
+        setRegistrationsList((prev) => [newRegObj, ...prev]);
+
+        // Reset form for next student entry
         setOfflineForm({
           technicalEventId: technicalEvents[0]?.id || "",
           nonTechnicalEventId: nonTechnicalEvents[0]?.id || "",
@@ -166,12 +259,14 @@ export function AdminDashboardClient({
               fullName: "",
               email: "",
               phone: "",
-              college: "",
+              college: POPULAR_COLLEGES[0],
+              department: "ECE",
               foodPreference: "Veg",
               isTeamLeader: true,
             },
           ],
         });
+
         router.refresh();
       } else {
         showToast("Offline Registration Error", result.message || "Failed to process", "error");
@@ -183,9 +278,431 @@ export function AdminDashboardClient({
     }
   };
 
+  // Calculate live metrics
+  const totalRegistrations = registrationsList.length;
+  const totalParticipants = registrationsList.reduce(
+    (acc, r) => acc + (r.participants?.length || 0),
+    0
+  );
+  const onlineRegistrations = registrationsList.filter(
+    (r) => r.registrationType === "online"
+  ).length;
+  const offlineRegistrations = registrationsList.filter(
+    (r) => r.registrationType === "offline"
+  ).length;
+  const totalEvents = events.length;
+
+  // =========================================================================
+  // RENDER FULL SCREEN OFFLINE SPOT REGISTRATION DESK (WEBSITE 2)
+  // (Main Header & Top Cards Hidden)
+  // =========================================================================
+  if (isOfflineDeskView) {
+    return (
+      <div className="space-y-5 animate-in fade-in duration-200">
+        {/* Top Header Bar with Back Button */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl">
+          <div className="flex items-center space-x-3">
+            <Button
+              variant="outline"
+              size="sm"
+              leftIcon={<ArrowLeft className="w-4 h-4" />}
+              onClick={() => setIsOfflineDeskView(false)}
+            >
+              Back to Main Admin Dashboard
+            </Button>
+
+            <div className="h-6 w-[1px] bg-slate-800 hidden sm:block"></div>
+
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-bold font-mono text-white flex items-center gap-2">
+                  <UserPlus className="w-5 h-5 text-amber-400" />
+                  Offline Spot Registration Desk (Desk Volunteer Mode)
+                </h2>
+                <Badge variant="cyan">LIVE SUPABASE SYNC</Badge>
+              </div>
+              <p className="text-xs font-mono text-slate-400 mt-0.5">
+                Register walk-in students physically. Saved directly as <span className="text-amber-400 font-bold">registration_type = 'offline'</span>.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-mono text-slate-400 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+              Live Total: <strong className="text-cyan-400">{registrationsList.length} Passes</strong>
+            </span>
+          </div>
+        </div>
+
+        {/* 2-Column Split Layout: LEFT = Form (50%), RIGHT = Live Roster Feed (50%) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* LEFT COLUMN: Fast Typing Registration Form (50% / 6 cols) */}
+          <div className="lg:col-span-6 space-y-4">
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 className="text-sm font-semibold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-cyan-400" /> Spot Registration Form
+                </h3>
+                <span className="text-xs font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md font-bold">
+                  TYPE: OFFLINE
+                </span>
+              </div>
+
+              <form onSubmit={handleOfflineSubmit} className="space-y-4">
+                {/* Event Track Selectors */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <Select
+                    label="Technical Event Track *"
+                    options={technicalEvents.map((e) => ({
+                      label: `${e.title}`,
+                      value: e.id,
+                    }))}
+                    value={offlineForm.technicalEventId}
+                    onChange={(e) =>
+                      setOfflineForm({ ...offlineForm, technicalEventId: e.target.value })
+                    }
+                  />
+
+                  <Select
+                    label="Non-Technical Event Track *"
+                    options={nonTechnicalEvents.map((e) => ({
+                      label: `${e.title}`,
+                      value: e.id,
+                    }))}
+                    value={offlineForm.nonTechnicalEventId}
+                    onChange={(e) =>
+                      setOfflineForm({ ...offlineForm, nonTechnicalEventId: e.target.value })
+                    }
+                  />
+                </div>
+
+                <Input
+                  label="Team Name (Optional)"
+                  placeholder="e.g. Offline Circuit Titans"
+                  value={offlineForm.teamName}
+                  onChange={(e) => setOfflineForm({ ...offlineForm, teamName: e.target.value })}
+                />
+
+                {/* Team Roster Bar & Quick Copy Button */}
+                <div className="flex items-center justify-between pt-2">
+                  <h4 className="text-xs font-mono font-bold text-slate-200 uppercase flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-cyan-400" /> Team Roster ({offlineForm.participants.length})
+                  </h4>
+
+                  <div className="flex items-center gap-2">
+                    {offlineForm.participants.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        leftIcon={<Copy className="w-3 h-3 text-cyan-400" />}
+                        onClick={handleCopyCollegeToAll}
+                        title="Copy Leader's college name to all team members"
+                      >
+                        Same College for All
+                      </Button>
+                    )}
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      leftIcon={<UserPlus className="w-3.5 h-3.5" />}
+                      onClick={addOfflineParticipant}
+                    >
+                      Add Member
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Participants Form Inputs */}
+                <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+                  {offlineForm.participants.map((p, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3 relative"
+                    >
+                      <div className="flex items-center justify-between text-xs text-slate-300 font-semibold border-b border-slate-800/80 pb-2">
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+                          Participant {idx + 1} {idx === 0 ? "(Team Leader *)" : ""}
+                        </span>
+
+                        {idx > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => removeOfflineParticipant(idx)}
+                            className="text-slate-400 hover:text-rose-400 transition-colors p-1"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Input
+                          label="Full Name *"
+                          placeholder="e.g. Rahul Sharma"
+                          value={p.fullName}
+                          onChange={(e) =>
+                            handleOfflineParticipantChange(idx, "fullName", e.target.value)
+                          }
+                          required
+                        />
+                        <Input
+                          label="Email Address *"
+                          type="email"
+                          placeholder="rahul@student.edu"
+                          value={p.email}
+                          onChange={(e) =>
+                            handleOfflineParticipantChange(idx, "email", e.target.value)
+                          }
+                          required
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Input
+                          label="Mobile Phone *"
+                          placeholder="9876543210"
+                          value={p.phone}
+                          onChange={(e) =>
+                            handleOfflineParticipantChange(idx, "phone", e.target.value)
+                          }
+                          required
+                        />
+
+                        {/* College Name with Autocomplete Datalist */}
+                        <div className="w-full space-y-1.5">
+                          <label className="block text-xs font-mono font-medium text-slate-400 tracking-wider uppercase">
+                            College / Institution *
+                          </label>
+                          <input
+                            list="college-suggestions"
+                            placeholder="e.g. SRM Institute"
+                            value={p.college}
+                            onChange={(e) =>
+                              handleOfflineParticipantChange(idx, "college", e.target.value)
+                            }
+                            required
+                            className="w-full rounded-xl bg-slate-900/80 border border-slate-700/80 px-3.5 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-200"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Select
+                          label="Department *"
+                          options={DEPARTMENTS}
+                          value={p.department}
+                          onChange={(e) =>
+                            handleOfflineParticipantChange(idx, "department", e.target.value)
+                          }
+                        />
+
+                        <Select
+                          label="Food Preference *"
+                          options={[
+                            { label: "Veg 🥗", value: "Veg" },
+                            { label: "Non-Veg 🍗", value: "Non-Veg" },
+                          ]}
+                          value={p.foodPreference}
+                          onChange={(e) =>
+                            handleOfflineParticipantChange(idx, "foodPreference", e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Datalist for College Autocomplete */}
+                <datalist id="college-suggestions">
+                  {POPULAR_COLLEGES.map((c, i) => (
+                    <option key={i} value={c} />
+                  ))}
+                </datalist>
+
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  className="w-full text-sm font-semibold tracking-wide py-3 mt-2 shadow-xl shadow-cyan-950/40"
+                  isLoading={submittingOffline}
+                  rightIcon={<ArrowRight className="w-4 h-4" />}
+                >
+                  Submit Offline Registration Pass
+                </Button>
+              </form>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: Live Stream Spot Roster (50% / 6 cols) */}
+          <div className="lg:col-span-6 space-y-4">
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-2xl space-y-4 h-full flex flex-col">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 className="text-sm font-semibold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                  <Ticket className="w-4 h-4 text-emerald-400" /> Live Registrations Roster Stream
+                </h3>
+                <span className="text-xs font-mono text-slate-400">
+                  {registrationsList.length} Total Passes
+                </span>
+              </div>
+
+              {/* Live Stream List */}
+              <div className="space-y-3 overflow-y-auto max-h-[65vh] pr-1 flex-1">
+                {registrationsList.length === 0 ? (
+                  <div className="text-center py-12 text-slate-500 font-mono text-xs">
+                    No registrations in system yet.
+                  </div>
+                ) : (
+                  registrationsList.map((r, idx) => {
+                    const leader = r.participants?.[0] || {};
+                    const isNewest = idx === 0;
+                    return (
+                      <div
+                        key={r.id || idx}
+                        className={`p-4 rounded-xl border transition-all duration-200 ${
+                          isNewest
+                            ? "bg-slate-900 border-cyan-500/40 shadow-lg shadow-cyan-950/30"
+                            : "bg-slate-950/70 border-slate-800/80"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-sm text-cyan-400">
+                              {r.registrationCode}
+                            </span>
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-extrabold ${
+                                r.registrationType === "offline"
+                                  ? "bg-amber-500/15 text-amber-400 border border-amber-500/40"
+                                  : "bg-cyan-500/15 text-cyan-400 border border-cyan-500/40"
+                              }`}
+                            >
+                              {r.registrationType}
+                            </span>
+                          </div>
+
+                          <span className="text-[11px] text-slate-400 font-mono">
+                            {r.participants?.length || 1} Member(s)
+                          </span>
+                        </div>
+
+                        <div className="space-y-1 text-xs">
+                          <p className="text-slate-100 font-semibold flex items-center justify-between">
+                            <span>{leader.fullName || "N/A"}</span>
+                            <span className="text-slate-400 font-mono text-[11px]">
+                              {leader.department || "ECE"}
+                            </span>
+                          </p>
+
+                          <p className="text-slate-400 truncate text-[11px]">
+                            {leader.college || "N/A"} • {leader.email}
+                          </p>
+
+                          <div className="flex items-center justify-between pt-1 text-[11px]">
+                            <div className="flex gap-1.5">
+                              <Badge variant="primary" className="text-[10px] py-0 px-2">
+                                {r.technicalEvent?.title || "Tech Track"}
+                              </Badge>
+                              <Badge variant="cyan" className="text-[10px] py-0 px-2">
+                                {r.nonTechnicalEvent?.title || "Non-Tech Track"}
+                              </Badge>
+                            </div>
+
+                            <span
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                leader.foodPreference === "Non-Veg"
+                                  ? "bg-rose-500/10 text-rose-400"
+                                  : "bg-emerald-500/10 text-emerald-400"
+                              }`}
+                            >
+                              {leader.foodPreference}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // MAIN ADMIN DASHBOARD VIEW (Header & Metrics Shown Only Here)
+  // =========================================================================
   return (
-    <div className="space-y-6">
-      {/* Search, Filter & Offline Spot Registration Bar */}
+    <div className="space-y-8">
+      {/* Admin Header Bar */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl bg-card border border-slate-800 shadow-xl">
+        <div className="flex items-center space-x-3">
+          <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center font-mono font-bold text-xl">
+            <ShieldCheck className="w-6 h-6" />
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-xl font-bold font-mono text-white">
+                SPARKTRON 2K26 Registered Participants Portal
+              </h1>
+              {session && <Badge variant="primary">{session.role}</Badge>}
+            </div>
+            <p className="text-xs font-mono text-slate-400 mt-0.5">
+              Live Supabase Cloud Monitor • Logged in as <span className="text-white">{session?.name || "Admin"}</span> ({session?.email || "admin@sparktron.ece"})
+            </p>
+          </div>
+        </div>
+
+        <form action="/api/admin/logout" method="POST">
+          <Button type="submit" variant="ghost" size="sm" leftIcon={<LogOut className="w-4 h-4" />}>
+            Sign Out
+          </Button>
+        </form>
+      </div>
+
+      {/* Live Registration Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-mono text-slate-400 uppercase">Total Registrations</span>
+            <Calendar className="w-5 h-5 text-cyan-400" />
+          </div>
+          <p className="text-3xl font-extrabold font-mono text-white">{totalRegistrations}</p>
+        </Card>
+
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-mono text-slate-400 uppercase">Total Participants</span>
+            <Users className="w-5 h-5 text-emerald-400" />
+          </div>
+          <p className="text-3xl font-extrabold font-mono text-emerald-400">{totalParticipants}</p>
+        </Card>
+
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-mono text-slate-400 uppercase">Online / Offline</span>
+            <Laptop className="w-5 h-5 text-purple-400" />
+          </div>
+          <p className="text-2xl font-bold font-mono text-white">
+            <span className="text-cyan-400">{onlineRegistrations}</span> / <span className="text-amber-400">{offlineRegistrations}</span>
+          </p>
+        </Card>
+
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-mono text-slate-400 uppercase">Active Event Tracks</span>
+            <Award className="w-5 h-5 text-amber-400" />
+          </div>
+          <p className="text-3xl font-extrabold font-mono text-amber-400">{totalEvents}</p>
+        </Card>
+      </div>
+
+      {/* Search, Filter & Offline Spot Desk Toggle Button */}
       <Card className="p-4 flex flex-col lg:flex-row items-center justify-between gap-4">
         <div className="w-full lg:w-96">
           <Input
@@ -224,9 +741,9 @@ export function AdminDashboardClient({
             variant="cyan"
             size="sm"
             leftIcon={<PlusCircle className="w-4 h-4" />}
-            onClick={() => setIsOfflineModalOpen(true)}
+            onClick={() => setIsOfflineDeskView(true)}
           >
-            Offline Spot Reg
+            Offline Spot Reg Desk
           </Button>
 
           <Button
@@ -263,7 +780,7 @@ export function AdminDashboardClient({
                 </tr>
               ) : (
                 filteredRegistrations.map((r) => {
-                  const leader = r.participants[0] || {};
+                  const leader = r.participants?.[0] || {};
                   return (
                     <tr key={r.id} className="hover:bg-slate-800/40 transition-colors">
                       <td className="py-3.5 px-4 font-bold text-cyan-400">
@@ -283,7 +800,9 @@ export function AdminDashboardClient({
                       <td className="py-3.5 px-4 font-sans">
                         <p className="text-slate-100 font-bold">{leader.fullName || "N/A"}</p>
                         <p className="text-xs text-slate-400 font-mono">{leader.email}</p>
-                        <p className="text-[11px] text-slate-400 font-mono">{leader.college}</p>
+                        <p className="text-[11px] text-slate-400 font-mono">
+                          {leader.college} • <span className="text-cyan-400">{leader.department || "ECE"}</span>
+                        </p>
                       </td>
                       <td className="py-3.5 px-4">
                         <Badge variant="primary">
@@ -301,7 +820,7 @@ export function AdminDashboardClient({
                           variant="outline"
                           onClick={() => setSelectedRegistration(r)}
                         >
-                          {r.participants.length} Member(s)
+                          {r.participants?.length || 1} Member(s)
                         </Button>
                       </td>
                     </tr>
@@ -312,152 +831,6 @@ export function AdminDashboardClient({
           </table>
         </div>
       </div>
-
-      {/* OFFLINE SPOT REGISTRATION MODAL (Website 2 Volunteer Entry) */}
-      {isOfflineModalOpen && (
-        <Modal
-          isOpen={isOfflineModalOpen}
-          onClose={() => setIsOfflineModalOpen(false)}
-          title="Offline Spot Registration (College Desk)"
-          description="Register walk-in students physically. Saved directly to Supabase as registration_type = 'offline'."
-          maxWidth="xl"
-        >
-          <form onSubmit={handleOfflineSubmit} className="space-y-4 max-h-[68vh] overflow-y-auto pr-2">
-            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 flex items-center gap-2 font-mono">
-              <ShieldCheck className="w-4 h-4 shrink-0 text-amber-400" />
-              <span>Offline Entry Mode — Type: <strong>OFFLINE</strong></span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Select
-                label="Technical Event Track *"
-                options={technicalEvents.map((e) => ({
-                  label: `${e.title}`,
-                  value: e.id,
-                }))}
-                value={offlineForm.technicalEventId}
-                onChange={(e) =>
-                  setOfflineForm({ ...offlineForm, technicalEventId: e.target.value })
-                }
-              />
-
-              <Select
-                label="Non-Technical Event Track *"
-                options={nonTechnicalEvents.map((e) => ({
-                  label: `${e.title}`,
-                  value: e.id,
-                }))}
-                value={offlineForm.nonTechnicalEventId}
-                onChange={(e) =>
-                  setOfflineForm({ ...offlineForm, nonTechnicalEventId: e.target.value })
-                }
-              />
-            </div>
-
-            <Input
-              label="Team Name (Optional)"
-              placeholder="e.g. Offline Titans"
-              value={offlineForm.teamName}
-              onChange={(e) => setOfflineForm({ ...offlineForm, teamName: e.target.value })}
-            />
-
-            {/* Offline Participants */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-semibold text-slate-200 uppercase">
-                  Participant Roster ({offlineForm.participants.length})
-                </h4>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  leftIcon={<UserPlus className="w-3.5 h-3.5" />}
-                  onClick={addOfflineParticipant}
-                >
-                  Add Member
-                </Button>
-              </div>
-
-              {offlineForm.participants.map((p, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2.5">
-                  <div className="flex items-center justify-between text-xs text-slate-300 font-semibold">
-                    <span>Participant {idx + 1} {idx === 0 ? "(Leader *)" : ""}</span>
-                    {idx > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => removeOfflineParticipant(idx)}
-                        className="text-slate-400 hover:text-rose-400 p-1"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <Input
-                      placeholder="Full Name *"
-                      value={p.fullName}
-                      onChange={(e) =>
-                        handleOfflineParticipantChange(idx, "fullName", e.target.value)
-                      }
-                      required
-                    />
-                    <Input
-                      type="email"
-                      placeholder="Email Address *"
-                      value={p.email}
-                      onChange={(e) =>
-                        handleOfflineParticipantChange(idx, "email", e.target.value)
-                      }
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                    <Input
-                      placeholder="Phone *"
-                      value={p.phone}
-                      onChange={(e) =>
-                        handleOfflineParticipantChange(idx, "phone", e.target.value)
-                      }
-                      required
-                    />
-                    <Input
-                      placeholder="College / Institution *"
-                      value={p.college}
-                      onChange={(e) =>
-                        handleOfflineParticipantChange(idx, "college", e.target.value)
-                      }
-                      required
-                    />
-                    <Select
-                      options={[
-                        { label: "Veg 🥗", value: "Veg" },
-                        { label: "Non-Veg 🍗", value: "Non-Veg" },
-                      ]}
-                      value={p.foodPreference}
-                      onChange={(e) =>
-                        handleOfflineParticipantChange(idx, "foodPreference", e.target.value)
-                      }
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <Button
-              type="submit"
-              variant="cyan"
-              size="lg"
-              className="w-full text-sm font-semibold tracking-wide py-3 mt-2"
-              isLoading={submittingOffline}
-              rightIcon={<ArrowRight className="w-4 h-4" />}
-            >
-              Submit Offline Registration Pass
-            </Button>
-          </form>
-        </Modal>
-      )}
 
       {/* Registration Details & Team Roster Modal */}
       {selectedRegistration && (
@@ -483,7 +856,9 @@ export function AdminDashboardClient({
               </p>
               <p>
                 <span className="text-slate-400">Registration Type:</span>{" "}
-                <span className="text-amber-400 font-bold uppercase">{selectedRegistration.registrationType}</span>
+                <span className="text-amber-400 font-bold uppercase">
+                  {selectedRegistration.registrationType}
+                </span>
               </p>
               {selectedRegistration.teamName && (
                 <p>
@@ -496,11 +871,11 @@ export function AdminDashboardClient({
             <div className="space-y-2">
               <h4 className="text-xs font-mono font-bold text-slate-200 uppercase flex items-center gap-1.5">
                 <Users className="w-3.5 h-3.5 text-cyan-400" /> Participant Roster (
-                {selectedRegistration.participants.length})
+                {selectedRegistration.participants?.length || 0})
               </h4>
 
               <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
-                {selectedRegistration.participants.map((p: any, idx: number) => (
+                {selectedRegistration.participants?.map((p: any, idx: number) => (
                   <div
                     key={p.id || idx}
                     className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs flex justify-between items-center"
@@ -510,7 +885,9 @@ export function AdminDashboardClient({
                         {p.fullName} {p.isTeamLeader ? "(Leader)" : ""}
                       </p>
                       <p className="text-slate-400 font-mono">{p.email}</p>
-                      <p className="text-slate-400">{p.college} • {p.phone}</p>
+                      <p className="text-slate-400">
+                        {p.college} • {p.department || "ECE"} • {p.phone}
+                      </p>
                     </div>
 
                     <span
