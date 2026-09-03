@@ -298,9 +298,9 @@ export function AdminDashboardClient({
   // =========================================================================
   if (isOfflineDeskView) {
     return (
-      <div className="space-y-5 animate-in fade-in duration-200">
+      <div className="h-[calc(100vh-3rem)] flex flex-col space-y-4 animate-in fade-in duration-200">
         {/* Top Header Bar with Back Button */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl">
+        <div className="shrink-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl">
           <div className="flex items-center space-x-3">
             <Button
               variant="outline"
@@ -315,13 +315,13 @@ export function AdminDashboardClient({
 
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold font-mono text-white flex items-center gap-2">
+                <h2 className="text-base font-bold font-mono text-white flex items-center gap-2">
                   <UserPlus className="w-5 h-5 text-amber-400" />
                   Offline Spot Registration Desk (Desk Volunteer Mode)
                 </h2>
                 <Badge variant="cyan">LIVE SUPABASE SYNC</Badge>
               </div>
-              <p className="text-xs font-mono text-slate-400 mt-0.5">
+              <p className="text-[11px] font-mono text-slate-400 mt-0.5">
                 Register walk-in students physically. Saved directly as <span className="text-amber-400 font-bold">registration_type = 'offline'</span>.
               </p>
             </div>
@@ -335,20 +335,19 @@ export function AdminDashboardClient({
         </div>
 
         {/* 2-Column Split Layout: LEFT = Form (50%), RIGHT = Live Roster Feed (50%) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-5">
           {/* LEFT COLUMN: Fast Typing Registration Form (50% / 6 cols) */}
-          <div className="lg:col-span-6 space-y-4">
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-2xl space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 className="text-sm font-semibold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-cyan-400" /> Spot Registration Form
-                </h3>
-                <span className="text-xs font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md font-bold">
-                  TYPE: OFFLINE
-                </span>
-              </div>
+          <div className="lg:col-span-6 h-full flex flex-col p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-2xl overflow-hidden">
+            <div className="shrink-0 flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+              <h3 className="text-sm font-semibold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-cyan-400" /> Spot Registration Form
+              </h3>
+              <span className="text-xs font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md font-bold">
+                TYPE: OFFLINE
+              </span>
+            </div>
 
-              <form onSubmit={handleOfflineSubmit} className="space-y-4">
+            <form onSubmit={handleOfflineSubmit} className="flex-1 flex flex-col min-h-0 space-y-3.5">
                 {/* Event Track Selectors */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   <Select
@@ -416,7 +415,7 @@ export function AdminDashboardClient({
                 </div>
 
                 {/* Participants Form Inputs */}
-                <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+                <div className="flex-1 min-h-0 overflow-y-auto pr-1.5 space-y-3.5">
                   {offlineForm.participants.map((p, idx) => (
                     <div
                       key={idx}
@@ -527,7 +526,7 @@ export function AdminDashboardClient({
                   type="submit"
                   variant="primary"
                   size="lg"
-                  className="w-full text-sm font-semibold tracking-wide py-3 mt-2 shadow-xl shadow-cyan-950/40"
+                  className="w-full text-sm font-semibold tracking-wide py-3 mt-2 shadow-xl shadow-cyan-950/40 shrink-0"
                   isLoading={submittingOffline}
                   rightIcon={<ArrowRight className="w-4 h-4" />}
                 >
@@ -535,22 +534,20 @@ export function AdminDashboardClient({
                 </Button>
               </form>
             </div>
-          </div>
 
           {/* RIGHT COLUMN: Live Stream Spot Roster (50% / 6 cols) */}
-          <div className="lg:col-span-6 space-y-4">
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-2xl space-y-4 h-full flex flex-col">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 className="text-sm font-semibold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                  <Ticket className="w-4 h-4 text-emerald-400" /> Live Registrations Roster Stream
-                </h3>
-                <span className="text-xs font-mono text-slate-400">
-                  {registrationsList.length} Total Passes
-                </span>
-              </div>
+          <div className="lg:col-span-6 h-full flex flex-col p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-2xl overflow-hidden space-y-3">
+            <div className="shrink-0 flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="text-sm font-semibold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <Ticket className="w-4 h-4 text-emerald-400" /> Live Registrations Roster Stream
+              </h3>
+              <span className="text-xs font-mono text-slate-400">
+                {registrationsList.length} Total Passes
+              </span>
+            </div>
 
-              {/* Live Stream List */}
-              <div className="space-y-3 overflow-y-auto max-h-[65vh] pr-1 flex-1">
+            {/* Live Stream List */}
+            <div className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-3">
                 {registrationsList.length === 0 ? (
                   <div className="text-center py-12 text-slate-500 font-mono text-xs">
                     No registrations in system yet.
@@ -630,7 +627,6 @@ export function AdminDashboardClient({
             </div>
           </div>
         </div>
-      </div>
     );
   }
 
