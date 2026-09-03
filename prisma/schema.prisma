@@ -28,14 +28,13 @@ model Participant {
   gender         String?
   createdAt      DateTime       @default(now())
   registrations  Registration[]
-  quizAttempts   QuizAttempt[]
 }
 
 model Event {
   id               String         @id @default(uuid())
   slug             String         @unique
   title            String
-  category         String // TECHNICAL, NON_TECHNICAL, WORKSHOP, QUIZ
+  category         String // TECHNICAL, NON_TECHNICAL, WORKSHOP
   shortDesc        String
   fullDesc         String
   rules            String
@@ -76,62 +75,6 @@ model TeamMember {
   memberEmail    String
   memberPhone    String?
   isLeader       Boolean      @default(false)
-}
-
-model Quiz {
-  id              String        @id @default(uuid())
-  title           String
-  description     String
-  durationMinutes Int           @default(15)
-  totalQuestions  Int           @default(15)
-  isActive        Boolean       @default(true)
-  questions       Question[]
-  attempts        QuizAttempt[]
-  createdAt       DateTime      @default(now())
-}
-
-model Question {
-  id           String       @id @default(uuid())
-  quizId       String
-  quiz         Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  questionText String
-  category     String       @default("Electronics & Tech")
-  points       Int          @default(10)
-  options      QuizOption[]
-  answers      QuizAnswer[]
-}
-
-model QuizOption {
-  id         String       @id @default(uuid())
-  questionId String
-  question   Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  optionText String
-  isCorrect  Boolean      @default(false)
-  answers    QuizAnswer[]
-}
-
-model QuizAttempt {
-  id               String       @id @default(uuid())
-  participantId    String
-  participant      Participant  @relation(fields: [participantId], references: [id], onDelete: Cascade)
-  quizId           String
-  quiz             Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  score            Int
-  totalQuestions   Int
-  timeTakenSeconds Int
-  completedAt      DateTime     @default(now())
-  answers          QuizAnswer[]
-}
-
-model QuizAnswer {
-  id               String      @id @default(uuid())
-  attemptId        String
-  attempt          QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  questionId       String
-  question         Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  selectedOptionId String?
-  selectedOption   QuizOption? @relation(fields: [selectedOptionId], references: [id], onDelete: SetNull)
-  isCorrect        Boolean
 }
 
 model Coordinator {

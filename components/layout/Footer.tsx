@@ -1,14 +1,29 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Cpu, Mail, Phone, MapPin, ExternalLink, ShieldAlert, Heart } from "lucide-react";
+import { Cpu, Mail, Phone, MapPin } from "lucide-react";
+import { useRegistrationModal } from "@/components/registration/RegistrationModalContext";
 
 export function Footer() {
   const pathname = usePathname();
+  const { openRegistrationModal } = useRegistrationModal();
 
+  // Hide footer on admin routes
   if (pathname?.startsWith("/admin")) return null;
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace("#", "");
+    const element = document.getElementById(targetId);
+    if (element) {
+      const offsetTop = element.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({
+        top: offsetTop,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return (
     <footer className="w-full border-t border-primary/15 bg-background text-secondary-foreground">
@@ -20,15 +35,15 @@ export function Footer() {
               Ready to electrify your engineering vision?
             </h3>
             <p className="text-sm text-secondary-foreground">
-              Register now for CircuitRIX, PaperTronix, RoboCombat, Workshops & Online Quiz!
+              Register now for CircuitRIX, PaperTronix, RoboCombat, and Workshops!
             </p>
           </div>
-          <Link
-            href="/register"
+          <button
+            onClick={() => openRegistrationModal()}
             className="px-6 py-3 rounded-lg bg-primary text-background font-bold text-sm shadow-glow hover:bg-primary-dark transition-all transform hover:-translate-y-0.5"
           >
             Register Now →
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -55,79 +70,74 @@ export function Footer() {
         </div>
 
         {/* Quick Links */}
-        <div className="space-y-3">
-          <h4 className="text-xs font-mono font-bold text-white uppercase tracking-widest border-b border-primary/20 pb-2">
+        <div className="space-y-3 font-mono">
+          <h4 className="text-xs font-bold text-white uppercase tracking-widest border-b border-primary/20 pb-2">
             Navigation
           </h4>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link href="/about" className="hover:text-primary transition-colors">
+              <a href="#about" onClick={(e) => handleNavClick(e, "#about")} className="hover:text-primary transition-colors">
                 About Symposium
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="/symposium" className="hover:text-primary transition-colors">
+              <a href="#symposium" onClick={(e) => handleNavClick(e, "#symposium")} className="hover:text-primary transition-colors">
                 Schedule & Guidelines
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="/events" className="hover:text-primary transition-colors">
+              <a href="#events" onClick={(e) => handleNavClick(e, "#events")} className="hover:text-primary transition-colors">
                 Events Catalog
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="/quiz" className="hover:text-primary transition-colors">
-                Online Quiz Portal
-              </Link>
+              <a href="#coordinators" onClick={(e) => handleNavClick(e, "#coordinators")} className="hover:text-primary transition-colors">
+                Coordinators
+              </a>
             </li>
             <li>
-              <Link href="/leaderboard" className="hover:text-primary transition-colors">
-                Live Leaderboard
-              </Link>
+              <a href="#sponsors" onClick={(e) => handleNavClick(e, "#sponsors")} className="hover:text-primary transition-colors">
+                Sponsors & Partners
+              </a>
             </li>
           </ul>
         </div>
 
-        {/* Categories */}
-        <div className="space-y-3">
-          <h4 className="text-xs font-mono font-bold text-white uppercase tracking-widest border-b border-primary/20 pb-2">
-            Event Tracks
+        {/* Event Tracks */}
+        <div className="space-y-3 font-mono">
+          <h4 className="text-xs font-bold text-white uppercase tracking-widest border-b border-primary/20 pb-2">
+            Featured Tracks
           </h4>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link href="/events?category=TECHNICAL" className="hover:text-primary transition-colors">
-                CircuitRIX & PaperTronix
-              </Link>
+              <a href="#events" onClick={(e) => handleNavClick(e, "#events")} className="hover:text-primary transition-colors">
+                CircuitRIX Debugging
+              </a>
             </li>
             <li>
-              <Link href="/events?category=TECHNICAL" className="hover:text-primary transition-colors">
-                RoboCombat 2.0
-              </Link>
+              <a href="#events" onClick={(e) => handleNavClick(e, "#events")} className="hover:text-primary transition-colors">
+                PaperTronix Symposium
+              </a>
             </li>
             <li>
-              <Link href="/events?category=WORKSHOP" className="hover:text-primary transition-colors">
-                IoT & Embedded Edge Workshop
-              </Link>
+              <a href="#events" onClick={(e) => handleNavClick(e, "#events")} className="hover:text-primary transition-colors">
+                RoboCombat 2.0 Arena
+              </a>
             </li>
             <li>
-              <Link href="/events?category=QUIZ" className="hover:text-primary transition-colors">
-                Tech Mastermind Quiz
-              </Link>
-            </li>
-            <li>
-              <Link href="/sponsors" className="hover:text-primary transition-colors">
-                Our Sponsors & Partners
-              </Link>
+              <a href="#events" onClick={(e) => handleNavClick(e, "#events")} className="hover:text-primary transition-colors">
+                IoT Edge Workshop
+              </a>
             </li>
           </ul>
         </div>
 
-        {/* Contact info */}
+        {/* Contact Info */}
         <div className="space-y-3">
           <h4 className="text-xs font-mono font-bold text-white uppercase tracking-widest border-b border-primary/20 pb-2">
             Contact Us
           </h4>
-          <div className="space-y-2.5 text-xs">
+          <div className="space-y-2.5 text-xs font-mono">
             <div className="flex items-start space-x-2.5">
               <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
               <span>ECE Department, St. Joseph's Institute of Technology, OMR, Chennai - 600119</span>
@@ -148,11 +158,6 @@ export function Footer() {
       <div className="border-t border-primary/10 py-6 bg-background/50 text-xs">
         <div className="container mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© 2026 SPARKTRON 2K26. Department of ECE. All rights reserved.</p>
-          <div className="flex items-center space-x-4 font-mono">
-            <Link href="/admin/login" className="hover:text-primary flex items-center gap-1">
-              <ShieldAlert className="w-3.5 h-3.5 text-primary" /> Admin Portal
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

@@ -43,7 +43,6 @@ export async function GET(request: Request) {
             teamMembers: true,
           },
         },
-        quizAttempts: true,
       },
     });
 

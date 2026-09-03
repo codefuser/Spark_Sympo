@@ -95,24 +95,6 @@ async function main() {
       status: "OPEN",
     },
     {
-      slug: "tech-trivia-quiz",
-      title: "SPARK Quiz: Tech Mastermind",
-      category: "QUIZ",
-      shortDesc: "Rapid-fire online & live quiz on Electronics, Telecom, AI, and Tech Trivia.",
-      fullDesc: "Speed, accuracy, and deep engineering knowledge! Answer multi-tier questions spanning semiconductor physics, wireless protocols, historical tech breakthroughs, and modern computing trends.",
-      rules: "1. 15 Questions in 15 Minutes on our online quiz portal.\n2. Server-side timestamping to resolve ties.\n3. Top 5 qualify for live buzzer final round on stage.",
-      eligibility: "Individual participation for all registered delegates",
-      teamSize: "Individual",
-      maxTeams: 200,
-      rounds: "Online Screening + Stage Buzzer Finale",
-      date: "March 28, 2026",
-      time: "02:00 PM - 03:30 PM",
-      venue: "Online Portal / Main Stage Auditorium",
-      coordinatorName: "Ms. P. Swetha",
-      coordinatorPhone: "+91 98405 67890",
-      status: "OPEN",
-    },
-    {
       slug: "pixelfest-media",
       title: "LensCraft: Tech Photography & Reels",
       category: "NON_TECHNICAL",
@@ -139,174 +121,9 @@ async function main() {
       create: item,
     });
   }
-  console.log("✅ Seeded 6 Symposium Events");
+  console.log("✅ Seeded 5 Symposium Events");
 
-  // 3. Create Sample Quiz & Questions
-  const quiz = await prisma.quiz.upsert({
-    where: { id: "sparktron-main-quiz-2026" },
-    update: {},
-    create: {
-      id: "sparktron-main-quiz-2026",
-      title: "SPARKTRON 2K26 National Tech Challenge",
-      description: "Official ECE & Tech Knowledge Screening Quiz",
-      durationMinutes: 15,
-      totalQuestions: 10,
-      isActive: true,
-    },
-  });
-
-  const questionsData = [
-    {
-      id: "q1",
-      quizId: quiz.id,
-      questionText: "Which semiconductor material has a direct energy band gap commonly used in optoelectronics (LEDs & Laser Diodes)?",
-      category: "Semiconductor Physics",
-      points: 10,
-      options: [
-        { optionText: "Silicon (Si)", isCorrect: false },
-        { optionText: "Gallium Arsenide (GaAs)", isCorrect: true },
-        { optionText: "Germanium (Ge)", isCorrect: false },
-        { optionText: "Carbon (Diamond)", isCorrect: false },
-      ],
-    },
-    {
-      id: "q2",
-      quizId: quiz.id,
-      questionText: "What is the primary function of a Schmitt Trigger circuit in digital electronics?",
-      category: "Digital Circuits",
-      points: 10,
-      options: [
-        { optionText: "Convert AC to DC voltage", isCorrect: false },
-        { optionText: "Provide hysteresis to eliminate noise in switching signals", isCorrect: true },
-        { optionText: "Amplify high-frequency RF signals", isCorrect: false },
-        { optionText: "Generate pure sine wave oscillations", isCorrect: false },
-      ],
-    },
-    {
-      id: "q3",
-      quizId: quiz.id,
-      questionText: "In 5G NR (New Radio), what frequency spectrum band is categorized as millimeter Wave (mmWave)?",
-      category: "Telecommunication",
-      points: 10,
-      options: [
-        { optionText: "Sub-1 GHz", isCorrect: false },
-        { optionText: "1 GHz to 6 GHz", isCorrect: false },
-        { optionText: "24 GHz to 100 GHz", isCorrect: true },
-        { optionText: "300 GHz to 1 THz", isCorrect: false },
-      ],
-    },
-    {
-      id: "q4",
-      quizId: quiz.id,
-      questionText: "What does the Nyquist-Shannon Sampling Theorem specify to prevent aliasing when converting analog to digital?",
-      category: "Signal Processing",
-      points: 10,
-      options: [
-        { optionText: "Sampling frequency must be at least twice the maximum signal frequency", isCorrect: true },
-        { optionText: "Sampling frequency must equal signal bandwidth", isCorrect: false },
-        { optionText: "Sampling rate must be half the signal frequency", isCorrect: false },
-        { optionText: "Quantization steps must be logarithmic", isCorrect: false },
-      ],
-    },
-    {
-      id: "q5",
-      quizId: quiz.id,
-      questionText: "In microcontroller systems (such as ESP32 / STM32), what is the function of a Watchdog Timer (WDT)?",
-      category: "Embedded Systems",
-      points: 10,
-      options: [
-        { optionText: "Measure precise CPU temperature", isCorrect: false },
-        { optionText: "Reset the microcontroller if firmware hangs or gets stuck in infinite loops", isCorrect: true },
-        { optionText: "Increase clock multiplier for Turbo mode", isCorrect: false },
-        { optionText: "Encrypt serial SPI communication payload", isCorrect: false },
-      ],
-    },
-    {
-      id: "q6",
-      quizId: quiz.id,
-      questionText: "Which logic gate family provides the lowest static power consumption in integrated circuits?",
-      category: "VLSI Design",
-      points: 10,
-      options: [
-        { optionText: "TTL (Transistor-Transistor Logic)", isCorrect: false },
-        { optionText: "ECL (Emitter-Coupled Logic)", isCorrect: false },
-        { optionText: "CMOS (Complementary Metal-Oxide-Semiconductor)", isCorrect: true },
-        { optionText: "NMOS Depletion Logic", isCorrect: false },
-      ],
-    },
-    {
-      id: "q7",
-      quizId: quiz.id,
-      questionText: "What protocol is widely used for low-power long-range IoT sensor communication up to 15km?",
-      category: "IoT Communications",
-      points: 10,
-      options: [
-        { optionText: "Bluetooth Low Energy (BLE)", isCorrect: false },
-        { optionText: "LoRaWAN", isCorrect: true },
-        { optionText: "Zigbee", isCorrect: false },
-        { optionText: "NFC", isCorrect: false },
-      ],
-    },
-    {
-      id: "q8",
-      quizId: quiz.id,
-      questionText: "What is the theoretical maximum efficiency of a Class A power amplifier?",
-      category: "Analog Electronics",
-      points: 10,
-      options: [
-        { optionText: "25% (or 50% with transformer coupling)", isCorrect: true },
-        { optionText: "78.5%", isCorrect: false },
-        { optionText: "90%", isCorrect: false },
-        { optionText: "100%", isCorrect: false },
-      ],
-    },
-    {
-      id: "q9",
-      quizId: quiz.id,
-      questionText: "In Fiber Optic Communications, what physical phenomenon guides light through the core?",
-      category: "Optoelectronics",
-      points: 10,
-      options: [
-        { optionText: "Total Internal Reflection", isCorrect: true },
-        { optionText: "Diffraction Gradient", isCorrect: false },
-        { optionText: "Birefringence Dispersion", isCorrect: false },
-        { optionText: "Photoelectric Absorption", isCorrect: false },
-      ],
-    },
-    {
-      id: "q10",
-      quizId: quiz.id,
-      questionText: "Who is celebrated as the Father of Electronics for inventing the Triode Vacuum Tube (Audion) in 1906?",
-      category: "Tech History",
-      points: 10,
-      options: [
-        { optionText: "Nikola Tesla", isCorrect: false },
-        { optionText: "Lee de Forest", isCorrect: true },
-        { optionText: "Guglielmo Marconi", isCorrect: false },
-        { optionText: "Heinrich Hertz", isCorrect: false },
-      ],
-    },
-  ];
-
-  for (const q of questionsData) {
-    await prisma.question.upsert({
-      where: { id: q.id },
-      update: {},
-      create: {
-        id: q.id,
-        quizId: q.quizId,
-        questionText: q.questionText,
-        category: q.category,
-        points: q.points,
-        options: {
-          create: q.options,
-        },
-      },
-    });
-  }
-  console.log("✅ Seeded Quiz and 10 Technical MCQ Questions");
-
-  // 4. Seed Coordinators
+  // 3. Seed Coordinators
   const coordinatorsData = [
     {
       name: "Dr. V. Rajeshwari",
@@ -357,7 +174,7 @@ async function main() {
   }
   console.log("✅ Seeded Coordinators");
 
-  // 5. Seed Sponsors
+  // 4. Seed Sponsors
   const sponsorsData = [
     { name: "Texas Instruments", tier: "PLATINUM", websiteUrl: "https://www.ti.com" },
     { name: "Bosch Sensing Systems", tier: "PLATINUM", websiteUrl: "https://www.bosch.com" },
@@ -372,7 +189,7 @@ async function main() {
   }
   console.log("✅ Seeded Sponsors");
 
-  // 6. Seed Sample Announcements
+  // 5. Seed Announcements
   await prisma.announcement.create({
     data: {
       title: "SPARKTRON 2K26 Registration Now Live!",

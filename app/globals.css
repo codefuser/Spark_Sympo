@@ -6,6 +6,11 @@
   :root {
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px; /* Offset for fixed sticky navbar */
+  }
   
   body {
     background-color: #07090E;
@@ -24,18 +29,25 @@
   background-size: 100% 100%, 40px 40px, 40px 40px;
 }
 
-/* Custom scrollbar */
+/* Cyber Theme Custom Scrollbar Design */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #07090E;
+  background: #05070A;
+  border-left: 1px solid rgba(0, 240, 255, 0.1);
 }
+
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 240, 255, 0.2);
-  border-radius: 4px;
+  background: linear-gradient(180deg, #00F0FF 0%, #0072FF 100%);
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  border: 2px solid #07090E;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 240, 255, 0.4);
+  background: linear-gradient(180deg, #00D2FF 0%, #00F0FF 100%);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.8);
 }
