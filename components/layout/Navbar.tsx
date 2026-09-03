@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Cpu, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -9,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { useRegistrationModal } from "@/components/registration/RegistrationModalContext";
 
 const navLinks = [
+  { name: "Home", href: "#hero" },
   { name: "About", href: "#about" },
   { name: "Symposium", href: "#symposium" },
   { name: "Events", href: "#events" },
@@ -20,11 +20,35 @@ const navLinks = [
 export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
+  const [activeSection, setActiveSection] = useState("hero");
   const { openRegistrationModal } = useRegistrationModal();
 
-  // Hide public navbar completely on admin portal routes
+  // Hide public navbar on admin portal routes
   if (pathname?.startsWith("/admin")) return null;
+
+  // Real-time Active Section Tracking on Scroll
+  useEffect(() => {
+    const sectionIds = navLinks.map((l) => l.href.replace("#", ""));
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 140; // Offset for navbar height
+
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sectionIds[i]);
+        if (el) {
+          const top = el.offsetTop;
+          if (scrollPosition >= top) {
+            setActiveSection(sectionIds[i]);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Check on mount
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -63,7 +87,7 @@ export function Navbar() {
         </a>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden xl:flex items-center space-x-1 font-mono">
+        <nav className="hidden xl:flex items-center space-x-6 font-mono">
           {navLinks.map((link) => {
             const sectionId = link.href.replace("#", "");
             const isActive = activeSection === sectionId;
@@ -73,15 +97,23 @@ export function Navbar() {
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
                 className={cn(
-                  "relative px-3.5 py-2 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer group",
+                  "relative py-2 text-sm font-medium transition-all duration-200 cursor-pointer group select-none",
                   isActive
-                    ? "text-primary bg-primary/10 border border-primary/30 shadow-glow"
-                    : "text-secondary-foreground hover:text-white hover:bg-card/60"
+                    ? "text-primary font-extrabold"
+                    : "text-slate-400 hover:text-primary"
                 )}
               >
                 <span>{link.name}</span>
-                {/* Glowing bottom line animation on hover */}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-cyan group-hover:w-4/5 transition-all duration-300 rounded-full" />
+
+                {/* Underline Indicator without any box border */}
+                <span
+                  className={cn(
+                    "absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-primary via-cyan to-cyan-glow shadow-glow transition-all duration-300 transform origin-left",
+                    isActive
+                      ? "opacity-100 scale-x-100"
+                      : "opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100"
+                  )}
+                />
               </a>
             );
           })}
@@ -98,7 +130,7 @@ export function Navbar() {
           </Button>
         </div>
 
-        {/* Mobile menu trigger */}
+        {/* Mobile Menu Trigger */}
         <div className="flex xl:hidden items-center space-x-2">
           <Button
             variant="primary"
@@ -117,20 +149,29 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="xl:hidden border-b border-primary/20 bg-card/95 backdrop-blur-2xl px-4 py-6 space-y-3 animate-in slide-in-from-top-2">
           <div className="grid grid-cols-2 gap-2 font-mono">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className="px-3 py-2.5 text-sm font-medium rounded-lg text-center transition-all text-secondary-foreground hover:text-primary hover:bg-primary/10 border border-transparent hover:border-primary/20"
-              >
-                {link.name}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const sectionId = link.href.replace("#", "");
+              const isActive = activeSection === sectionId;
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className={cn(
+                    "px-3 py-2.5 text-sm font-medium rounded-lg text-center transition-all",
+                    isActive
+                      ? "text-primary font-bold bg-primary/10"
+                      : "text-slate-400 hover:text-white"
+                  )}
+                >
+                  {link.name}
+                </a>
+              );
+            })}
           </div>
         </div>
       )}
