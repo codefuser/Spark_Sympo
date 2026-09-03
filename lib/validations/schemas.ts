@@ -1,27 +1,30 @@
 import { z } from "zod";
 
-export const registrationSchema = z.object({
-  name: z.string().min(2, "Full name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
+export const participantSchema = z.object({
+  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .transform((val) => val.trim().toLowerCase()),
   phone: z
     .string()
     .min(10, "Phone number must be at least 10 digits")
     .regex(/^[0-9+\-\s]+$/, "Invalid phone number format"),
-  college: z.string().min(2, "College name is required"),
-  department: z.string().min(2, "Department name is required"),
-  year: z.string().min(1, "Please select your year of study"),
-  gender: z.string().optional(),
-  eventId: z.string().min(1, "Please select an event"),
+  college: z.string().min(2, "College/Institution name is required"),
+  foodPreference: z.enum(["Veg", "Non-Veg"], {
+    required_error: "Please select food preference",
+  }),
+  isTeamLeader: z.boolean().default(false),
+});
+
+export const registrationSchema = z.object({
+  technicalEventId: z.string().min(1, "Please select 1 Technical Event"),
+  nonTechnicalEventId: z.string().min(1, "Please select 1 Non-Technical Event"),
   teamName: z.string().optional(),
-  teamMembers: z
-    .array(
-      z.object({
-        name: z.string().min(2, "Member name required"),
-        email: z.string().email("Valid member email required"),
-        phone: z.string().optional(),
-      })
-    )
-    .optional(),
+  registrationType: z.enum(["online", "offline"]).default("online"),
+  participants: z
+    .array(participantSchema)
+    .min(1, "At least 1 participant is required"),
 });
 
 export const quizSubmissionSchema = z.object({
@@ -57,7 +60,9 @@ export const eventSchema = z.object({
   rules: z.string().min(5, "Rules are required"),
   eligibility: z.string().min(3, "Eligibility is required"),
   teamSize: z.string().min(1, "Team size is required"),
-  maxTeams: z.number().int().positive(),
+  minMembers: z.number().int().positive().default(1),
+  maxMembers: z.number().int().positive().default(5),
+  maxTeams: z.number().int().positive().default(100),
   rounds: z.string().min(1, "Rounds info required"),
   date: z.string().min(1, "Date is required"),
   time: z.string().min(1, "Time is required"),
@@ -66,19 +71,4 @@ export const eventSchema = z.object({
   coordinatorPhone: z.string().min(10, "Coordinator phone is required"),
   status: z.enum(["OPEN", "CLOSED", "UPCOMING"]),
   image: z.string().optional(),
-});
-
-export const questionSchema = z.object({
-  quizId: z.string().min(1),
-  questionText: z.string().min(5, "Question text required"),
-  category: z.string().min(2),
-  points: z.number().default(10),
-  options: z
-    .array(
-      z.object({
-        optionText: z.string().min(1, "Option text required"),
-        isCorrect: z.boolean(),
-      })
-    )
-    .min(2, "At least 2 options required"),
 });

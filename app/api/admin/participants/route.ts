@@ -20,16 +20,19 @@ export async function GET(request: Request) {
 
     if (search) {
       where.OR = [
-        { name: { contains: search } },
+        { fullName: { contains: search } },
         { email: { contains: search } },
         { college: { contains: search } },
-        { registrationId: { contains: search } },
+        { phone: { contains: search } },
       ];
     }
 
     if (eventId) {
-      where.registrations = {
-        some: { eventId },
+      where.registration = {
+        OR: [
+          { technicalEventId: eventId },
+          { nonTechnicalEventId: eventId },
+        ],
       };
     }
 
@@ -37,10 +40,10 @@ export async function GET(request: Request) {
       where,
       orderBy: { createdAt: "desc" },
       include: {
-        registrations: {
+        registration: {
           include: {
-            event: true,
-            teamMembers: true,
+            technicalEvent: true,
+            nonTechnicalEvent: true,
           },
         },
       },

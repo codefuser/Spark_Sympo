@@ -16,65 +16,70 @@ model Admin {
   createdAt    DateTime @default(now())
 }
 
-model Participant {
-  id             String         @id @default(uuid())
-  registrationId String         @unique
-  name           String
-  email          String         @unique
-  phone          String
-  college        String
-  department     String
-  year           String
-  gender         String?
-  createdAt      DateTime       @default(now())
-  registrations  Registration[]
-}
-
 model Event {
-  id               String         @id @default(uuid())
-  slug             String         @unique
-  title            String
-  category         String // TECHNICAL, NON_TECHNICAL, WORKSHOP
-  shortDesc        String
-  fullDesc         String
-  rules            String
-  eligibility      String
-  teamSize         String
-  maxTeams         Int            @default(100)
-  rounds           String
-  date             String
-  time             String
-  venue            String
-  coordinatorName  String
-  coordinatorPhone String
-  status           String         @default("OPEN") // OPEN, CLOSED, UPCOMING
-  image            String?
-  registrations    Registration[]
-  createdAt        DateTime       @default(now())
+  id                        String         @id @default(uuid())
+  slug                      String         @unique
+  title                     String
+  category                  String         // TECHNICAL, NON_TECHNICAL, WORKSHOP
+  shortDesc                 String
+  fullDesc                  String
+  rules                     String
+  eligibility               String
+  teamSize                  String
+  minMembers                Int            @default(1)
+  maxMembers                Int            @default(5)
+  maxTeams                  Int            @default(100)
+  rounds                    String
+  date                      String
+  time                      String
+  venue                     String
+  coordinatorName           String
+  coordinatorPhone          String
+  status                    String         @default("OPEN") // OPEN, CLOSED, UPCOMING
+  image                     String?
+  technicalRegistrations    Registration[] @relation("TechnicalEvent")
+  nonTechnicalRegistrations Registration[] @relation("NonTechnicalEvent")
+  createdAt                 DateTime       @default(now())
 }
 
 model Registration {
-  id            String       @id @default(uuid())
-  participantId String
-  participant   Participant  @relation(fields: [participantId], references: [id], onDelete: Cascade)
-  eventId       String
-  event         Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  teamName      String?
-  status        String       @default("CONFIRMED")
-  createdAt     DateTime     @default(now())
-  teamMembers   TeamMember[]
-
-  @@unique([participantId, eventId])
+  id                  String        @id @default(uuid())
+  registrationCode    String        @unique
+  registrationType    String        @default("online") // online, offline
+  technicalEventId    String
+  technicalEvent      Event         @relation("TechnicalEvent", fields: [technicalEventId], references: [id])
+  nonTechnicalEventId String
+  nonTechnicalEvent   Event         @relation("NonTechnicalEvent", fields: [nonTechnicalEventId], references: [id])
+  teamName            String?
+  status              String        @default("CONFIRMED")
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  participants        Participant[]
 }
 
-model TeamMember {
+model Participant {
   id             String       @id @default(uuid())
   registrationId String
   registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
-  memberName     String
-  memberEmail    String
-  memberPhone    String?
-  isLeader       Boolean      @default(false)
+  fullName       String
+  email          String
+  phone          String
+  college        String
+  foodPreference String       @default("Veg") // Veg, Non-Veg
+  isTeamLeader   Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  @@index([email])
+}
+
+model QuizSettings {
+  id              String   @id @default(uuid())
+  quizTitle       String   @default("SPARKTRON 2K26 Technical Quiz")
+  startTime       DateTime
+  endTime         DateTime
+  isActive        Boolean  @default(true)
+  durationMinutes Int      @default(30)
+  createdAt       DateTime @default(now())
 }
 
 model Coordinator {

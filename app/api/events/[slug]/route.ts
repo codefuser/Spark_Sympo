@@ -11,7 +11,7 @@ export async function GET(
       where: { slug: params.slug },
       include: {
         _count: {
-          select: { registrations: true },
+          select: { technicalRegistrations: true, nonTechnicalRegistrations: true },
         },
       },
     });

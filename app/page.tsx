@@ -40,7 +40,7 @@ export default async function HomePage() {
     orderBy: { createdAt: "asc" },
     include: {
       _count: {
-        select: { registrations: true },
+        select: { technicalRegistrations: true, nonTechnicalRegistrations: true },
       },
     },
   });
