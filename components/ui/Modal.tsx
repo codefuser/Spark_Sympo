@@ -49,41 +49,44 @@ export function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-300 animate-in fade-in"
         onClick={onClose}
       />
 
       {/* Modal Dialog */}
       <div
         className={cn(
-          "relative w-full rounded-2xl bg-card border border-primary/30 p-6 shadow-glow-lg text-white z-10 animate-in fade-in zoom-in-95 duration-200",
+          "relative w-full rounded-2xl bg-[#0B0F19] border border-slate-800 shadow-2xl shadow-black/90 text-slate-100 z-10 animate-in fade-in zoom-in-95 duration-200 overflow-hidden",
           maxWidthClasses[maxWidth]
         )}
       >
+        {/* Subtle accent border top */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
+
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-secondary-foreground hover:text-primary transition-colors p-1 rounded-lg hover:bg-white/5"
+          className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-slate-800/60 z-20"
           aria-label="Close dialog"
         >
           <X className="w-5 h-5" />
         </button>
 
         {(title || description) && (
-          <div className="mb-4 pr-6">
+          <div className="p-6 pb-4 border-b border-slate-800/80 pr-12 bg-slate-900/30">
             {title && (
-              <h3 className="text-xl font-bold tracking-tight text-white">
+              <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
                 {title}
               </h3>
             )}
             {description && (
-              <p className="text-sm text-secondary-foreground mt-1">
+              <p className="text-sm text-slate-400 mt-1 leading-relaxed">
                 {description}
               </p>
             )}
           </div>
         )}
 
-        <div>{children}</div>
+        <div className="p-6 pt-4">{children}</div>
       </div>
     </div>
   );

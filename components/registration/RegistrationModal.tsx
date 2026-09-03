@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
-import { Cpu, CheckCircle2, UserPlus, Trash2, ShieldCheck, Zap } from "lucide-react";
+import { CheckCircle2, UserPlus, Trash2, ShieldCheck, MapPin, Users, Award, Ticket, ArrowRight, Sparkles } from "lucide-react";
 import { SymposiumEvent } from "@/types";
 
 type RegistrationFormInputs = z.infer<typeof registrationSchema>;
@@ -114,41 +114,50 @@ export function RegistrationModal({
     <Modal
       isOpen={isOpen}
       onClose={handleModalClose}
-      title="SPARKTRON 2K26 Event Registration"
-      description="Fill out the registration details. Duplicate registrations for the same event are automatically prevented."
+      title="SPARKTRON 2K26 Registration"
+      description="Fill out your participant details to complete your event registration."
       maxWidth="xl"
     >
       {successData ? (
-        <div className="text-center space-y-4 py-4">
-          <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto shadow-glow">
-            <CheckCircle2 className="w-10 h-10" />
+        <div className="text-center space-y-5 py-4">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto shadow-md">
+            <CheckCircle2 className="w-9 h-9" />
           </div>
 
-          <div className="space-y-1">
-            <p className="text-xs font-mono text-secondary-foreground uppercase">Unique Registration ID</p>
-            <h3 className="text-3xl font-extrabold font-mono text-primary tracking-wider">
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">Unique Registration Pass</p>
+            <h3 className="text-3xl font-black font-mono text-cyan-400 tracking-widest bg-cyan-950/30 py-2 px-4 rounded-xl border border-cyan-500/20 inline-block">
               {successData.registrationId}
             </h3>
           </div>
 
-          <div className="p-4 rounded-xl bg-card border border-primary/20 text-xs font-mono space-y-1.5 text-left">
-            <p><span className="text-slate-400">Participant:</span> <span className="text-white font-bold">{successData.participantName}</span></p>
-            <p><span className="text-slate-400">Event Track:</span> <span className="text-cyan font-bold">{successData.eventTitle}</span></p>
-            <p><span className="text-slate-400">Venue:</span> <span className="text-white">ECE Campus Auditorium & Labs</span></p>
+          <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-xs space-y-2 text-left">
+            <div className="flex justify-between border-b border-slate-800 pb-2">
+              <span className="text-slate-400">Participant:</span>
+              <span className="text-slate-100 font-semibold">{successData.participantName}</span>
+            </div>
+            <div className="flex justify-between border-b border-slate-800 pb-2">
+              <span className="text-slate-400">Event Track:</span>
+              <span className="text-cyan-400 font-semibold">{successData.eventTitle}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Venue:</span>
+              <span className="text-slate-200">ECE Campus Auditorium & Labs</span>
+            </div>
           </div>
 
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Please save your Registration ID for campus verification and entry on symposium day.
+          <p className="text-xs text-slate-400 leading-relaxed px-2">
+            Show this Registration ID at the venue desk during event check-in on symposium day.
           </p>
 
-          <Button variant="primary" className="w-full" onClick={handleModalClose}>
+          <Button variant="primary" className="w-full py-3" onClick={handleModalClose}>
             Done
           </Button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-h-[75vh] overflow-y-auto pr-1">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 max-h-[68vh] overflow-y-auto pr-2">
           {/* Select Event Track */}
-          <div className="space-y-2 pb-4 border-b border-primary/10">
+          <div className="space-y-3 pb-4 border-b border-slate-800">
             <Select
               label="Select Event Track *"
               options={events.map((e) => ({
@@ -158,22 +167,37 @@ export function RegistrationModal({
               {...register("eventId")}
               error={errors.eventId?.message}
             />
+            
             {activeEvent && (
-              <div className="p-2.5 rounded-lg bg-card/80 border border-primary/20 text-xs font-mono text-slate-300 flex flex-wrap justify-between gap-2">
-                <span>Rounds: {activeEvent.rounds}</span>
-                <span>Venue: {activeEvent.venue}</span>
-                <span>Team Size: {activeEvent.teamSize}</span>
+              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800/90 text-xs text-slate-300 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div className="flex items-center gap-2 text-slate-300">
+                  <Award className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <span>Rounds: <strong className="text-slate-100">{activeEvent.rounds}</strong></span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-300">
+                  <MapPin className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <span className="truncate" title={activeEvent.venue}>Venue: <strong className="text-slate-100">{activeEvent.venue}</strong></span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-300">
+                  <Users className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <span>Team: <strong className="text-slate-100">{activeEvent.teamSize}</strong></span>
+                </div>
               </div>
             )}
           </div>
 
           {/* Participant Details */}
-          <div className="space-y-3 pb-4 border-b border-primary/10">
-            <h4 className="text-xs font-mono font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4" /> Participant Details
-            </h4>
+          <div className="space-y-3 pb-4 border-b border-slate-800">
+            <div className="flex items-center gap-2">
+              <span className="p-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                <ShieldCheck className="w-3.5 h-3.5" />
+              </span>
+              <h4 className="text-xs font-semibold text-slate-200 uppercase tracking-wider">
+                Participant Details
+              </h4>
+            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <Input
                 label="Full Name *"
                 placeholder="e.g. Rahul Sharma"
@@ -189,7 +213,7 @@ export function RegistrationModal({
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <Input
                 label="Mobile Phone Number *"
                 placeholder="9876543210"
@@ -204,7 +228,7 @@ export function RegistrationModal({
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <Select
                 label="Department"
                 options={[
@@ -243,11 +267,16 @@ export function RegistrationModal({
 
           {/* Team Members if applicable */}
           {activeEvent && activeEvent.teamSize !== "Individual" && (
-            <div className="space-y-3">
+            <div className="space-y-3.5">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-mono font-bold text-cyan uppercase tracking-wider">
-                  Team Members (Optional)
-                </h4>
+                <div className="flex items-center gap-2">
+                  <span className="p-1 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                    <Users className="w-3.5 h-3.5" />
+                  </span>
+                  <h4 className="text-xs font-semibold text-slate-200 uppercase tracking-wider">
+                    Team Details (Optional)
+                  </h4>
+                </div>
                 <Button
                   type="button"
                   variant="outline"
@@ -266,18 +295,21 @@ export function RegistrationModal({
               />
 
               {fields.map((field, index) => (
-                <div key={field.id} className="p-3 rounded-lg bg-background border border-primary/20 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-mono text-primary font-bold">
-                    <span>Teammate #{index + 2}</span>
+                <div key={field.id} className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2.5">
+                  <div className="flex items-center justify-between text-xs font-medium text-slate-300">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                      Teammate #{index + 2}
+                    </span>
                     <button
                       type="button"
                       onClick={() => remove(index)}
-                      className="text-rose-400 hover:text-rose-300"
+                      className="text-slate-400 hover:text-rose-400 transition-colors p-1"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <Input
                       placeholder="Member Name"
                       {...register(`teamMembers.${index}.name` as const)}
@@ -295,9 +327,18 @@ export function RegistrationModal({
             </div>
           )}
 
-          <Button type="submit" variant="primary" size="lg" className="w-full" isLoading={submitting}>
-            Submit Registration →
-          </Button>
+          <div className="pt-2">
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              className="w-full text-sm font-semibold tracking-wide py-3 shadow-lg shadow-cyan-950/40"
+              isLoading={submitting}
+              rightIcon={<ArrowRight className="w-4 h-4" />}
+            >
+              Submit Registration
+            </Button>
+          </div>
         </form>
       )}
     </Modal>

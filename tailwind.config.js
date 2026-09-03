@@ -62,9 +62,9 @@ module.exports = {
         sm: "0.375rem",
       },
       boxShadow: {
-        glow: "0 0 20px rgba(0, 240, 255, 0.25)",
-        "glow-lg": "0 0 35px rgba(0, 240, 255, 0.35)",
-        "cyan-glow": "0 0 25px rgba(0, 114, 255, 0.3)",
+        glow: "0 4px 20px -2px rgba(0, 240, 255, 0.12)",
+        "glow-lg": "0 10px 30px -5px rgba(0, 240, 255, 0.15)",
+        "cyan-glow": "0 4px 20px -2px rgba(0, 114, 255, 0.15)",
       },
       backgroundImage: {
         'circuit-pattern': "radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05) 0%, transparent 60%)",
