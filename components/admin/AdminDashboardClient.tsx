@@ -1,13 +1,28 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
-import { Search, Download, Users, Ticket, Utensils, ShieldCheck } from "lucide-react";
+import { useToast } from "@/components/ui/Toast";
+import {
+  Search,
+  Download,
+  Users,
+  Ticket,
+  Utensils,
+  ShieldCheck,
+  UserPlus,
+  PlusCircle,
+  ArrowRight,
+  CheckCircle2,
+  Trash2,
+  Layers,
+} from "lucide-react";
 
 export function AdminDashboardClient({
   initialRegistrations,
@@ -16,14 +31,41 @@ export function AdminDashboardClient({
   initialRegistrations: any[];
   events: any[];
 }) {
+  const router = useRouter();
+  const { showToast } = useToast();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEventId, setSelectedEventId] = useState<string>("ALL");
   const [selectedType, setSelectedType] = useState<string>("ALL");
   const [selectedRegistration, setSelectedRegistration] = useState<any | null>(null);
 
+  // Offline Spot Registration Modal State
+  const [isOfflineModalOpen, setIsOfflineModalOpen] = useState(false);
+  const [submittingOffline, setSubmittingOffline] = useState(false);
+
+  const technicalEvents = events.filter(
+    (e) => e.category === "TECHNICAL" || e.slug === "paper-presentation" || e.slug === "technical-quiz" || e.slug === "circuit-debugging"
+  );
+  const nonTechnicalEvents = events.filter((e) => e.category === "NON_TECHNICAL");
+
+  const [offlineForm, setOfflineForm] = useState({
+    technicalEventId: technicalEvents[0]?.id || "",
+    nonTechnicalEventId: nonTechnicalEvents[0]?.id || "",
+    teamName: "",
+    participants: [
+      {
+        fullName: "",
+        email: "",
+        phone: "",
+        college: "",
+        foodPreference: "Veg",
+        isTeamLeader: true,
+      },
+    ],
+  });
+
   const filteredRegistrations = initialRegistrations.filter((r) => {
     const term = searchTerm.toLowerCase();
-    const leader = r.participants[0] || {};
 
     const matchesSearch =
       r.registrationCode.toLowerCase().includes(term) ||
@@ -61,9 +103,89 @@ export function AdminDashboardClient({
     downloadAnchor.remove();
   };
 
+  const handleOfflineParticipantChange = (index: number, field: string, value: any) => {
+    const updated = [...offlineForm.participants];
+    updated[index] = { ...updated[index], [field]: value };
+    setOfflineForm({ ...offlineForm, participants: updated });
+  };
+
+  const addOfflineParticipant = () => {
+    setOfflineForm({
+      ...offlineForm,
+      participants: [
+        ...offlineForm.participants,
+        {
+          fullName: "",
+          email: "",
+          phone: "",
+          college: "",
+          foodPreference: "Veg",
+          isTeamLeader: false,
+        },
+      ],
+    });
+  };
+
+  const removeOfflineParticipant = (index: number) => {
+    if (offlineForm.participants.length <= 1) return;
+    const updated = offlineForm.participants.filter((_, i) => i !== index);
+    setOfflineForm({ ...offlineForm, participants: updated });
+  };
+
+  const handleOfflineSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmittingOffline(true);
+
+    try {
+      const payload = {
+        ...offlineForm,
+        registrationType: "offline",
+      };
+
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await res.json();
+
+      if (res.ok && result.success) {
+        showToast(
+          "Offline Pass Generated!",
+          `Pass Code: ${result.registrationId}`,
+          "success"
+        );
+        setIsOfflineModalOpen(false);
+        setOfflineForm({
+          technicalEventId: technicalEvents[0]?.id || "",
+          nonTechnicalEventId: nonTechnicalEvents[0]?.id || "",
+          teamName: "",
+          participants: [
+            {
+              fullName: "",
+              email: "",
+              phone: "",
+              college: "",
+              foodPreference: "Veg",
+              isTeamLeader: true,
+            },
+          ],
+        });
+        router.refresh();
+      } else {
+        showToast("Offline Registration Error", result.message || "Failed to process", "error");
+      }
+    } catch (err) {
+      showToast("Network Error", "Unable to connect to server", "error");
+    } finally {
+      setSubmittingOffline(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      {/* Search & Event Filter Bar */}
+      {/* Search, Filter & Offline Spot Registration Bar */}
       <Card className="p-4 flex flex-col lg:flex-row items-center justify-between gap-4">
         <div className="w-full lg:w-96">
           <Input
@@ -87,7 +209,7 @@ export function AdminDashboardClient({
             />
           </div>
 
-          <div className="w-56">
+          <div className="w-52">
             <Select
               value={selectedEventId}
               onChange={(e) => setSelectedEventId(e.target.value)}
@@ -99,12 +221,21 @@ export function AdminDashboardClient({
           </div>
 
           <Button
+            variant="cyan"
+            size="sm"
+            leftIcon={<PlusCircle className="w-4 h-4" />}
+            onClick={() => setIsOfflineModalOpen(true)}
+          >
+            Offline Spot Reg
+          </Button>
+
+          <Button
             variant="outline"
             size="sm"
             leftIcon={<Download className="w-4 h-4" />}
             onClick={handleExportJSON}
           >
-            Export JSON Data
+            Export JSON
           </Button>
         </div>
       </Card>
@@ -140,10 +271,10 @@ export function AdminDashboardClient({
                       </td>
                       <td className="py-3.5 px-4">
                         <span
-                          className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold ${
+                          className={`px-2.5 py-1 rounded-full text-[10px] uppercase font-extrabold ${
                             r.registrationType === "offline"
-                              ? "bg-amber-500/10 text-amber-400 border border-amber-500/30"
-                              : "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30"
+                              ? "bg-amber-500/15 text-amber-400 border border-amber-500/40"
+                              : "bg-cyan-500/15 text-cyan-400 border border-cyan-500/40"
                           }`}
                         >
                           {r.registrationType}
@@ -182,7 +313,153 @@ export function AdminDashboardClient({
         </div>
       </div>
 
-      {/* Registration Details & Team Modal */}
+      {/* OFFLINE SPOT REGISTRATION MODAL (Website 2 Volunteer Entry) */}
+      {isOfflineModalOpen && (
+        <Modal
+          isOpen={isOfflineModalOpen}
+          onClose={() => setIsOfflineModalOpen(false)}
+          title="Offline Spot Registration (College Desk)"
+          description="Register walk-in students physically. Saved directly to Supabase as registration_type = 'offline'."
+          maxWidth="xl"
+        >
+          <form onSubmit={handleOfflineSubmit} className="space-y-4 max-h-[68vh] overflow-y-auto pr-2">
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 flex items-center gap-2 font-mono">
+              <ShieldCheck className="w-4 h-4 shrink-0 text-amber-400" />
+              <span>Offline Entry Mode — Type: <strong>OFFLINE</strong></span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Select
+                label="Technical Event Track *"
+                options={technicalEvents.map((e) => ({
+                  label: `${e.title}`,
+                  value: e.id,
+                }))}
+                value={offlineForm.technicalEventId}
+                onChange={(e) =>
+                  setOfflineForm({ ...offlineForm, technicalEventId: e.target.value })
+                }
+              />
+
+              <Select
+                label="Non-Technical Event Track *"
+                options={nonTechnicalEvents.map((e) => ({
+                  label: `${e.title}`,
+                  value: e.id,
+                }))}
+                value={offlineForm.nonTechnicalEventId}
+                onChange={(e) =>
+                  setOfflineForm({ ...offlineForm, nonTechnicalEventId: e.target.value })
+                }
+              />
+            </div>
+
+            <Input
+              label="Team Name (Optional)"
+              placeholder="e.g. Offline Titans"
+              value={offlineForm.teamName}
+              onChange={(e) => setOfflineForm({ ...offlineForm, teamName: e.target.value })}
+            />
+
+            {/* Offline Participants */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-semibold text-slate-200 uppercase">
+                  Participant Roster ({offlineForm.participants.length})
+                </h4>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  leftIcon={<UserPlus className="w-3.5 h-3.5" />}
+                  onClick={addOfflineParticipant}
+                >
+                  Add Member
+                </Button>
+              </div>
+
+              {offlineForm.participants.map((p, idx) => (
+                <div key={idx} className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2.5">
+                  <div className="flex items-center justify-between text-xs text-slate-300 font-semibold">
+                    <span>Participant {idx + 1} {idx === 0 ? "(Leader *)" : ""}</span>
+                    {idx > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => removeOfflineParticipant(idx)}
+                        className="text-slate-400 hover:text-rose-400 p-1"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <Input
+                      placeholder="Full Name *"
+                      value={p.fullName}
+                      onChange={(e) =>
+                        handleOfflineParticipantChange(idx, "fullName", e.target.value)
+                      }
+                      required
+                    />
+                    <Input
+                      type="email"
+                      placeholder="Email Address *"
+                      value={p.email}
+                      onChange={(e) =>
+                        handleOfflineParticipantChange(idx, "email", e.target.value)
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <Input
+                      placeholder="Phone *"
+                      value={p.phone}
+                      onChange={(e) =>
+                        handleOfflineParticipantChange(idx, "phone", e.target.value)
+                      }
+                      required
+                    />
+                    <Input
+                      placeholder="College / Institution *"
+                      value={p.college}
+                      onChange={(e) =>
+                        handleOfflineParticipantChange(idx, "college", e.target.value)
+                      }
+                      required
+                    />
+                    <Select
+                      options={[
+                        { label: "Veg 🥗", value: "Veg" },
+                        { label: "Non-Veg 🍗", value: "Non-Veg" },
+                      ]}
+                      value={p.foodPreference}
+                      onChange={(e) =>
+                        handleOfflineParticipantChange(idx, "foodPreference", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <Button
+              type="submit"
+              variant="cyan"
+              size="lg"
+              className="w-full text-sm font-semibold tracking-wide py-3 mt-2"
+              isLoading={submittingOffline}
+              rightIcon={<ArrowRight className="w-4 h-4" />}
+            >
+              Submit Offline Registration Pass
+            </Button>
+          </form>
+        </Modal>
+      )}
+
+      {/* Registration Details & Team Roster Modal */}
       {selectedRegistration && (
         <Modal
           isOpen={!!selectedRegistration}
@@ -204,6 +481,10 @@ export function AdminDashboardClient({
                   {selectedRegistration.nonTechnicalEvent?.title}
                 </strong>
               </p>
+              <p>
+                <span className="text-slate-400">Registration Type:</span>{" "}
+                <span className="text-amber-400 font-bold uppercase">{selectedRegistration.registrationType}</span>
+              </p>
               {selectedRegistration.teamName && (
                 <p>
                   <span className="text-slate-400">Team Name:</span>{" "}
@@ -221,7 +502,7 @@ export function AdminDashboardClient({
               <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
                 {selectedRegistration.participants.map((p: any, idx: number) => (
                   <div
-                    key={p.id}
+                    key={p.id || idx}
                     className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs flex justify-between items-center"
                   >
                     <div>
