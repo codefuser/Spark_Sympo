@@ -200,7 +200,7 @@ async function main() {
 
   await prisma.announcement.create({
     data: {
-      title: "Cash Prizes Worth ₹75,000 Up For Grabs",
+      title: "Cash Prizes Worth ₹20,000 Up For Grabs",
       content: "Certificates of Excellence will be provided to all winners and finalists across technical and workshop tracks.",
       priority: "NORMAL",
     },

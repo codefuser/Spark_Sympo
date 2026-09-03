@@ -178,23 +178,16 @@ export function HomePageClient({
 
       {/* QUICK STATS */}
       <section className="container mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {[
-            { label: "CASH PRIZES", value: "₹75,000+", icon: Trophy, color: "text-amber-400" },
-            { label: "EXPECTED DELEGATES", value: "1,500+", icon: Users, color: "text-primary" },
-            { label: "COMPETITION TRACKS", value: "05 TOTAL", icon: Layers, color: "text-cyan" },
-            { label: "NATIONAL COLLEGES", value: "50+", icon: ShieldCheck, color: "text-emerald-400" },
-          ].map((stat, idx) => (
-            <Card key={idx} glowOnHover className="text-center p-6 bg-card/60">
-              <stat.icon className={`w-8 h-8 ${stat.color} mx-auto mb-3`} />
-              <div className="text-3xl sm:text-4xl font-extrabold font-mono text-white mb-1">
-                {stat.value}
-              </div>
-              <div className="text-xs font-mono text-secondary-foreground tracking-widest">
-                {stat.label}
-              </div>
-            </Card>
-          ))}
+        <div className="max-w-md mx-auto">
+          <Card glowOnHover className="text-center p-6 bg-card/70 border-amber-500/30 shadow-glow">
+            <Trophy className="w-10 h-10 text-amber-400 mx-auto mb-3" />
+            <div className="text-4xl sm:text-5xl font-extrabold font-mono text-white mb-1">
+              ₹20,000+
+            </div>
+            <div className="text-xs font-mono text-amber-400 tracking-widest uppercase font-bold">
+              TOTAL CASH PRIZES
+            </div>
+          </Card>
         </div>
       </section>
 
