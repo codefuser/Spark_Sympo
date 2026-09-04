@@ -36,19 +36,27 @@ import { prisma } from "@/lib/database/prisma";
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const events = await prisma.event.findMany({
-    orderBy: { createdAt: "asc" },
-    include: {
-      _count: {
-        select: { technicalRegistrations: true, nonTechnicalRegistrations: true },
-      },
-    },
-  });
+  let events: any[] = [];
+  let sponsors: any[] = [];
+  let facultyCoordinators: any[] = [];
+  let studentCoordinators: any[] = [];
+  let announcements: any[] = [];
 
-  const sponsors = await prisma.sponsor.findMany();
-  const facultyCoordinators = await prisma.coordinator.findMany({ where: { role: "FACULTY" } });
-  const studentCoordinators = await prisma.coordinator.findMany({ where: { role: "STUDENT" } });
-  const announcements = await prisma.announcement.findMany({ orderBy: { date: "desc" } });
+  try {
+    events = await prisma.event.findMany({
+      orderBy: { createdAt: "asc" },
+      include: {
+        _count: {
+          select: { technicalRegistrations: true, nonTechnicalRegistrations: true },
+        },
+      },
+    });
+  } catch (err) { console.warn("page: prisma events failed", err); }
+
+  try { sponsors = await prisma.sponsor.findMany(); } catch (err) { console.warn("page: prisma sponsors failed", err); }
+  try { facultyCoordinators = await prisma.coordinator.findMany({ where: { role: "FACULTY" } }); } catch (err) { console.warn("page: prisma faculty failed", err); }
+  try { studentCoordinators = await prisma.coordinator.findMany({ where: { role: "STUDENT" } }); } catch (err) { console.warn("page: prisma students failed", err); }
+  try { announcements = await prisma.announcement.findMany({ orderBy: { date: "desc" } }); } catch (err) { console.warn("page: prisma announcements failed", err); }
 
   const symposiumDate = process.env.NEXT_PUBLIC_SYMPOSIUM_DATE || "September 16, 2026";
   const collegeName = process.env.NEXT_PUBLIC_COLLEGE_NAME || "St. Joseph's Institute of Technology";

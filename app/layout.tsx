@@ -33,9 +33,15 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const events = await prisma.event.findMany({
-    orderBy: { createdAt: "asc" },
-  });
+  let events: any[] = [];
+  try {
+    events = await prisma.event.findMany({
+      orderBy: { createdAt: "asc" },
+    });
+  } catch (err) {
+    console.warn("Layout: Prisma event fetch failed, using empty events:", err);
+    events = [];
+  }
 
   return (
     <html lang="en" className="dark">
