@@ -10,6 +10,8 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 80px; /* Offset for fixed sticky navbar */
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
   }
   
   body {
