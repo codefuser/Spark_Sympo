@@ -2,7 +2,7 @@ run  
 
 # SPARKTRON 2K26 — Full-Stack College Symposium Platform
 
-SPARKTRON 2K26 is a production-ready, full-stack digital platform built for the National Level Technical Symposium organized by the Department of Electronics  (ECE).
+SPARKTRON 2K26 is a production-ready, full-stack digital platform built for the National Level Technical Symposium organized by the Department of Electronics  ().
 
 ---
 
