@@ -1289,91 +1289,117 @@ export function AdminDashboardClient({
                       {/* Student Roster (Name + Email below) */}
                       <td className="py-3 px-3 align-top">
                         {r.teamName && (
-                          <div className="h-7 mb-1 flex items-center">
-                            <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-mono font-bold ${isLight ? "bg-slate-100 border-slate-300 text-slate-800" : "bg-slate-800 border-slate-700 text-slate-200"}`}>
+                          <div className="h-7 mb-1.5 flex items-center">
+                            <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[10px] font-mono font-bold shadow-xs ${isLight ? "bg-blue-50 border-blue-200 text-blue-800" : "bg-blue-950/60 border-blue-800 text-blue-200"}`}>
                               🚩 {r.teamName} ({members.length})
                             </div>
                           </div>
                         )}
 
                         {members.length === 0 ? (
-                          <div className="h-12 flex items-center text-xs font-mono text-slate-400 italic">No members listed</div>
+                          <div className="h-11 flex items-center text-xs font-mono text-slate-400 italic">No members listed</div>
                         ) : (
-                          members.map((p: any, idx: number) => (
-                            <div
-                              key={p.id || idx}
-                              className={`h-12 flex flex-col justify-center ${
-                                idx < members.length - 1 ? "border-b border-slate-200 dark:border-slate-800 pb-1" : ""
-                              }`}
-                            >
-                              <p className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-1">
-                                <span className="text-slate-500 font-mono text-[10px]">#{idx + 1}</span>
-                                <span className="truncate max-w-[160px]">{p.fullName}</span>
-                              </p>
-                              <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate pl-3.5">
-                                {p.email}
-                              </p>
-                            </div>
-                          ))
+                          <div className="space-y-1.5">
+                            {members.map((p: any, idx: number) => (
+                              <div
+                                key={p.id || idx}
+                                className={`h-[50px] flex flex-col justify-center px-2.5 rounded-lg border transition-all ${
+                                  members.length > 1
+                                    ? isLight
+                                      ? "bg-slate-50/80 border-slate-200/90 shadow-2xs"
+                                      : "bg-slate-800/40 border-slate-700/60"
+                                    : "border-transparent"
+                                }`}
+                              >
+                                <p className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                                  <span
+                                    className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-extrabold ${
+                                      idx === 0
+                                        ? "bg-blue-500/15 text-blue-700 dark:text-blue-300"
+                                        : "bg-purple-500/15 text-purple-700 dark:text-purple-300"
+                                    }`}
+                                  >
+                                    #{idx + 1} {idx === 0 ? "Leader" : "Member"}
+                                  </span>
+                                  <span className="truncate max-w-[150px]" title={p.fullName}>{p.fullName}</span>
+                                </p>
+                                <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                                  {p.email}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </td>
 
                       {/* College & Dept */}
                       <td className="py-3 px-3 align-top">
                         {r.teamName && (
-                          <div className="h-7 mb-1" />
+                          <div className="h-7 mb-1.5" />
                         )}
 
                         {members.length === 0 ? (
-                          <div className="h-12 flex items-center text-xs font-mono text-slate-400 italic">-</div>
+                          <div className="h-11 flex items-center text-xs font-mono text-slate-400 italic">-</div>
                         ) : (
-                          members.map((p: any, idx: number) => (
-                            <div
-                              key={idx}
-                              className={`h-12 flex flex-col justify-center ${
-                                idx < members.length - 1 ? "border-b border-slate-200 dark:border-slate-800 pb-1" : ""
-                              }`}
-                            >
-                              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title={p.college}>
-                                {p.college || "N/A"}
-                              </p>
-                              <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400">
-                                Dept: {p.department || "ECE"}
-                              </span>
-                            </div>
-                          ))
+                          <div className="space-y-1.5">
+                            {members.map((p: any, idx: number) => (
+                              <div
+                                key={idx}
+                                className={`h-[50px] flex flex-col justify-center px-2.5 rounded-lg border ${
+                                  members.length > 1
+                                    ? isLight
+                                      ? "bg-slate-50/80 border-slate-200/90 shadow-2xs"
+                                      : "bg-slate-800/40 border-slate-700/60"
+                                    : "border-transparent"
+                                }`}
+                              >
+                                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title={p.college}>
+                                  {p.college || "N/A"}
+                                </p>
+                                <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400 mt-0.5">
+                                  Dept: {p.department || "ECE"}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </td>
 
                       {/* Phone Number (Strict Line-by-Line Alignment with Roster) */}
                       <td className="py-3 px-3 align-top font-mono text-xs text-slate-700 dark:text-slate-300">
                         {r.teamName && (
-                          <div className="h-7 mb-1" />
+                          <div className="h-7 mb-1.5" />
                         )}
 
                         {members.length === 0 ? (
-                          <div className="h-12 flex items-center text-xs font-mono text-slate-400 italic">-</div>
+                          <div className="h-11 flex items-center text-xs font-mono text-slate-400 italic">-</div>
                         ) : (
-                          members.map((p: any, idx: number) => (
-                            <div
-                              key={idx}
-                              className={`h-12 flex items-center font-semibold text-xs ${
-                                idx < members.length - 1 ? "border-b border-slate-200 dark:border-slate-800 pb-1" : ""
-                              }`}
-                            >
-                              📞 {p.phone || "N/A"}
-                            </div>
-                          ))
+                          <div className="space-y-1.5">
+                            {members.map((p: any, idx: number) => (
+                              <div
+                                key={idx}
+                                className={`h-[50px] flex items-center px-2.5 rounded-lg border font-semibold text-xs ${
+                                  members.length > 1
+                                    ? isLight
+                                      ? "bg-slate-50/80 border-slate-200/90 shadow-2xs"
+                                      : "bg-slate-800/40 border-slate-700/60"
+                                    : "border-transparent"
+                                }`}
+                              >
+                                📞 {p.phone || "N/A"}
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </td>
 
                       {/* Registered Events */}
                       <td className="py-3 px-3 align-top">
                         {r.teamName && (
-                          <div className="h-7 mb-1" />
+                          <div className="h-7 mb-1.5" />
                         )}
 
-                        <div className="space-y-1">
+                        <div className="space-y-1.5 py-1">
                           {r.technicalEvent && (
                             <Badge variant="primary" size="sm" className="block text-[11px] truncate max-w-[170px]">
                               Tech: {r.technicalEvent.title}
@@ -1390,38 +1416,46 @@ export function AdminDashboardClient({
                       {/* Payment Status */}
                       <td className="py-3 px-2 align-top text-center">
                         {r.teamName && (
-                          <div className="h-7 mb-1" />
+                          <div className="h-7 mb-1.5" />
                         )}
 
-                        <Badge
-                          variant={payStatus === "PAID" ? "success" : payStatus === "PENDING" ? "warning" : "danger"}
-                          size="sm"
-                        >
-                          {payStatus === "PAID" ? "PAID 🟢" : payStatus === "PENDING" ? "PENDING ⏳" : "UNPAID 🔴"}
-                        </Badge>
+                        <div className="py-1">
+                          <Badge
+                            variant={payStatus === "PAID" ? "success" : payStatus === "PENDING" ? "warning" : "danger"}
+                            size="sm"
+                          >
+                            {payStatus === "PAID" ? "PAID 🟢" : payStatus === "PENDING" ? "PENDING ⏳" : "UNPAID 🔴"}
+                          </Badge>
+                        </div>
                       </td>
 
                       {/* Food */}
                       <td className="py-3 px-2 align-top text-center">
                         {r.teamName && (
-                          <div className="h-7 mb-1" />
+                          <div className="h-7 mb-1.5" />
                         )}
 
                         {members.length === 0 ? (
-                          <div className="h-12 flex items-center justify-center text-xs font-mono text-slate-400 italic">-</div>
+                          <div className="h-11 flex items-center justify-center text-xs font-mono text-slate-400 italic">-</div>
                         ) : (
-                          members.map((p: any, idx: number) => (
-                            <div
-                              key={idx}
-                              className={`h-12 flex items-center justify-center ${
-                                idx < members.length - 1 ? "border-b border-slate-200 dark:border-slate-800 pb-1" : ""
-                              }`}
-                            >
-                              <Badge variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm" className="text-[10px]">
-                                {p.foodPreference || "Veg"}
-                              </Badge>
-                            </div>
-                          ))
+                          <div className="space-y-1.5">
+                            {members.map((p: any, idx: number) => (
+                              <div
+                                key={idx}
+                                className={`h-[50px] flex items-center justify-center px-2 rounded-lg border ${
+                                  members.length > 1
+                                    ? isLight
+                                      ? "bg-slate-50/80 border-slate-200/90 shadow-2xs"
+                                      : "bg-slate-800/40 border-slate-700/60"
+                                    : "border-transparent"
+                                }`}
+                              >
+                                <Badge variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm" className="text-[10px]">
+                                  {p.foodPreference || "Veg"}
+                                </Badge>
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </td>
                     </tr>
