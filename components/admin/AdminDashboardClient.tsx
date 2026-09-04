@@ -167,6 +167,7 @@ export function AdminDashboardClient({
   const [activeAdminTab, setActiveAdminTab] = useState<"registrations" | "notifications">("registrations");
   const [messagesList, setMessagesList] = useState<any[]>([]);
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
+  const [selectedMessageDetail, setSelectedMessageDetail] = useState<any | null>(null);
 
   const fetchContactMessages = useCallback(async () => {
     setLoadingMessages(true);
@@ -1196,7 +1197,7 @@ export function AdminDashboardClient({
               No student inquiry notifications logged yet.
             </Card>
           ) : (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {messagesList.map((msg) => {
                 const isUnread = msg.status === "UNREAD";
                 const matchedParts = msg.participantDetails || [];
@@ -1204,201 +1205,91 @@ export function AdminDashboardClient({
                 return (
                   <div
                     key={msg.id}
-                    className={`p-5 sm:p-6 rounded-2xl border transition-all duration-200 space-y-4 ${
+                    onClick={() => {
+                      setSelectedMessageDetail(msg);
+                      if (isUnread) {
+                        handleToggleMessageStatus(msg.id, "UNREAD");
+                      }
+                    }}
+                    className={`p-5 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-3 group hover:scale-[1.01] ${
                       isUnread
                         ? isLight
-                          ? "bg-gradient-to-r from-amber-50/70 via-white to-white border-amber-300 shadow-xs border-l-4 border-l-amber-500"
-                          : "bg-gradient-to-r from-amber-950/30 via-slate-900/90 to-slate-900/90 border-amber-800/80 shadow-md border-l-4 border-l-amber-500"
+                          ? "bg-gradient-to-br from-amber-50/80 via-white to-white border-amber-300 shadow-xs border-l-4 border-l-amber-500 hover:border-amber-400"
+                          : "bg-gradient-to-br from-amber-950/30 via-slate-900/90 to-slate-900/90 border-amber-800/80 shadow-md border-l-4 border-l-amber-500 hover:border-amber-700"
                         : isLight
-                        ? "bg-white border-slate-200 shadow-2xs hover:border-slate-300"
-                        : "bg-slate-900/70 border-slate-800 hover:border-slate-700"
+                        ? "bg-white border-slate-200/90 shadow-2xs hover:border-blue-300 hover:shadow-xs"
+                        : "bg-slate-900/70 border-slate-800 hover:border-cyan-500/50"
                     }`}
                   >
-                    {/* Top Row: Avatar, Name, Badges & Action Buttons */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800/80 pb-4">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-11 h-11 rounded-xl border flex items-center justify-center font-mono font-bold text-sm shrink-0 ${
-                          msg.isRegistered
-                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-                            : "bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-cyan-400"
-                        }`}>
-                          {msg.name?.charAt(0).toUpperCase() || "S"}
-                        </div>
+                    <div className="space-y-3">
+                      {/* Card Header: Avatar, Name & Status */}
+                      <div className="flex items-start justify-between gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-2.5">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className={`w-9 h-9 rounded-lg border flex items-center justify-center font-mono font-bold text-xs shrink-0 ${
+                            msg.isRegistered
+                              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                              : "bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-cyan-400"
+                          }`}>
+                            {msg.name?.charAt(0).toUpperCase() || "S"}
+                          </div>
 
-                        <div className="space-y-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="text-base font-bold font-mono text-slate-900 dark:text-white">
+                          <div className="min-w-0">
+                            <h3 className="font-bold text-sm font-mono text-slate-900 dark:text-white truncate">
                               {msg.name}
                             </h3>
-
-                            {msg.isRegistered ? (
-                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-700/80 flex items-center gap-1 shadow-2xs">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> REGISTERED STUDENT
-                              </span>
-                            ) : (
-                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 flex items-center gap-1">
-                                🌐 GUEST / UNREGISTERED
-                              </span>
-                            )}
-
-                            {isUnread ? (
-                              <span className="px-2 py-0.5 rounded-md text-[9px] font-mono font-extrabold bg-amber-500 text-slate-950 uppercase tracking-wider animate-pulse">
-                                NEW UNREAD
-                              </span>
-                            ) : (
-                              <span className="px-2 py-0.5 rounded-md text-[9px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-800">
-                                READ
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Contact Links Bar */}
-                          <div className="flex flex-wrap items-center gap-3 text-xs font-mono pt-1">
-                            <a
-                              href={`tel:${msg.phone}`}
-                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md border text-[11px] font-bold transition-colors ${
-                                isLight ? "bg-slate-100 border-slate-200 text-slate-800 hover:bg-blue-50 hover:text-blue-700" : "bg-slate-800/80 border-slate-700 text-slate-200 hover:text-cyan-300"
-                              }`}
-                            >
-                              📞 {msg.phone || "No phone"}
-                            </a>
-
-                            <a
-                              href={`mailto:${msg.email}`}
-                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md border text-[11px] font-semibold transition-colors ${
-                                isLight ? "bg-slate-100 border-slate-200 text-slate-700 hover:bg-blue-50 hover:text-blue-700" : "bg-slate-800/80 border-slate-700 text-slate-300 hover:text-cyan-300"
-                              }`}
-                            >
+                            <p className="text-[11px] font-mono text-slate-500 truncate">
                               ✉️ {msg.email}
-                            </a>
-
-                            <span className="text-[11px] font-mono text-slate-400">
-                              🕒 {formatDateSafe(msg.created_at)}
-                            </span>
+                            </p>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Actions Bar */}
-                      <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                        <Button
-                          size="sm"
-                          variant={isUnread ? "primary" : "outline"}
-                          onClick={() => handleToggleMessageStatus(msg.id, msg.status)}
-                        >
-                          {isUnread ? "Mark as Read ✓" : "Mark Unread"}
-                        </Button>
-
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-2 rounded-lg"
-                          onClick={() => handleDeleteMessage(msg.id)}
-                          title="Delete notification"
-                        >
-                          <Trash2 className="w-4 h-4 text-rose-500" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Subject & Message Content Box */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        <MessageSquare className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
-                        Subject: <span className="text-slate-900 dark:text-white font-extrabold normal-case text-sm">{msg.subject}</span>
-                      </div>
-
-                      <div className={`p-4 rounded-xl border text-xs sm:text-sm font-sans leading-relaxed transition-colors shadow-2xs ${
-                        isLight ? "bg-slate-50/90 border-slate-200/90 text-slate-800" : "bg-slate-950/80 border-slate-800 text-slate-200"
-                      }`}>
-                        {msg.message}
-                      </div>
-                    </div>
-
-                    {/* Registered Student Info Box or Unregistered Spot Pass Button */}
-                    {msg.isRegistered && matchedParts.length > 0 ? (
-                      <div className={`p-4 rounded-xl border space-y-3 transition-all ${
-                        isLight ? "bg-emerald-50/70 border-emerald-200 text-emerald-950" : "bg-emerald-950/30 border-emerald-800/80 text-emerald-100"
-                      }`}>
-                        <p className="text-xs font-mono font-bold flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300">
-                          <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                          Matched Registered Student Pass ({matchedParts.length} Record{matchedParts.length > 1 ? "s" : ""})
-                        </p>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs font-mono">
-                          {matchedParts.map((p: any, pIdx: number) => {
-                            const reg = p.registrations || {};
-                            return (
-                              <div
-                                key={pIdx}
-                                className={`p-3 rounded-lg border space-y-1.5 cursor-pointer hover:border-emerald-500 transition-all ${
-                                  isLight ? "bg-white border-emerald-200 shadow-2xs hover:shadow-xs" : "bg-slate-900/90 border-slate-800"
-                                }`}
-                                onClick={() => {
-                                  if (reg.id) {
-                                    const foundReg = registrationsList.find((r) => r.id === reg.id) || reg;
-                                    setSelectedRegistration(foundReg);
-                                  }
-                                }}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <span className="font-extrabold text-blue-600 dark:text-cyan-400 text-xs">
-                                    {reg.registrationCode || p.registration_id}
-                                  </span>
-                                  <Badge variant={reg.paymentStatus === "PAID" ? "success" : "danger"} size="sm">
-                                    {reg.paymentStatus || "UNPAID"}
-                                  </Badge>
-                                </div>
-
-                                <p className="font-bold text-slate-900 dark:text-slate-100 truncate">
-                                  {p.fullName || msg.name}
-                                </p>
-
-                                <p className="text-[11px] text-slate-600 dark:text-slate-400 truncate">
-                                  {p.college || "N/A"} ({p.department || "ECE"})
-                                </p>
-
-                                <div className="pt-1 flex items-center justify-between text-[10px] text-slate-500">
-                                  <span>Food: <strong>{p.foodPreference || "Veg"}</strong></span>
-                                  <span className="text-blue-600 dark:text-cyan-400 font-bold underline flex items-center gap-1">
-                                    Inspect Pass <ArrowRight className="w-3 h-3" />
-                                  </span>
-                                </div>
-                              </div>
-                            );
-                          })}
+                        <div className="shrink-0 flex flex-col items-end gap-1">
+                          {isUnread ? (
+                            <span className="px-2 py-0.5 rounded text-[9px] font-mono font-extrabold bg-amber-500 text-slate-950 uppercase tracking-wider animate-pulse">
+                              NEW UNREAD
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded text-[9px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-800">
+                              READ
+                            </span>
+                          )}
                         </div>
                       </div>
-                    ) : (
-                      <div className="pt-1 flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          leftIcon={<UserPlus className="w-4 h-4 text-blue-600 dark:text-cyan-400" />}
-                          onClick={() => {
-                            setOfflineForm({
-                              technicalEventId: technicalEvents[0]?.id || "",
-                              nonTechnicalEventId: nonTechnicalEvents[0]?.id || "",
-                              teamName: "",
-                              participants: [
-                                {
-                                  fullName: msg.name || "",
-                                  email: msg.email || "",
-                                  phone: msg.phone || "",
-                                  college: POPULAR_COLLEGES[0],
-                                  department: "ECE",
-                                  foodPreference: "Veg",
-                                  isTeamLeader: true,
-                                },
-                              ],
-                            });
-                            setIsOfflineDeskView(true);
-                          }}
-                        >
-                          Register Spot Pass for {msg.name}
-                        </Button>
+
+                      {/* Badges Bar */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        {msg.isRegistered ? (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-700/80 flex items-center gap-1 shadow-2xs">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> REGISTERED ({matchedParts.length})
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 flex items-center gap-1">
+                            🌐 GUEST
+                          </span>
+                        )}
+                        <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400">
+                          📞 {msg.phone || "N/A"}
+                        </span>
                       </div>
-                    )}
+
+                      {/* Subject & Message Preview */}
+                      <div className="space-y-1">
+                        <p className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200 truncate">
+                          Subj: {msg.subject}
+                        </p>
+                        <p className="text-xs font-sans text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                          "{msg.message}"
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Card Footer */}
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-slate-400">{formatDateSafe(msg.created_at)}</span>
+                      <span className="text-blue-600 dark:text-cyan-400 font-bold group-hover:underline flex items-center gap-1">
+                        Full Details <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
+                      </span>
+                    </div>
                   </div>
                 );
               })}
@@ -2202,6 +2093,122 @@ export function AdminDashboardClient({
               >
                 Yes, Permanently Delete
               </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* STUDENT INQUIRY FULL DETAILS MODAL */}
+      {selectedMessageDetail && (
+        <Modal
+          isOpen={!!selectedMessageDetail}
+          onClose={() => setSelectedMessageDetail(null)}
+          title={`Student Inquiry — ${selectedMessageDetail.name}`}
+          description={`Received: ${formatDateSafe(selectedMessageDetail.created_at)}`}
+          maxWidth="md"
+        >
+          <div className="space-y-4">
+            {/* Header info */}
+            <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold text-slate-500">Contact Details</span>
+                {selectedMessageDetail.isRegistered ? (
+                  <Badge variant="success">REGISTERED STUDENT Pass</Badge>
+                ) : (
+                  <Badge variant="warning">GUEST / UNREGISTERED</Badge>
+                )}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                <div>
+                  <span className="text-slate-500">Name:</span>{" "}
+                  <strong className="text-slate-900 dark:text-slate-100">{selectedMessageDetail.name}</strong>
+                </div>
+                <div>
+                  <span className="text-slate-500">Email:</span>{" "}
+                  <a href={`mailto:${selectedMessageDetail.email}`} className="text-blue-600 dark:text-cyan-400 font-bold underline">
+                    {selectedMessageDetail.email}
+                  </a>
+                </div>
+                <div>
+                  <span className="text-slate-500">Phone:</span>{" "}
+                  <a href={`tel:${selectedMessageDetail.phone}`} className="text-blue-600 dark:text-cyan-400 font-bold underline">
+                    {selectedMessageDetail.phone || "N/A"}
+                  </a>
+                </div>
+                <div>
+                  <span className="text-slate-500">Status:</span>{" "}
+                  <strong className={selectedMessageDetail.status === "UNREAD" ? "text-amber-500 font-bold" : "text-emerald-500"}>
+                    {selectedMessageDetail.status}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Subject & Full Message */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-mono font-bold uppercase text-slate-500">Subject</label>
+              <p className="text-sm font-bold text-slate-900 dark:text-slate-100 p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                {selectedMessageDetail.subject}
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-mono font-bold uppercase text-slate-500">Full Message Content</label>
+              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-sans text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">
+                {selectedMessageDetail.message}
+              </div>
+            </div>
+
+            {/* Matched Registered Student Pass Information */}
+            {selectedMessageDetail.isRegistered && selectedMessageDetail.participantDetails?.length > 0 && (
+              <div className="p-4 rounded-xl border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/50 dark:bg-emerald-950/20 space-y-2">
+                <h4 className="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Matched Pass Roster
+                </h4>
+                {selectedMessageDetail.participantDetails.map((part: any, i: number) => (
+                  <div key={i} className="text-xs font-mono text-slate-700 dark:text-slate-300">
+                    • <strong>{part.fullName}</strong> ({part.email}) — {part.college} ({part.department})
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Modal Actions */}
+            <div className="flex items-center justify-between pt-3 border-t border-slate-200 dark:border-slate-800">
+              <Button
+                variant="danger"
+                size="sm"
+                leftIcon={<Trash2 className="w-4 h-4" />}
+                onClick={() => {
+                  handleDeleteMessage(selectedMessageDetail.id);
+                  setSelectedMessageDetail(null);
+                }}
+              >
+                Delete Notification
+              </Button>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    handleToggleMessageStatus(selectedMessageDetail.id, selectedMessageDetail.status);
+                    setSelectedMessageDetail({
+                      ...selectedMessageDetail,
+                      status: selectedMessageDetail.status === "UNREAD" ? "READ" : "UNREAD",
+                    });
+                  }}
+                >
+                  Mark as {selectedMessageDetail.status === "UNREAD" ? "Read ✓" : "Unread ⏳"}
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => setSelectedMessageDetail(null)}
+                >
+                  Close
+                </Button>
+              </div>
             </div>
           </div>
         </Modal>
