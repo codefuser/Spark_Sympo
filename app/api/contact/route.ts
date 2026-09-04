@@ -40,7 +40,7 @@ export async function POST(request: Request) {
             subject: validated.subject,
             message: validated.message,
             status: "UNREAD",
-          },
+          } as any,
         });
       } catch (pErr) {
         console.warn("Prisma contact insert warning:", pErr);
@@ -91,11 +91,11 @@ export async function GET() {
         const pMsgs = await prisma.contactMessage.findMany({
           orderBy: { createdAt: "desc" },
         });
-        messages = pMsgs.map((m) => ({
+        messages = pMsgs.map((m: any) => ({
           id: m.id,
           name: m.name,
           email: m.email,
-          phone: m.phone,
+          phone: m.phone || "",
           subject: m.subject,
           message: m.message,
           status: m.status,

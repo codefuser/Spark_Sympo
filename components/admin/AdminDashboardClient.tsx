@@ -1234,14 +1234,14 @@ export function AdminDashboardClient({
 
                       <div className="flex items-center gap-2 shrink-0">
                         <Button
-                          size="xs"
+                          size="sm"
                           variant="outline"
                           onClick={() => handleToggleMessageStatus(msg.id, msg.status)}
                         >
                           {isUnread ? "Mark as Read" : "Mark as Unread"}
                         </Button>
                         <Button
-                          size="xs"
+                          size="sm"
                           variant="ghost"
                           className="text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40"
                           onClick={() => handleDeleteMessage(msg.id)}
@@ -1318,7 +1318,7 @@ export function AdminDashboardClient({
                     ) : (
                       <div className="pt-1 flex items-center gap-2">
                         <Button
-                          size="xs"
+                          size="sm"
                           variant="outline"
                           leftIcon={<UserPlus className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />}
                           onClick={() => {
