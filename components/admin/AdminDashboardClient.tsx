@@ -1287,18 +1287,25 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* Student Roster (Name + Email below) */}
-                      <td className="py-3.5 px-3 align-top space-y-2">
+                      <td className="py-3 px-3 align-top">
                         {r.teamName && (
-                          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-mono font-bold mb-1 ${isLight ? "bg-slate-100 border-slate-300 text-slate-800" : "bg-slate-800 border-slate-700 text-slate-200"}`}>
-                            🚩 {r.teamName} ({members.length})
+                          <div className="h-7 mb-1 flex items-center">
+                            <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-mono font-bold ${isLight ? "bg-slate-100 border-slate-300 text-slate-800" : "bg-slate-800 border-slate-700 text-slate-200"}`}>
+                              🚩 {r.teamName} ({members.length})
+                            </div>
                           </div>
                         )}
 
                         {members.length === 0 ? (
-                          <span className="text-xs font-mono text-slate-400 italic">No members listed</span>
+                          <div className="h-12 flex items-center text-xs font-mono text-slate-400 italic">No members listed</div>
                         ) : (
                           members.map((p: any, idx: number) => (
-                            <div key={p.id || idx} className="h-10 flex flex-col justify-center">
+                            <div
+                              key={p.id || idx}
+                              className={`h-12 flex flex-col justify-center ${
+                                idx < members.length - 1 ? "border-b border-slate-200 dark:border-slate-800 pb-1" : ""
+                              }`}
+                            >
                               <p className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-1">
                                 <span className="text-slate-500 font-mono text-[10px]">#{idx + 1}</span>
                                 <span className="truncate max-w-[160px]">{p.fullName}</span>
@@ -1312,12 +1319,21 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* College & Dept */}
-                      <td className="py-3.5 px-3 align-top">
+                      <td className="py-3 px-3 align-top">
+                        {r.teamName && (
+                          <div className="h-7 mb-1" />
+                        )}
+
                         {members.length === 0 ? (
-                          <div className="h-10 flex items-center text-xs font-mono text-slate-400 italic">-</div>
+                          <div className="h-12 flex items-center text-xs font-mono text-slate-400 italic">-</div>
                         ) : (
                           members.map((p: any, idx: number) => (
-                            <div key={idx} className="h-10 flex flex-col justify-center">
+                            <div
+                              key={idx}
+                              className={`h-12 flex flex-col justify-center ${
+                                idx < members.length - 1 ? "border-b border-slate-200 dark:border-slate-800 pb-1" : ""
+                              }`}
+                            >
                               <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title={p.college}>
                                 {p.college || "N/A"}
                               </p>
@@ -1330,12 +1346,21 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* Phone Number (Strict Line-by-Line Alignment with Roster) */}
-                      <td className="py-3.5 px-3 align-top font-mono text-xs text-slate-700 dark:text-slate-300">
+                      <td className="py-3 px-3 align-top font-mono text-xs text-slate-700 dark:text-slate-300">
+                        {r.teamName && (
+                          <div className="h-7 mb-1" />
+                        )}
+
                         {members.length === 0 ? (
-                          <div className="h-10 flex items-center text-xs font-mono text-slate-400 italic">-</div>
+                          <div className="h-12 flex items-center text-xs font-mono text-slate-400 italic">-</div>
                         ) : (
                           members.map((p: any, idx: number) => (
-                            <div key={idx} className="h-10 flex items-center font-semibold text-xs">
+                            <div
+                              key={idx}
+                              className={`h-12 flex items-center font-semibold text-xs ${
+                                idx < members.length - 1 ? "border-b border-slate-200 dark:border-slate-800 pb-1" : ""
+                              }`}
+                            >
                               📞 {p.phone || "N/A"}
                             </div>
                           ))
@@ -1343,21 +1368,31 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* Registered Events */}
-                      <td className="py-3.5 px-3 align-top space-y-1.5">
-                        {r.technicalEvent && (
-                          <Badge variant="primary" size="sm" className="block text-[11px] truncate max-w-[170px]">
-                            Tech: {r.technicalEvent.title}
-                          </Badge>
+                      <td className="py-3 px-3 align-top">
+                        {r.teamName && (
+                          <div className="h-7 mb-1" />
                         )}
-                        {r.nonTechnicalEvent && (
-                          <Badge variant="neutral" size="sm" className="block text-[11px] truncate max-w-[170px]">
-                            Non-Tech: {r.nonTechnicalEvent.title}
-                          </Badge>
-                        )}
+
+                        <div className="space-y-1">
+                          {r.technicalEvent && (
+                            <Badge variant="primary" size="sm" className="block text-[11px] truncate max-w-[170px]">
+                              Tech: {r.technicalEvent.title}
+                            </Badge>
+                          )}
+                          {r.nonTechnicalEvent && (
+                            <Badge variant="neutral" size="sm" className="block text-[11px] truncate max-w-[170px]">
+                              Non-Tech: {r.nonTechnicalEvent.title}
+                            </Badge>
+                          )}
+                        </div>
                       </td>
 
                       {/* Payment Status */}
-                      <td className="py-3.5 px-2 align-top text-center">
+                      <td className="py-3 px-2 align-top text-center">
+                        {r.teamName && (
+                          <div className="h-7 mb-1" />
+                        )}
+
                         <Badge
                           variant={payStatus === "PAID" ? "success" : payStatus === "PENDING" ? "warning" : "danger"}
                           size="sm"
@@ -1367,12 +1402,21 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* Food */}
-                      <td className="py-3.5 px-2 align-top text-center">
+                      <td className="py-3 px-2 align-top text-center">
+                        {r.teamName && (
+                          <div className="h-7 mb-1" />
+                        )}
+
                         {members.length === 0 ? (
-                          <div className="h-10 flex items-center justify-center text-xs font-mono text-slate-400 italic">-</div>
+                          <div className="h-12 flex items-center justify-center text-xs font-mono text-slate-400 italic">-</div>
                         ) : (
                           members.map((p: any, idx: number) => (
-                            <div key={idx} className="h-10 flex items-center justify-center">
+                            <div
+                              key={idx}
+                              className={`h-12 flex items-center justify-center ${
+                                idx < members.length - 1 ? "border-b border-slate-200 dark:border-slate-800 pb-1" : ""
+                              }`}
+                            >
                               <Badge variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm" className="text-[10px]">
                                 {p.foodPreference || "Veg"}
                               </Badge>
