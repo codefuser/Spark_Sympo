@@ -169,8 +169,8 @@ export function AdminDashboardClient({
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
   const [selectedMessageDetail, setSelectedMessageDetail] = useState<any | null>(null);
 
-  const fetchContactMessages = useCallback(async () => {
-    setLoadingMessages(true);
+  const fetchContactMessages = useCallback(async (silent = false) => {
+    if (!silent) setLoadingMessages(true);
     try {
       const res = await fetch("/api/contact");
       const data = await res.json();
@@ -180,12 +180,12 @@ export function AdminDashboardClient({
     } catch (err) {
       console.warn("Failed to fetch contact messages:", err);
     } finally {
-      setLoadingMessages(false);
+      if (!silent) setLoadingMessages(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchContactMessages();
+    fetchContactMessages(true);
   }, [fetchContactMessages]);
 
   const unreadMessagesCount = messagesList.filter((m) => m.status === "UNREAD").length;
@@ -432,11 +432,17 @@ export function AdminDashboardClient({
     }
   }, [showToast]);
 
-  // ─── Event-driven Realtime Updates (No periodic polling interval) ──
+  // ─── Instant Realtime + Fast Silent Background Sync ──────────────────
   useEffect(() => {
     // Initial fetch on mount
     refreshRegistrations(true, false);
-    fetchContactMessages();
+    fetchContactMessages(true);
+
+    // ⏱ Fast Silent background auto-sync (No spinning loaders, completely seamless!)
+    const interval = setInterval(() => {
+      refreshRegistrations(true, true);
+      fetchContactMessages(true);
+    }, 3000);
 
     // 🔴 Supabase Real-time subscription for Registrations
     const regChannel = supabase
@@ -459,7 +465,7 @@ export function AdminDashboardClient({
         "postgres_changes",
         { event: "*", schema: "public", table: "contact_messages" },
         async (payload) => {
-          await fetchContactMessages();
+          await fetchContactMessages(true);
           if (payload.eventType === "INSERT") {
             showToast(
               "📬 New Student Message Received!",
@@ -472,6 +478,7 @@ export function AdminDashboardClient({
       .subscribe();
 
     return () => {
+      clearInterval(interval);
       supabase.removeChannel(regChannel);
       supabase.removeChannel(msgChannel);
     };
