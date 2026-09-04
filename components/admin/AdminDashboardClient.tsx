@@ -193,15 +193,27 @@ export function AdminDashboardClient({
     if (!regId) return;
     setSubmittingDelete(true);
     try {
-      // 1. Direct Supabase deletion for instant database update
-      const { error: partErr } = await supabase.from("participants").delete().eq("registration_id", regId);
-      const { error: regErr } = await supabase.from("registrations").delete().eq("id", regId);
+      // 1. Direct Supabase deletion with .select() verification
+      await supabase.from("participants").delete().eq("registration_id", regId).select();
+      const { data: deletedRegs, error: regErr } = await supabase
+        .from("registrations")
+        .delete()
+        .eq("id", regId)
+        .select();
 
-      // 2. Server API delete
-      await fetch(`/api/admin/registrations/${regId}`, { method: "DELETE" });
+      // 2. Server API delete fallback
+      const apiRes = await fetch(`/api/admin/registrations/${regId}`, { method: "DELETE" });
+      const apiData = await apiRes.json();
 
-      if (regErr || partErr) {
-        showToast("Delete Failed", regErr?.message || partErr?.message || "Could not delete from database", "error");
+      const wasDeletedInCloud = deletedRegs && deletedRegs.length > 0;
+      const wasDeletedInApi = apiRes.ok && apiData.success;
+
+      if (!wasDeletedInCloud && !wasDeletedInApi) {
+        showToast(
+          "Delete Blocked by Supabase RLS",
+          "Supabase RLS is blocking DELETE operations. Please run the SQL command in Supabase SQL Editor to enable delete permissions.",
+          "error"
+        );
       } else {
         showToast("Pass Permanently Deleted", "Registration pass and all member details removed from database", "success");
         // Update local state immediately

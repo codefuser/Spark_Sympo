@@ -69,14 +69,25 @@ export async function DELETE(
     const regId = params.id;
 
     // Delete participants first then registration row from Supabase
-    const { error: partErr } = await supabase.from("participants").delete().eq("registration_id", regId);
-    const { error: regErr } = await supabase.from("registrations").delete().eq("id", regId);
+    await supabase.from("participants").delete().eq("registration_id", regId).select();
+    const { data: delRegs, error: regErr } = await supabase
+      .from("registrations")
+      .delete()
+      .eq("id", regId)
+      .select();
 
-    if (regErr || partErr) {
-      console.error("Database delete error:", regErr || partErr);
+    if (regErr) {
+      console.error("Database delete error:", regErr);
       return NextResponse.json(
-        { success: false, message: `Failed to delete from database: ${regErr?.message || partErr?.message}` },
+        { success: false, message: `Failed to delete from database: ${regErr.message}` },
         { status: 500 }
+      );
+    }
+
+    if (!delRegs || delRegs.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Delete operation was ignored by Supabase RLS policies." },
+        { status: 403 }
       );
     }
 
