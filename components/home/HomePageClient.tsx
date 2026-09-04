@@ -23,6 +23,7 @@ import {
   Phone,
   Mail,
   Building2,
+  GraduationCap,
   Shield,
   UserCheck,
   ExternalLink,
@@ -195,12 +196,74 @@ export function HomePageClient({
       </section>
 
       {/* SECTION 2: ABOUT */}
-      <section id="about" className="container mx-auto px-4 sm:px-6 space-y-16">
+      <section id="about" className="container mx-auto px-4 sm:px-6 space-y-12">
         <SectionHeading
           badge="ABOUT US"
-          title="About SPARKTRON 2K26 & ECE Dept"
+          title="About Thamirabharani Engineering College & SPARKTRON 2K26"
           description="Fostering technical innovation, engineering mastery, and collaborative research excellence."
         />
+
+        {/* Thamirabharani Engineering College Overview Card */}
+        <Card glowOnHover className="relative overflow-hidden border border-primary/25 bg-card/90 shadow-2xl p-6 sm:p-8 space-y-6">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan/10 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
+
+          <div className="relative z-10 space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-primary/15 pb-5">
+              <div className="flex items-center space-x-3.5">
+                <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/20">
+                  <Building2 className="w-7 h-7" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2 text-primary font-mono text-xs tracking-wider uppercase font-semibold">
+                    <GraduationCap className="w-4 h-4" />
+                    <span>INSTITUTION PROFILE</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
+                    About Thamirabharani Engineering College
+                  </h3>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                <span className="px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary font-semibold flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-primary" /> AICTE Approved, New Delhi
+                </span>
+                <span className="px-3 py-1.5 rounded-full bg-cyan/10 border border-cyan/30 text-cyan font-semibold flex items-center gap-1.5">
+                  <Award className="w-4 h-4 text-cyan" /> Anna University Affiliated
+                </span>
+              </div>
+            </div>
+
+            <div className="text-sm sm:text-base text-secondary-foreground leading-relaxed space-y-4">
+              <p>
+                Thamirabharani Engineering College which is in the Tirunelveli Corporation limits is located at Thatchanallur, 5km away from Palayamkottai and 40 km from Tuticorin airport. Unfolding its grandeur over 25 acres of land, the college exhibits an attractive panorama conducive to studies. Considering a holistic approach to life and education, an ambient infrastructure is provided for the students. They enjoy a natural sanctuary of birds, magnificent scenery of evergreen trees and amazing mountains and a gorgeous garden of multicolored flowers. Thamirabharani Engineering College was founded with the noble vision to raise professionals and leaders of high academic caliber and unblemished character, nurtured with a strong motivation and commitment to serve humanity. TEC aims at educating &amp; training its students to become not only competent professionals but also excellent human beings to influence the quality of life of people around.
+              </p>
+              <p>
+                Thamirabharani Engineering College was established with the goal of producing outstanding students in Technical and Business fields and preparing them to tackle the challenges of a dynamic and rapidly changing world. The management implements an interdisciplinary approach to the programs of Anna University, making sure that practical applications are combined with the classroom material. All the programs offered by the institute are recognized by and affiliated to statutory bodies like the All India Council of Technical Education (AICTE), New Delhi and Anna University, Chennai. In a nutshell, Thamirabharani Engineering College is a co-educational, residential, technological college imparting holistic education to develop the technical and the character of the students.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 font-mono text-xs">
+              <div className="p-3.5 rounded-lg bg-background/80 border border-primary/20 text-center">
+                <div className="text-xl sm:text-2xl font-bold text-primary">25 Acres</div>
+                <div className="text-slate-400 mt-1">Lush Green Campus</div>
+              </div>
+              <div className="p-3.5 rounded-lg bg-background/80 border border-primary/20 text-center">
+                <div className="text-xl sm:text-2xl font-bold text-cyan">Tirunelveli</div>
+                <div className="text-slate-400 mt-1">Corporation Limits</div>
+              </div>
+              <div className="p-3.5 rounded-lg bg-background/80 border border-primary/20 text-center">
+                <div className="text-xl sm:text-2xl font-bold text-emerald-400">AICTE &amp; AU</div>
+                <div className="text-slate-400 mt-1">Approved &amp; Affiliated</div>
+              </div>
+              <div className="p-3.5 rounded-lg bg-background/80 border border-primary/20 text-center">
+                <div className="text-xl sm:text-2xl font-bold text-amber-400">Co-Ed</div>
+                <div className="text-slate-400 mt-1">Residential Campus</div>
+              </div>
+            </div>
+          </div>
+        </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
           <Card glowOnHover className="space-y-4 flex flex-col justify-between">
@@ -515,7 +578,7 @@ export function HomePageClient({
                 <div>
                   <p className="text-white font-bold">Venue Address</p>
                   <p className="text-slate-400 text-xs mt-0.5">
-                    Department of ECE, St. Joseph's Institute of Technology, OMR, Chennai - 600119, Tamil Nadu.
+                    Department of ECE, Thamirabharani Engineering College, Thatchanallur, Tirunelveli - 627358, Tamil Nadu.
                   </p>
                 </div>
               </div>

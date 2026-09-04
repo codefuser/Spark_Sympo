@@ -43,8 +43,8 @@ export default async function HomePage() {
   const finalAnnouncements = announcements && announcements.length > 0 ? announcements : DEFAULT_ANNOUNCEMENTS;
 
   const symposiumDate = process.env.NEXT_PUBLIC_SYMPOSIUM_DATE || "September 16, 2026";
-  const collegeName = process.env.NEXT_PUBLIC_COLLEGE_NAME || "St. Joseph's Institute of Technology";
-  const venue = process.env.NEXT_PUBLIC_VENUE || "ECE Block Auditorium & Advanced Labs";
+  const collegeName = process.env.NEXT_PUBLIC_COLLEGE_NAME || "Thamirabharani Engineering College";
+  const venue = process.env.NEXT_PUBLIC_VENUE || "ECE Seminar Hall & Labs, Thamirabharani Engineering College, Tirunelveli";
 
   const schedule = [
     { time: "08:30 AM - 09:30 AM", title: "Registration Desk & Welcome Kit Distribution", venue: "College Entrance Lobby" },

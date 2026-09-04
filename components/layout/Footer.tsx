@@ -140,7 +140,7 @@ export function Footer() {
           <div className="space-y-2.5 text-xs font-mono">
             <div className="flex items-start space-x-2.5">
               <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-              <span>ECE Department, St. Joseph's Institute of Technology, OMR, Chennai - 600119</span>
+              <span>ECE Department, Thamirabharani Engineering College, Thatchanallur, Tirunelveli - 627358</span>
             </div>
             <div className="flex items-center space-x-2.5">
               <Mail className="w-4 h-4 text-primary shrink-0" />
