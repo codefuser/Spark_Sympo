@@ -1089,7 +1089,7 @@ export function AdminDashboardClient({
       </div>
 
       {/* Search, Filter & Offline Spot Desk Toggle Button */}
-      <Card className={`p-4 flex flex-col lg:flex-row items-center justify-between gap-4 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-xs" : ""}`}>
+      <div className={`p-4 rounded-xl border flex flex-col lg:flex-row items-center justify-between gap-4 transition-all duration-200 relative overflow-visible z-30 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : "bg-card border-primary/15 text-slate-100 backdrop-blur-md"}`}>
         <div className="w-full lg:w-96">
           <Input
             placeholder="Search by Code, Name, Email, College, Phone..."
@@ -1099,8 +1099,8 @@ export function AdminDashboardClient({
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-          <div className="w-44">
+        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto relative overflow-visible z-30">
+          <div className="w-44 relative z-30">
             <Select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
@@ -1112,7 +1112,7 @@ export function AdminDashboardClient({
             />
           </div>
 
-          <div className="w-52">
+          <div className="w-52 relative z-30">
             <Select
               value={selectedEventId}
               onChange={(e) => setSelectedEventId(e.target.value)}
@@ -1133,7 +1133,7 @@ export function AdminDashboardClient({
           </Button>
 
           {/* Interactive Multi-Format Export Dropdown */}
-          <div className="relative">
+          <div className="relative z-40">
             <Button
               variant="outline"
               size="sm"
@@ -1221,7 +1221,7 @@ export function AdminDashboardClient({
             )}
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Registered Passes Table */}
       <div className={`rounded-2xl border overflow-hidden shadow-xs transition-all duration-200 ${isLight ? "bg-white border-slate-300" : "bg-slate-900/60 border-slate-800"}`}>
