@@ -446,17 +446,11 @@ export function AdminDashboardClient({
     }
   }, [showToast]);
 
-  // ─── Instant Realtime + Fast Silent Background Sync ──────────────────
+  // ─── Instant Realtime Updates (No periodic polling interval) ────────
   useEffect(() => {
     // Initial fetch on mount
     refreshRegistrations(true, false);
     fetchContactMessages(true);
-
-    // ⏱ Fast Silent background auto-sync (No spinning loaders, completely seamless!)
-    const interval = setInterval(() => {
-      refreshRegistrations(true, true);
-      fetchContactMessages(true);
-    }, 3000);
 
     // 🔴 Supabase Real-time subscription for Registrations
     const regChannel = supabase
@@ -492,7 +486,6 @@ export function AdminDashboardClient({
       .subscribe();
 
     return () => {
-      clearInterval(interval);
       supabase.removeChannel(regChannel);
       supabase.removeChannel(msgChannel);
     };
