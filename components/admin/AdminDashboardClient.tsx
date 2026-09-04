@@ -818,7 +818,6 @@ export function AdminDashboardClient({
       </div>
     );
   }
-  }
 
   // =========================================================================
   // MAIN ADMIN DASHBOARD VIEW (Header & Metrics Shown Only Here)
