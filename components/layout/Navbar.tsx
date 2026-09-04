@@ -21,16 +21,18 @@ export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+  const [isScrolled, setIsScrolled] = useState(false);
   const { openRegistrationModal } = useRegistrationModal();
 
   // Hide public navbar on admin portal routes
   if (pathname?.startsWith("/admin")) return null;
 
-  // Real-time Active Section Tracking on Scroll
+  // Real-time Active Section Tracking & Scroll Effect
   useEffect(() => {
     const sectionIds = navLinks.map((l) => l.href.replace("#", ""));
 
     const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
       const scrollPosition = window.scrollY + 140; // Offset for navbar height
 
       for (let i = sectionIds.length - 1; i >= 0; i--) {
@@ -66,7 +68,14 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-primary/15 bg-background/90 backdrop-blur-xl">
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 w-full border-b transition-all duration-300",
+        isScrolled
+          ? "bg-background/95 backdrop-blur-2xl border-primary/25 shadow-xl shadow-primary/5"
+          : "bg-background/75 backdrop-blur-xl border-primary/15"
+      )}
+    >
       <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6">
         {/* Brand Logo */}
         <a
@@ -178,3 +187,4 @@ export function Navbar() {
     </header>
   );
 }
+
