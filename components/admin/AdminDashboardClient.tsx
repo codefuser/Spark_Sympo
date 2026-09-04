@@ -114,6 +114,16 @@ export function AdminDashboardClient({
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (theme === "light") {
+        document.documentElement.classList.remove("dark");
+      } else {
+        document.documentElement.classList.add("dark");
+      }
+    }
+  }, [theme]);
+
   const toggleTheme = () => {
     const nextTheme = theme === "dark" ? "light" : "dark";
     setTheme(nextTheme);
@@ -480,9 +490,9 @@ export function AdminDashboardClient({
   // =========================================================================
   if (isOfflineDeskView) {
     return (
-      <div className={`h-[calc(100vh-3rem)] flex flex-col space-y-4 animate-in fade-in duration-200 rounded-2xl p-2 transition-colors ${isLight ? "bg-slate-100 text-slate-900" : ""}`}>
+      <div className={`min-h-screen transition-colors duration-200 -m-4 sm:-m-8 p-4 sm:p-8 space-y-4 flex flex-col ${isLight ? "bg-slate-100 text-slate-900" : "bg-slate-950 text-slate-100 circuit-bg"}`}>
         {/* Top Header Bar with Back Button & Theme Switcher */}
-        <div className={`shrink-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border shadow-2xl transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-md" : "bg-slate-900/90 border-slate-800 text-white"}`}>
+        <div className={`shrink-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border shadow-sm transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-xs" : "bg-slate-900/90 border-slate-800 text-white"}`}>
           <div className="flex items-center space-x-3">
             <Button
               variant="outline"
@@ -493,7 +503,7 @@ export function AdminDashboardClient({
               Back to Main Admin Dashboard
             </Button>
 
-            <div className="h-6 w-[1px] bg-slate-800 hidden sm:block"></div>
+            <div className="h-6 w-[1px] bg-slate-300 dark:bg-slate-800 hidden sm:block"></div>
 
             <div>
               <div className="flex items-center gap-2">
@@ -501,10 +511,10 @@ export function AdminDashboardClient({
                   <UserPlus className="w-5 h-5 text-amber-500" />
                   Offline Spot Registration Desk (Desk Volunteer Mode)
                 </h2>
-                <Badge variant="cyan">LIVE SUPABASE SYNC</Badge>
+                <Badge variant="success">LIVE SUPABASE SYNC</Badge>
               </div>
-              <p className={`text-[11px] font-mono mt-0.5 ${isLight ? "text-slate-500" : "text-slate-400"}`}>
-                Register walk-in students physically. Saved directly as <span className="text-amber-500 font-bold">registration_type = 'offline'</span>.
+              <p className={`text-[11px] font-mono mt-0.5 ${isLight ? "text-slate-600 font-medium" : "text-slate-400"}`}>
+                Register walk-in students physically. Saved directly as <span className="text-amber-600 dark:text-amber-400 font-bold">registration_type = 'offline'</span>.
               </p>
             </div>
           </div>
@@ -514,15 +524,15 @@ export function AdminDashboardClient({
               type="button"
               variant="outline"
               size="sm"
-              leftIcon={isLight ? <Moon className="w-4 h-4 text-purple-600" /> : <Sun className="w-4 h-4 text-amber-400" />}
+              leftIcon={isLight ? <Moon className="w-4 h-4 text-slate-700" /> : <Sun className="w-4 h-4 text-amber-400" />}
               onClick={toggleTheme}
               title={`Switch to ${isLight ? "Dark" : "Light"} Mode`}
             >
               {isLight ? "Dark Mode" : "Light Mode"}
             </Button>
 
-            <span className={`text-xs font-mono px-3 py-1.5 rounded-lg border ${isLight ? "bg-slate-100 text-slate-700 border-slate-300" : "bg-slate-800/80 text-slate-400 border-slate-700"}`}>
-              Live Total: <strong className="text-cyan-600">{registrationsList.length} Passes</strong>
+            <span className={`text-xs font-mono px-3 py-1.5 rounded-lg border font-bold shadow-xs ${isLight ? "bg-slate-50 text-slate-800 border-slate-300" : "bg-slate-800/80 text-slate-300 border-slate-700"}`}>
+              Live Total: <strong className="text-blue-600 dark:text-cyan-400">{registrationsList.length} Passes</strong>
             </span>
           </div>
         </div>
@@ -532,15 +542,13 @@ export function AdminDashboardClient({
           {/* LEFT COLUMN: Fast Typing Registration Form (Resizable Width) */}
           <div
             style={{ width: typeof window !== "undefined" && window.innerWidth >= 1024 ? `${leftWidthPercent}%` : "100%" }}
-            className={`w-full lg:w-auto h-full flex flex-col p-5 rounded-2xl border shadow-2xl overflow-hidden shrink-0 transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-lg" : "bg-slate-900/80 border-slate-800 text-slate-100"}`}
+            className={`w-full lg:w-auto h-full flex flex-col p-5 rounded-2xl border shadow-sm overflow-hidden shrink-0 transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900" : "bg-slate-900/80 border-slate-800 text-slate-100"}`}
           >
             <div className={`shrink-0 flex items-center justify-between border-b pb-3 mb-3 ${isLight ? "border-slate-200" : "border-slate-800"}`}>
               <h3 className={`text-sm font-semibold font-mono uppercase tracking-wider flex items-center gap-2 ${isLight ? "text-slate-800" : "text-slate-200"}`}>
-                <Sparkles className="w-4 h-4 text-cyan-500" /> Spot Registration Form
+                <Sparkles className="w-4 h-4 text-blue-600 dark:text-cyan-400" /> Spot Registration Form
               </h3>
-              <span className="text-xs font-mono text-amber-500 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-md font-bold">
-                TYPE: OFFLINE
-              </span>
+              <Badge variant="warning">TYPE: OFFLINE</Badge>
             </div>
 
             {/* ENTIRE FORM IS SCROLLABLE TOP-TO-BOTTOM */}
@@ -582,7 +590,7 @@ export function AdminDashboardClient({
               {/* Team Roster Bar & Quick Copy Button */}
               <div className="flex items-center justify-between pt-2">
                 <h4 className={`text-xs font-mono font-bold uppercase flex items-center gap-1.5 ${isLight ? "text-slate-800" : "text-slate-200"}`}>
-                  <Users className="w-3.5 h-3.5 text-cyan-500" /> Team Roster ({offlineForm.participants.length})
+                  <Users className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" /> Team Roster ({offlineForm.participants.length})
                 </h4>
 
                 <div className="flex items-center gap-2">
@@ -591,7 +599,7 @@ export function AdminDashboardClient({
                       type="button"
                       variant="outline"
                       size="sm"
-                      leftIcon={<Copy className="w-3 h-3 text-cyan-500" />}
+                      leftIcon={<Copy className="w-3 h-3 text-slate-500" />}
                       onClick={handleCopyCollegeToAll}
                       title="Copy First Member's college name to all team members"
                     >
@@ -603,7 +611,7 @@ export function AdminDashboardClient({
                     type="button"
                     variant="outline"
                     size="sm"
-                    leftIcon={<UserPlus className="w-3.5 h-3.5" />}
+                    leftIcon={<UserPlus className="w-3.5 h-3.5 text-slate-500" />}
                     onClick={addOfflineParticipant}
                   >
                     Add Member
@@ -616,7 +624,7 @@ export function AdminDashboardClient({
                 {offlineForm.participants.map((p, idx) => (
                   <div
                     key={idx}
-                    className={`p-4 rounded-xl border space-y-3 relative transition-colors duration-200 ${isLight ? "bg-slate-50 border-slate-200 text-slate-900" : "bg-slate-950/70 border-slate-800 text-slate-100"}`}
+                    className={`p-4 rounded-xl border space-y-3 relative transition-colors duration-200 ${isLight ? "bg-slate-50/80 border-slate-200 text-slate-900 shadow-xs" : "bg-slate-950/70 border-slate-800 text-slate-100"}`}
                   >
                     <div className={`flex items-center justify-between text-xs font-semibold border-b pb-2 ${isLight ? "text-slate-700 border-slate-200" : "text-slate-300 border-slate-800/80"}`}>
                       <span className="flex items-center gap-1.5">
@@ -628,7 +636,7 @@ export function AdminDashboardClient({
                         <button
                           type="button"
                           onClick={() => removeOfflineParticipant(idx)}
-                          className="text-slate-400 hover:text-rose-500 transition-colors p-1"
+                          className="text-slate-400 hover:text-rose-600 transition-colors p-1"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -670,7 +678,7 @@ export function AdminDashboardClient({
 
                       {/* College Name with Autocomplete Datalist */}
                       <div className="w-full space-y-1.5">
-                        <label className={`block text-xs font-mono font-medium tracking-wider uppercase ${isLight ? "text-slate-600" : "text-slate-400"}`}>
+                        <label className={`block text-xs font-mono font-semibold tracking-wider uppercase ${isLight ? "text-slate-700" : "text-slate-300"}`}>
                           College / Institution *
                         </label>
                         <input
@@ -681,7 +689,7 @@ export function AdminDashboardClient({
                             handleOfflineParticipantChange(idx, "college", e.target.value)
                           }
                           required
-                          className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 ${isLight ? "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-cyan-500" : "bg-slate-900/80 border-slate-700/80 text-slate-100 placeholder:text-slate-500 focus:border-cyan-400"}`}
+                          className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-slate-400/20 font-medium ${isLight ? "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 shadow-xs" : "bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-slate-400"}`}
                         />
                       </div>
                     </div>
@@ -723,7 +731,7 @@ export function AdminDashboardClient({
                 type="submit"
                 variant="primary"
                 size="lg"
-                className="w-full text-sm font-semibold tracking-wide py-3.5 mt-2 shadow-xl shadow-cyan-950/40 shrink-0"
+                className="w-full text-sm font-semibold tracking-wide py-3.5 mt-2 shadow-xs shrink-0 cursor-pointer"
                 isLoading={submittingOffline}
                 rightIcon={<ArrowRight className="w-4 h-4" />}
               >
@@ -736,21 +744,21 @@ export function AdminDashboardClient({
           <div
             onMouseDown={handleMouseDownResize}
             onTouchStart={() => setIsResizing(true)}
-            className={`hidden lg:flex items-center justify-center w-2.5 hover:w-3.5 transition-all rounded-full group shrink-0 select-none cursor-col-resize ${isLight ? "bg-slate-200 hover:bg-cyan-500/40" : "bg-slate-800/80 hover:bg-cyan-500/50"} ${
-              isResizing ? "bg-cyan-500 ring-2 ring-cyan-400 w-3.5" : ""
+            className={`hidden lg:flex items-center justify-center w-2.5 hover:w-3.5 transition-all rounded-full group shrink-0 select-none cursor-col-resize ${isLight ? "bg-slate-200 hover:bg-slate-400" : "bg-slate-800 hover:bg-slate-700"} ${
+              isResizing ? "bg-slate-500 ring-2 ring-slate-400 w-3.5" : ""
             }`}
             title="Drag left / right to adjust panels size"
           >
-            <GripVertical className={`w-4 h-4 transition-colors ${isLight ? "text-slate-400 group-hover:text-cyan-700" : "text-slate-400 group-hover:text-cyan-200"}`} />
+            <GripVertical className={`w-4 h-4 transition-colors ${isLight ? "text-slate-400 group-hover:text-slate-700" : "text-slate-500 group-hover:text-slate-300"}`} />
           </div>
 
           {/* RIGHT COLUMN: Live Stream Spot Roster (Fills remaining width) */}
-          <div className={`flex-1 min-w-0 w-full h-full flex flex-col p-5 rounded-2xl border shadow-2xl overflow-hidden space-y-3 transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-lg" : "bg-slate-900/80 border-slate-800 text-slate-100"}`}>
+          <div className={`flex-1 min-w-0 w-full h-full flex flex-col p-5 rounded-2xl border shadow-sm overflow-hidden space-y-3 transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900" : "bg-slate-900/80 border-slate-800 text-slate-100"}`}>
             <div className={`shrink-0 flex items-center justify-between border-b pb-3 ${isLight ? "border-slate-200" : "border-slate-800"}`}>
               <h3 className={`text-sm font-semibold font-mono uppercase tracking-wider flex items-center gap-2 ${isLight ? "text-slate-800" : "text-slate-200"}`}>
-                <Ticket className="w-4 h-4 text-emerald-500" /> Live Registrations Roster Stream
+                <Ticket className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Live Registrations Roster Stream
               </h3>
-              <span className={`text-xs font-mono ${isLight ? "text-slate-500" : "text-slate-400"}`}>
+              <span className={`text-xs font-mono font-semibold ${isLight ? "text-slate-600" : "text-slate-400"}`}>
                 {registrationsList.length} Total Passes
               </span>
             </div>
@@ -770,32 +778,26 @@ export function AdminDashboardClient({
                       key={r.id || idx}
                       className={`p-4 rounded-xl border transition-all duration-200 ${
                         isLight
-                          ? (isNewest ? "bg-cyan-50/80 border-cyan-400 shadow-md text-slate-900" : "bg-slate-50 border-slate-200 text-slate-900")
-                          : (isNewest ? "bg-slate-900 border-cyan-500/40 shadow-lg shadow-cyan-950/30 text-slate-100" : "bg-slate-950/70 border-slate-800/80 text-slate-100")
+                          ? (isNewest ? "bg-blue-50/50 border-blue-300 shadow-xs text-slate-900" : "bg-slate-50/70 border-slate-200 text-slate-900")
+                          : (isNewest ? "bg-slate-900 border-slate-700 shadow-md text-slate-100" : "bg-slate-950/70 border-slate-800 text-slate-100")
                       }`}
                     >
-                      <div className={`flex items-center justify-between border-b pb-2 mb-2 ${isLight ? "border-slate-200" : "border-slate-800/80"}`}>
+                      <div className={`flex items-center justify-between border-b pb-2 mb-2 ${isLight ? "border-slate-200" : "border-slate-800"}`}>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-mono font-bold text-sm text-cyan-600">
+                          <span className="font-mono font-bold text-sm text-slate-900 dark:text-slate-100">
                             {r.registrationCode}
                           </span>
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-extrabold ${
-                              r.registrationType === "offline"
-                                ? "bg-amber-500/15 text-amber-600 border border-amber-500/40"
-                                : "bg-cyan-500/15 text-cyan-600 border border-cyan-500/40"
-                            }`}
-                          >
+                          <Badge variant={r.registrationType === "offline" ? "warning" : "success"}>
                             {r.registrationType}
-                          </span>
+                          </Badge>
                           {r.teamName && (
-                            <span className="text-[10px] font-mono font-semibold text-cyan-700 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30">
+                            <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${isLight ? "bg-slate-100 text-slate-800 border-slate-300" : "bg-slate-800 text-slate-300 border-slate-700"}`}>
                               Team: {r.teamName}
                             </span>
                           )}
                         </div>
 
-                        <span className={`text-[11px] font-mono font-bold ${isLight ? "text-slate-600" : "text-slate-400"}`}>
+                        <span className={`text-[11px] font-mono font-bold ${isLight ? "text-slate-700" : "text-slate-300"}`}>
                           {members.length} Member(s)
                         </span>
                       </div>
@@ -805,7 +807,7 @@ export function AdminDashboardClient({
                         <Badge variant="primary" className="text-[10px] py-0 px-2">
                           {r.technicalEvent?.title || "Tech Track"}
                         </Badge>
-                        <Badge variant="cyan" className="text-[10px] py-0 px-2">
+                        <Badge variant="neutral" className="text-[10px] py-0 px-2">
                           {r.nonTechnicalEvent?.title || "Non-Tech Track"}
                         </Badge>
                       </div>
@@ -818,26 +820,20 @@ export function AdminDashboardClient({
                           members.map((p: any, pIdx: number) => (
                             <div
                               key={p.id || pIdx}
-                              className={`p-2.5 rounded-lg border space-y-1 ${isLight ? "bg-white border-slate-200 text-slate-900" : "bg-slate-900/90 border-slate-800 text-slate-100"}`}
+                              className={`p-3 rounded-lg border space-y-1.5 transition-colors ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-2xs" : "bg-slate-900/90 border-slate-800 text-slate-100"}`}
                             >
                               <div className="flex items-center justify-between">
                                 <p className={`font-bold text-xs flex items-center gap-1.5 ${isLight ? "text-slate-900" : "text-slate-100"}`}>
-                                  <span className="text-cyan-600 font-mono text-[10px]">#{pIdx + 1}</span>
+                                  <span className="text-slate-500 font-mono text-[10px]">#{pIdx + 1}</span>
                                   {p.fullName || "N/A"}
                                 </p>
-                                <span
-                                  className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
-                                    p.foodPreference === "Non-Veg"
-                                      ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
-                                      : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
-                                  }`}
-                                >
+                                <Badge variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm">
                                   {p.foodPreference || "Veg"}
-                                </span>
+                                </Badge>
                               </div>
-                              <p className={`text-[11px] font-mono truncate ${isLight ? "text-slate-700" : "text-slate-300"}`}>{p.email}</p>
-                              <p className={`text-[10px] font-mono truncate ${isLight ? "text-slate-600" : "text-slate-400"}`}>
-                                {p.college} • <span className="text-cyan-600 font-bold">{p.department || "ECE"}</span> • 📞 {p.phone}
+                              <p className={`text-[11px] font-mono truncate ${isLight ? "text-slate-600 font-medium" : "text-slate-300"}`}>{p.email}</p>
+                              <p className={`text-[10px] font-mono truncate ${isLight ? "text-slate-600 font-medium" : "text-slate-400"}`}>
+                                {p.college} • <span className="font-bold text-slate-800 dark:text-slate-200">{p.department || "ECE"}</span> • 📞 {p.phone}
                               </p>
                             </div>
                           ))
@@ -861,20 +857,20 @@ export function AdminDashboardClient({
     <div className={`min-h-screen transition-all duration-300 -m-4 sm:-m-8 p-4 sm:p-8 space-y-8 ${isLight ? "bg-slate-100 text-slate-900" : "bg-slate-950 text-slate-100 circuit-bg"}`}>
       {/* Admin Header Bar */}
       <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl border transition-all duration-200 ${
-        isLight ? "bg-white border-slate-200/90 shadow-md text-slate-900" : "bg-card border-slate-800 shadow-xl text-white"
+        isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : "bg-card border-slate-800 shadow-xl text-white"
       }`}>
         <div className="flex items-center space-x-3">
           <div className={`w-12 h-12 rounded-xl border flex items-center justify-center font-mono font-bold text-xl ${
-            isLight ? "bg-cyan-50 border-cyan-200 text-cyan-600 shadow-xs" : "bg-cyan-500/10 border-cyan-500/30 text-cyan-400"
+            isLight ? "bg-slate-100 border-slate-300 text-slate-900 shadow-2xs" : "bg-slate-800/80 border-slate-700 text-slate-100"
           }`}>
-            <ShieldCheck className="w-6 h-6" />
+            <ShieldCheck className="w-6 h-6 text-blue-600 dark:text-cyan-400" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
               <h1 className={`text-xl font-bold font-mono ${isLight ? "text-slate-900" : "text-white"}`}>
                 SPARKTRON 2K26 Registered Participants Portal
               </h1>
-              {session && <Badge variant={isLight ? "cyan" : "primary"}>{session.role}</Badge>}
+              {session && <Badge variant="primary">{session.role}</Badge>}
             </div>
             <p className={`text-xs font-mono mt-0.5 ${isLight ? "text-slate-600 font-medium" : "text-slate-400"}`}>
               Live Supabase Cloud Monitor • Logged in as <span className={`font-bold ${isLight ? "text-slate-900" : "text-white"}`}>{session?.name || "Admin"}</span> ({session?.email || "admin@sparktron.ece"})
@@ -887,7 +883,7 @@ export function AdminDashboardClient({
             {/* Live status indicator */}
             <span className={`hidden sm:flex items-center gap-1.5 text-xs font-mono px-2.5 py-1.5 rounded-lg border font-bold ${
               isLive
-                ? isLight ? "text-emerald-800 bg-emerald-100 border-emerald-300" : "text-emerald-400 bg-emerald-500/10 border-emerald-500/30"
+                ? isLight ? "text-emerald-800 bg-emerald-50 border-emerald-300" : "text-emerald-400 bg-emerald-500/10 border-emerald-500/30"
                 : isLight ? "text-slate-600 bg-slate-100 border-slate-300" : "text-slate-500 bg-slate-800/50 border-slate-700"
             }`}>
               <span className={`w-1.5 h-1.5 rounded-full ${isLive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`} />
@@ -897,10 +893,9 @@ export function AdminDashboardClient({
               type="button"
               variant="outline"
               size="sm"
-              leftIcon={isLight ? <Moon className="w-4 h-4 text-purple-600" /> : <Sun className="w-4 h-4 text-amber-400" />}
+              leftIcon={isLight ? <Moon className="w-4 h-4 text-slate-700" /> : <Sun className="w-4 h-4 text-amber-400" />}
               onClick={toggleTheme}
               title={`Switch to ${isLight ? "Dark" : "Light"} Mode`}
-              className={isLight ? "bg-white border-slate-300 text-slate-800 hover:bg-slate-100 font-bold shadow-xs" : ""}
             >
               {isLight ? "Dark Mode" : "Light Mode"}
             </Button>
@@ -910,7 +905,6 @@ export function AdminDashboardClient({
               size="sm"
               leftIcon={<RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />}
               onClick={() => refreshRegistrations(false)}
-              className={isLight ? "text-slate-700 hover:bg-slate-100 font-semibold" : ""}
             >
               Refresh
             </Button>
@@ -918,8 +912,8 @@ export function AdminDashboardClient({
               type="submit"
               variant="ghost"
               size="sm"
-              leftIcon={<LogOut className="w-4 h-4" />}
-              className={isLight ? "text-rose-600 hover:bg-rose-50 font-semibold" : ""}
+              leftIcon={<LogOut className="w-4 h-4 text-rose-500" />}
+              className="text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40"
             >
               Sign Out
             </Button>
@@ -929,58 +923,57 @@ export function AdminDashboardClient({
 
       {/* Live Registration Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-6">
-        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200/90 shadow-md text-slate-900" : ""}`}>
+        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
           <div className="flex items-center justify-between mb-2">
             <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Total Registrations</span>
-            <div className={`p-2 rounded-lg ${isLight ? "bg-cyan-50 text-cyan-600" : ""}`}>
-              <Calendar className="w-5 h-5 text-cyan-500" />
+            <div className={`p-2 rounded-lg ${isLight ? "bg-blue-50 text-blue-600" : "bg-slate-800 text-blue-400"}`}>
+              <Calendar className="w-5 h-5 text-blue-600 dark:text-cyan-400" />
             </div>
           </div>
           <p className={`text-3xl font-extrabold font-mono ${isLight ? "text-slate-900" : "text-white"}`}>{totalRegistrations}</p>
         </Card>
 
-        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200/90 shadow-md text-slate-900" : ""}`}>
+        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
           <div className="flex items-center justify-between mb-2">
             <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Total Participants</span>
-            <div className={`p-2 rounded-lg ${isLight ? "bg-emerald-50 text-emerald-600" : ""}`}>
-              <Users className="w-5 h-5 text-emerald-500" />
+            <div className={`p-2 rounded-lg ${isLight ? "bg-emerald-50 text-emerald-600" : "bg-slate-800 text-emerald-400"}`}>
+              <Users className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             </div>
           </div>
-          <p className="text-3xl font-extrabold font-mono text-emerald-600">{totalParticipants}</p>
+          <p className="text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">{totalParticipants}</p>
         </Card>
 
-        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200/90 shadow-md text-slate-900" : ""}`}>
+        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
           <div className="flex items-center justify-between mb-2">
             <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Online / Offline</span>
-            <div className={`p-2 rounded-lg ${isLight ? "bg-purple-50 text-purple-600" : ""}`}>
-              <Laptop className="w-5 h-5 text-purple-500" />
+            <div className={`p-2 rounded-lg ${isLight ? "bg-purple-50 text-purple-600" : "bg-slate-800 text-purple-400"}`}>
+              <Laptop className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
           </div>
           <p className={`text-2xl font-bold font-mono ${isLight ? "text-slate-900" : "text-white"}`}>
-            <span className="text-cyan-600 font-extrabold">{onlineRegistrations}</span> / <span className="text-amber-600 font-extrabold">{offlineRegistrations}</span>
+            <span className="text-blue-600 dark:text-cyan-400 font-extrabold">{onlineRegistrations}</span> / <span className="text-amber-600 dark:text-amber-400 font-extrabold">{offlineRegistrations}</span>
           </p>
         </Card>
 
-        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200/90 shadow-md text-slate-900" : ""}`}>
+        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
           <div className="flex items-center justify-between mb-2">
             <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Active Event Tracks</span>
-            <div className={`p-2 rounded-lg ${isLight ? "bg-amber-50 text-amber-600" : ""}`}>
-              <Award className="w-5 h-5 text-amber-500" />
+            <div className={`p-2 rounded-lg ${isLight ? "bg-amber-50 text-amber-600" : "bg-slate-800 text-amber-400"}`}>
+              <Award className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </div>
           </div>
-          <p className="text-3xl font-extrabold font-mono text-amber-600">{totalEvents}</p>
+          <p className="text-3xl font-extrabold font-mono text-amber-600 dark:text-amber-400">{totalEvents}</p>
         </Card>
       </div>
 
       {/* Search, Filter & Offline Spot Desk Toggle Button */}
-      <Card className={`p-4 flex flex-col lg:flex-row items-center justify-between gap-4 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-md" : ""}`}>
+      <Card className={`p-4 flex flex-col lg:flex-row items-center justify-between gap-4 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-xs" : ""}`}>
         <div className="w-full lg:w-96">
           <Input
             placeholder="Search by Code, Name, Email, College, Phone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            leftIcon={<Search className={`w-4 h-4 ${isLight ? "text-slate-500" : ""}`} />}
-            className={isLight ? "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-cyan-600 focus:ring-cyan-500/20 font-medium" : ""}
+            leftIcon={<Search className={`w-4 h-4 ${isLight ? "text-slate-400" : ""}`} />}
           />
         </div>
 
@@ -994,7 +987,6 @@ export function AdminDashboardClient({
                 { label: "Online (Web 1)", value: "online" },
                 { label: "Offline (Web 2)", value: "offline" },
               ]}
-              className={isLight ? "bg-white border-slate-300 text-slate-900 font-medium" : ""}
             />
           </div>
 
@@ -1006,16 +998,14 @@ export function AdminDashboardClient({
                 { label: "All Event Tracks", value: "ALL" },
                 ...events.map((e) => ({ label: e.title, value: e.id })),
               ]}
-              className={isLight ? "bg-white border-slate-300 text-slate-900 font-medium" : ""}
             />
           </div>
 
           <Button
-            variant="cyan"
+            variant="primary"
             size="sm"
             leftIcon={<PlusCircle className="w-4 h-4" />}
             onClick={() => setIsOfflineDeskView(true)}
-            className={isLight ? "bg-cyan-600 hover:bg-cyan-700 text-white font-bold shadow-md shadow-cyan-600/20 border-none" : ""}
           >
             Offline Spot Reg Desk
           </Button>
@@ -1025,7 +1015,6 @@ export function AdminDashboardClient({
             size="sm"
             leftIcon={<Download className="w-4 h-4" />}
             onClick={handleExportJSON}
-            className={isLight ? "bg-white border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold" : ""}
           >
             Export JSON
           </Button>
@@ -1033,10 +1022,10 @@ export function AdminDashboardClient({
       </Card>
 
       {/* Registered Passes Table */}
-      <div className={`rounded-2xl border overflow-hidden shadow-xl transition-all duration-200 ${isLight ? "bg-white border-slate-200" : "bg-slate-900/60 border-slate-800"}`}>
+      <div className={`rounded-2xl border overflow-hidden shadow-xs transition-all duration-200 ${isLight ? "bg-white border-slate-200" : "bg-slate-900/60 border-slate-800"}`}>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className={`border-b text-xs font-mono uppercase transition-colors duration-200 ${isLight ? "bg-slate-100/90 border-slate-200 text-slate-700 font-bold tracking-wider" : "bg-slate-900/90 border-slate-800 text-slate-400"}`}>
+            <thead className={`border-b text-xs font-mono uppercase transition-colors duration-200 ${isLight ? "bg-slate-50 border-slate-200 text-slate-700 font-bold tracking-wider" : "bg-slate-900/90 border-slate-800 text-slate-400"}`}>
               <tr>
                 <th className="py-3.5 px-4">Pass Code</th>
                 <th className="py-3.5 px-4">Type</th>
@@ -1058,24 +1047,18 @@ export function AdminDashboardClient({
                   const members = r.participants || [];
                   const isOffline = r.registrationType === "offline";
                   return (
-                    <tr key={r.id} className={`transition-colors ${isLight ? "hover:bg-slate-50/80 text-slate-900" : "hover:bg-slate-800/40 text-slate-100"}`}>
-                      <td className="py-3.5 px-4 font-bold text-cyan-700 font-mono">
+                    <tr key={r.id} className={`transition-colors ${isLight ? "hover:bg-slate-50 text-slate-900" : "hover:bg-slate-800/40 text-slate-100"}`}>
+                      <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-slate-100 font-mono">
                         {r.registrationCode}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span
-                          className={`px-2.5 py-1 rounded-full text-[10px] uppercase font-extrabold ${
-                            isOffline
-                              ? isLight ? "bg-amber-100 text-amber-800 border border-amber-300" : "bg-amber-500/15 text-amber-400 border border-amber-500/40"
-                              : isLight ? "bg-cyan-100 text-cyan-800 border border-cyan-300" : "bg-cyan-500/15 text-cyan-400 border border-cyan-500/40"
-                          }`}
-                        >
+                        <Badge variant={isOffline ? "warning" : "success"}>
                           {r.registrationType}
-                        </span>
+                        </Badge>
                       </td>
                       <td className="py-3.5 px-4 font-sans space-y-2">
                         {r.teamName && (
-                          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-mono font-bold mb-1 ${isLight ? "bg-cyan-50 border-cyan-200 text-cyan-800" : "bg-cyan-500/10 border-cyan-500/30 text-cyan-300"}`}>
+                          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-mono font-bold mb-1 ${isLight ? "bg-slate-100 border-slate-300 text-slate-800" : "bg-slate-800 border-slate-700 text-slate-200"}`}>
                             🚩 Team: {r.teamName}
                           </div>
                         )}
@@ -1086,42 +1069,36 @@ export function AdminDashboardClient({
                           members.map((p: any, idx: number) => (
                             <div
                               key={p.id || idx}
-                              className={`pl-3 py-1.5 my-1 border-l-4 rounded-r-xl shadow-xs ${
+                              className={`pl-3 py-2 my-1 border-l-4 rounded-r-xl shadow-2xs ${
                                 isOffline
-                                  ? (isLight ? "border-l-amber-500 bg-amber-50/80 text-slate-900 border border-slate-200/60" : "border-l-amber-400 bg-amber-500/5")
-                                  : (isLight ? "border-l-cyan-600 bg-cyan-50/80 text-slate-900 border border-slate-200/60" : "border-l-cyan-400 bg-cyan-500/5")
+                                  ? (isLight ? "border-l-amber-500 bg-amber-50/60 text-slate-900 border border-slate-200/80" : "border-l-amber-400 bg-amber-500/5")
+                                  : (isLight ? "border-l-blue-600 bg-blue-50/50 text-slate-900 border border-slate-200/80" : "border-l-blue-500 bg-blue-500/5")
                               }`}
                             >
                               <div className="flex items-center justify-between gap-2">
-                                <p className={`font-bold text-xs flex items-center gap-1.5 ${isLight ? "text-slate-900 font-extrabold" : "text-slate-100"}`}>
-                                  <span className={isLight ? "text-cyan-700 font-mono text-[10px] font-bold" : "text-cyan-400 font-mono text-[10px]"}>#{idx + 1}</span>
+                                <p className={`font-bold text-xs flex items-center gap-1.5 ${isLight ? "text-slate-900" : "text-slate-100"}`}>
+                                  <span className="text-slate-500 font-mono text-[10px] font-bold">#{idx + 1}</span>
                                   {p.fullName || "N/A"}
                                 </p>
-                                <span
-                                  className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
-                                    p.foodPreference === "Non-Veg"
-                                      ? isLight ? "bg-rose-100 text-rose-800 border border-rose-200" : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                                      : isLight ? "bg-emerald-100 text-emerald-800 border border-emerald-200" : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                                  }`}
-                                >
+                                <Badge variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm">
                                   {p.foodPreference || "Veg"}
-                                </span>
+                                </Badge>
                               </div>
-                              <p className={`text-[11px] font-mono truncate ${isLight ? "text-slate-700 font-medium" : "text-slate-300"}`}>{p.email}</p>
+                              <p className={`text-[11px] font-mono truncate ${isLight ? "text-slate-600 font-medium" : "text-slate-300"}`}>{p.email}</p>
                               <p className={`text-[10px] font-mono truncate ${isLight ? "text-slate-600 font-medium" : "text-slate-400"}`}>
-                                {p.college} • <span className={isLight ? "text-cyan-700 font-bold" : "text-cyan-400"}>{p.department || "ECE"}</span> • 📞 {p.phone}
+                                {p.college} • <span className="font-bold text-slate-800 dark:text-slate-200">{p.department || "ECE"}</span> • 📞 {p.phone}
                               </p>
                             </div>
                           ))
                         )}
                       </td>
                       <td className="py-3.5 px-4">
-                        <Badge variant={isLight ? "secondary" : "primary"}>
+                        <Badge variant="primary">
                           {r.technicalEvent?.title || "N/A"}
                         </Badge>
                       </td>
                       <td className="py-3.5 px-4">
-                        <Badge variant="cyan">
+                        <Badge variant="neutral">
                           {r.nonTechnicalEvent?.title || "N/A"}
                         </Badge>
                       </td>
@@ -1130,7 +1107,6 @@ export function AdminDashboardClient({
                           size="sm"
                           variant="outline"
                           onClick={() => setSelectedRegistration(r)}
-                          className={isLight ? "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-800 font-bold shadow-xs" : ""}
                         >
                           {members.length} Member(s)
                         </Button>
@@ -1153,36 +1129,36 @@ export function AdminDashboardClient({
           description={`Registered on ${new Date(selectedRegistration.createdAt).toLocaleDateString()}`}
         >
           <div className="space-y-4 py-2">
-            <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-xs space-y-1.5">
+            <div className={`p-3.5 rounded-xl border text-xs space-y-1.5 ${isLight ? "bg-slate-50 border-slate-200 text-slate-900" : "bg-slate-900/80 border-slate-800 text-slate-100"}`}>
               <p>
-                <span className="text-slate-400">Technical Event:</span>{" "}
-                <strong className="text-cyan-400">
+                <span className={isLight ? "text-slate-600 font-medium" : "text-slate-400"}>Technical Event:</span>{" "}
+                <strong className={isLight ? "text-slate-900 font-bold" : "text-cyan-400"}>
                   {selectedRegistration.technicalEvent?.title}
                 </strong>
               </p>
               <p>
-                <span className="text-slate-400">Non-Technical Event:</span>{" "}
-                <strong className="text-cyan-300">
+                <span className={isLight ? "text-slate-600 font-medium" : "text-slate-400"}>Non-Technical Event:</span>{" "}
+                <strong className={isLight ? "text-slate-900 font-bold" : "text-cyan-300"}>
                   {selectedRegistration.nonTechnicalEvent?.title}
                 </strong>
               </p>
               <p>
-                <span className="text-slate-400">Registration Type:</span>{" "}
-                <span className="text-amber-400 font-bold uppercase">
+                <span className={isLight ? "text-slate-600 font-medium" : "text-slate-400"}>Registration Type:</span>{" "}
+                <span className="text-amber-600 dark:text-amber-400 font-bold uppercase">
                   {selectedRegistration.registrationType}
                 </span>
               </p>
               {selectedRegistration.teamName && (
                 <p>
-                  <span className="text-slate-400">Team Name:</span>{" "}
-                  <strong className="text-white">{selectedRegistration.teamName}</strong>
+                  <span className={isLight ? "text-slate-600 font-medium" : "text-slate-400"}>Team Name:</span>{" "}
+                  <strong className={isLight ? "text-slate-900 font-bold" : "text-white"}>{selectedRegistration.teamName}</strong>
                 </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-xs font-mono font-bold text-slate-200 uppercase flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5 text-cyan-400" /> Participant Roster (
+              <h4 className={`text-xs font-mono font-bold uppercase flex items-center gap-1.5 ${isLight ? "text-slate-800" : "text-slate-200"}`}>
+                <Users className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" /> Participant Roster (
                 {selectedRegistration.participants?.length || 0})
               </h4>
 
@@ -1190,27 +1166,21 @@ export function AdminDashboardClient({
                 {selectedRegistration.participants?.map((p: any, idx: number) => (
                   <div
                     key={p.id || idx}
-                    className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs flex justify-between items-center"
+                    className={`p-3 rounded-xl border text-xs flex justify-between items-center ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-2xs" : "bg-slate-900/90 border-slate-800 text-slate-100"}`}
                   >
                     <div>
-                      <p className="text-white font-bold">
+                      <p className={`font-bold ${isLight ? "text-slate-900" : "text-white"}`}>
                         {p.fullName} {p.isTeamLeader ? "(Leader)" : ""}
                       </p>
-                      <p className="text-slate-400 font-mono">{p.email}</p>
-                      <p className="text-slate-400">
+                      <p className={`font-mono ${isLight ? "text-slate-600" : "text-slate-400"}`}>{p.email}</p>
+                      <p className={isLight ? "text-slate-600" : "text-slate-400"}>
                         {p.college} • {p.department || "ECE"} • {p.phone}
                       </p>
                     </div>
 
-                    <span
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-                        p.foodPreference === "Non-Veg"
-                          ? "bg-rose-500/10 text-rose-400 border border-rose-500/30"
-                          : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                      }`}
-                    >
+                    <Badge variant={p.foodPreference === "Non-Veg" ? "danger" : "success"}>
                       {p.foodPreference}
-                    </span>
+                    </Badge>
                   </div>
                 ))}
               </div>

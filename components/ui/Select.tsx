@@ -73,7 +73,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="block text-xs font-mono font-medium text-slate-400 tracking-wider uppercase"
+            className="block text-xs font-mono font-semibold text-slate-700 dark:text-slate-300 tracking-wider uppercase"
           >
             {label}
           </label>
@@ -106,9 +106,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           disabled={disabled}
           onClick={() => setIsOpen((prev) => !prev)}
           className={cn(
-            "w-full flex items-center justify-between rounded-xl bg-slate-900/80 border border-slate-700/80 px-3.5 py-2.5 text-sm text-slate-100 transition-all duration-200 hover:border-slate-600 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 disabled:opacity-50 text-left",
-            isOpen && "border-cyan-400 ring-2 ring-cyan-400/20 bg-slate-900",
-            error && "border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20",
+            "w-full flex items-center justify-between rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-100 transition-colors duration-150 hover:border-slate-400 dark:hover:border-slate-600 focus:outline-none focus:border-slate-500 dark:focus:border-slate-400 focus:ring-2 focus:ring-slate-400/20 disabled:opacity-50 text-left font-medium cursor-pointer shadow-xs",
+            isOpen && "border-slate-500 ring-2 ring-slate-400/20",
+            error && "border-rose-500 focus:border-rose-500 focus:ring-rose-500/20",
             className
           )}
         >
@@ -117,8 +117,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           </span>
           <ChevronDown
             className={cn(
-              "w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200",
-              isOpen && "rotate-180 text-cyan-400"
+              "w-4 h-4 text-slate-400 shrink-0 transition-transform duration-150",
+              isOpen && "rotate-180 text-slate-700 dark:text-slate-200"
             )}
           />
         </button>
@@ -127,33 +127,27 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {isOpen && (
           <div
             className={cn(
-              "absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0E1526]/95 backdrop-blur-xl border border-slate-700/80 shadow-2xl shadow-black/90 rounded-xl overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150",
-              className?.includes("bg-white") && "bg-white/95 border-slate-200 shadow-xl shadow-slate-400/20 text-slate-900"
+              "absolute left-0 right-0 top-full mt-1.5 z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl rounded-xl overflow-hidden animate-in fade-in-50 duration-100"
             )}
           >
             <div className="max-h-60 overflow-y-auto p-1.5 space-y-0.5 scrollbar-thin">
               {options.map((opt) => {
                 const isSelected = opt.value === selectedVal;
-                const isLightSelect = className?.includes("bg-white");
                 return (
                   <button
                     key={opt.value}
                     type="button"
                     onClick={() => handleSelectOption(opt.value)}
                     className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 text-xs rounded-lg transition-colors duration-150 text-left font-medium",
+                      "w-full flex items-center justify-between px-3 py-2 text-xs rounded-lg transition-colors duration-150 text-left font-medium cursor-pointer",
                       isSelected
-                        ? isLightSelect
-                          ? "bg-cyan-50 text-cyan-800 border border-cyan-200 font-bold"
-                          : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shadow-sm"
-                        : isLightSelect
-                        ? "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                        : "text-slate-300 hover:bg-slate-800/80 hover:text-slate-100"
+                        ? "bg-slate-100 text-slate-900 border border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 font-bold"
+                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white"
                     )}
                   >
                     <span className="truncate pr-2">{opt.label}</span>
                     {isSelected && (
-                      <Check className={cn("w-3.5 h-3.5 shrink-0", isLightSelect ? "text-cyan-600" : "text-cyan-400")} />
+                      <Check className="w-3.5 h-3.5 shrink-0 text-slate-900 dark:text-slate-100" />
                     )}
                   </button>
                 );
@@ -162,7 +156,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           </div>
         )}
 
-        {error && <p className="text-xs text-rose-400 font-mono mt-1">{error}</p>}
+        {error && <p className="text-xs text-rose-500 font-mono mt-1">{error}</p>}
       </div>
     );
   }
