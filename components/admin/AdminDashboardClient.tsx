@@ -108,6 +108,39 @@ function formatDateSafe(dateStr?: string, includeTime = true) {
   }
 }
 
+function HighlightText({ text, query, isLight }: { text?: string; query?: string; isLight: boolean }) {
+  if (!text) return null;
+  if (!query || !query.trim()) {
+    return <>{text}</>;
+  }
+
+  const trimmedQuery = query.trim();
+  const escapedQuery = trimmedQuery.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`(${escapedQuery})`, "gi");
+  const parts = text.split(regex);
+
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === trimmedQuery.toLowerCase() ? (
+          <mark
+            key={i}
+            className={`px-1 py-0.2 rounded font-extrabold transition-colors ${
+              isLight
+                ? "bg-amber-300 text-slate-950 shadow-2xs"
+                : "bg-cyan-500/40 text-cyan-100 border border-cyan-400/60 shadow-xs"
+            }`}
+          >
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
+}
+
 export function AdminDashboardClient({
   initialRegistrations,
   events,
@@ -612,6 +645,18 @@ export function AdminDashboardClient({
     const matchesType = selectedType === "ALL" || r.registrationType === selectedType;
 
     return matchesSearch && matchesEvent && matchesType;
+  });
+
+  const filteredMessages = messagesList.filter((m) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      m.name?.toLowerCase().includes(term) ||
+      m.email?.toLowerCase().includes(term) ||
+      m.phone?.includes(term) ||
+      m.subject?.toLowerCase().includes(term) ||
+      m.message?.toLowerCase().includes(term)
+    );
   });
 
   const handleExportJSON = () => {
@@ -1273,13 +1318,13 @@ export function AdminDashboardClient({
             </div>
           </div>
 
-          {messagesList.length === 0 ? (
+          {filteredMessages.length === 0 ? (
             <Card className={`p-12 text-center font-mono text-sm transition-all duration-200 ${isLight ? "bg-white border-slate-200 text-slate-600 shadow-xs" : "bg-slate-900/80 border-slate-800 text-slate-400"}`}>
-              No student inquiry notifications logged yet.
+              No student inquiry notifications found matching your search.
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {messagesList.map((msg) => {
+              {filteredMessages.map((msg) => {
                 const isUnread = msg.status === "UNREAD";
                 const matchedParts = msg.participantDetails || [];
 
@@ -1316,10 +1361,10 @@ export function AdminDashboardClient({
 
                           <div className="min-w-0">
                             <h3 className="font-bold text-sm font-mono text-slate-900 dark:text-white truncate">
-                              {msg.name}
+                              <HighlightText text={msg.name} query={searchTerm} isLight={isLight} />
                             </h3>
                             <p className="text-[11px] font-mono text-slate-500 truncate">
-                              ✉️ {msg.email}
+                              ✉️ <HighlightText text={msg.email} query={searchTerm} isLight={isLight} />
                             </p>
                           </div>
                         </div>
@@ -1349,17 +1394,17 @@ export function AdminDashboardClient({
                           </span>
                         )}
                         <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400">
-                          📞 {msg.phone || "N/A"}
+                          📞 <HighlightText text={msg.phone} query={searchTerm} isLight={isLight} />
                         </span>
                       </div>
 
                       {/* Subject & Message Preview */}
                       <div className="space-y-1">
                         <p className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200 truncate">
-                          Subj: {msg.subject}
+                          Subj: <HighlightText text={msg.subject} query={searchTerm} isLight={isLight} />
                         </p>
                         <p className="text-xs font-sans text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                          "{msg.message}"
+                          "<HighlightText text={msg.message} query={searchTerm} isLight={isLight} />"
                         </p>
                       </div>
                     </div>
@@ -1608,7 +1653,7 @@ export function AdminDashboardClient({
                       {/* Pass Code (Single Line Code + Date below) */}
                       <td className="py-3.5 px-2.5 align-top whitespace-nowrap">
                         <span className="font-mono font-extrabold text-sm text-slate-900 dark:text-slate-100 block">
-                          {r.registrationCode}
+                          <HighlightText text={r.registrationCode} query={searchTerm} isLight={isLight} />
                         </span>
                         <span className="text-[10px] font-mono text-slate-500 block mt-0.5" suppressHydrationWarning>
                           {formatDateSafe(r.createdAt)}
@@ -1627,7 +1672,7 @@ export function AdminDashboardClient({
                         {r.teamName && (
                           <div className="h-7 mb-1.5 flex items-center">
                             <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[10px] font-mono font-bold shadow-xs ${isLight ? "bg-blue-50 border-blue-200 text-blue-800" : "bg-blue-950/60 border-blue-800 text-blue-200"}`}>
-                              🚩 {r.teamName} ({members.length})
+                              🚩 <HighlightText text={r.teamName} query={searchTerm} isLight={isLight} /> ({members.length})
                             </div>
                           </div>
                         )}
@@ -1657,10 +1702,10 @@ export function AdminDashboardClient({
                                   >
                                     #{idx + 1} {idx === 0 ? "Leader" : "Member"}
                                   </span>
-                                  <span>{p.fullName}</span>
+                                  <span><HighlightText text={p.fullName} query={searchTerm} isLight={isLight} /></span>
                                 </p>
                                 <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 break-all leading-tight mt-0.5" title={p.email}>
-                                  {p.email}
+                                  <HighlightText text={p.email} query={searchTerm} isLight={isLight} />
                                 </p>
                               </div>
                             ))}
@@ -1681,7 +1726,7 @@ export function AdminDashboardClient({
                             {members.map((p: any, idx: number) => (
                               <div
                                 key={idx}
-                                className={`h-[50px] flex flex-col justify-center px-2.5 rounded-lg border ${
+                                className={`py-1.5 px-2.5 rounded-lg border ${
                                   members.length > 1
                                     ? isLight
                                       ? "bg-slate-50/80 border-slate-200/90 shadow-2xs"
@@ -1689,11 +1734,11 @@ export function AdminDashboardClient({
                                     : "border-transparent"
                                 }`}
                               >
-                                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[160px]" title={p.college}>
-                                  {p.college || "N/A"}
+                                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 break-all" title={p.college}>
+                                  <HighlightText text={p.college || "N/A"} query={searchTerm} isLight={isLight} />
                                 </p>
-                                <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400 mt-0.5">
-                                  Dept: {p.department || "ECE"}
+                                <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400 mt-0.5 block">
+                                  Dept: <HighlightText text={p.department || "ECE"} query={searchTerm} isLight={isLight} />
                                 </span>
                               </div>
                             ))}
@@ -1714,7 +1759,7 @@ export function AdminDashboardClient({
                             {members.map((p: any, idx: number) => (
                               <div
                                 key={idx}
-                                className={`h-[50px] flex items-center px-2.5 rounded-lg border font-semibold text-xs whitespace-nowrap ${
+                                className={`py-1.5 px-2.5 rounded-lg border font-semibold text-xs whitespace-nowrap ${
                                   members.length > 1
                                     ? isLight
                                       ? "bg-slate-50/80 border-slate-200/90 shadow-2xs"
@@ -1722,7 +1767,7 @@ export function AdminDashboardClient({
                                     : "border-transparent"
                                 }`}
                               >
-                                📞 {p.phone || "N/A"}
+                                📞 <HighlightText text={p.phone || "N/A"} query={searchTerm} isLight={isLight} />
                               </div>
                             ))}
                           </div>
