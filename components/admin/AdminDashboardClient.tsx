@@ -206,15 +206,29 @@ export function AdminDashboardClient({
     }
   };
 
-  const handleDeleteMessage = async (id: string) => {
-    setMessagesList((prev) => prev.filter((m) => m.id !== id));
+  const [deletingMessageTarget, setDeletingMessageTarget] = useState<any | null>(null);
+  const [submittingDeleteMessage, setSubmittingDeleteMessage] = useState<boolean>(false);
+
+  const confirmDeleteMessage = async () => {
+    if (!deletingMessageTarget) return;
+    setSubmittingDeleteMessage(true);
+    const targetId = deletingMessageTarget.id;
+    setMessagesList((prev) => prev.filter((m) => m.id !== targetId));
     try {
-      const res = await fetch(`/api/contact?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/contact?id=${targetId}`, { method: "DELETE" });
       if (res.ok) {
-        showToast("Deleted", "Notification message removed", "success");
+        showToast("Message Deleted", "Notification message permanently removed", "success");
+        setDeletingMessageTarget(null);
+        if (selectedMessageDetail?.id === targetId) {
+          setSelectedMessageDetail(null);
+        }
+      } else {
+        showToast("Error", "Failed to delete notification message", "error");
       }
     } catch (err) {
-      showToast("Error", "Failed to delete notification", "error");
+      showToast("Error", "Failed to delete notification message", "error");
+    } finally {
+      setSubmittingDeleteMessage(false);
     }
   };
 
@@ -1190,7 +1204,7 @@ export function AdminDashboardClient({
           </div>
 
           {messagesList.length === 0 ? (
-            <Card className="p-12 text-center text-slate-500 font-mono text-sm">
+            <Card className={`p-12 text-center font-mono text-sm transition-all duration-200 ${isLight ? "bg-white border-slate-200 text-slate-600 shadow-xs" : "bg-slate-900/80 border-slate-800 text-slate-400"}`}>
               No student inquiry notifications logged yet.
             </Card>
           ) : (
@@ -2176,10 +2190,7 @@ export function AdminDashboardClient({
                 variant="danger"
                 size="sm"
                 leftIcon={<Trash2 className="w-4 h-4" />}
-                onClick={() => {
-                  handleDeleteMessage(selectedMessageDetail.id);
-                  setSelectedMessageDetail(null);
-                }}
+                onClick={() => setDeletingMessageTarget(selectedMessageDetail)}
               >
                 Delete Notification
               </Button>
@@ -2206,6 +2217,54 @@ export function AdminDashboardClient({
                   Close
                 </Button>
               </div>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* DELETE MESSAGE CONFIRMATION MODAL */}
+      {deletingMessageTarget && (
+        <Modal
+          isOpen={!!deletingMessageTarget}
+          onClose={() => setDeletingMessageTarget(null)}
+          maxWidth="md"
+        >
+          <div className="text-center py-3 space-y-4">
+            <div className="w-14 h-14 rounded-2xl bg-rose-100 dark:bg-rose-950/80 border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto shadow-sm">
+              <Trash2 className="w-7 h-7" />
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">
+                Delete Notification Message?
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
+                Are you sure you want to permanently delete notification message from{" "}
+                <strong className="text-slate-900 dark:text-slate-100 font-mono font-extrabold underline decoration-rose-500">
+                  {deletingMessageTarget.name}
+                </strong>{" "}
+                ({deletingMessageTarget.email})? This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setDeletingMessageTarget(null)}
+                disabled={submittingDeleteMessage}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                type="button"
+                variant="danger"
+                isLoading={submittingDeleteMessage}
+                onClick={confirmDeleteMessage}
+              >
+                Yes, Permanently Delete
+              </Button>
             </div>
           </div>
         </Modal>
