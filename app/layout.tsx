@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ToastProvider } from "@/components/ui/Toast";
 import { RegistrationModalProvider } from "@/components/registration/RegistrationModalContext";
 import { prisma } from "@/lib/database/prisma";
+import { DEFAULT_EVENTS } from "@/lib/constants/defaults";
 
 export const metadata: Metadata = {
   title: "SPARKTRON 2K26 | ECE Technical Symposium",
@@ -43,11 +44,13 @@ export default async function RootLayout({
     events = [];
   }
 
+  const finalEvents = events && events.length > 0 ? events : DEFAULT_EVENTS;
+
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen flex flex-col bg-background text-foreground circuit-bg selection:bg-primary selection:text-background">
         <ToastProvider>
-          <RegistrationModalProvider events={events as any}>
+          <RegistrationModalProvider events={finalEvents as any}>
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />

@@ -1,37 +1,13 @@
 import React from "react";
-import {
-  Cpu,
-  Zap,
-  Award,
-  Calendar,
-  MapPin,
-  Trophy,
-  ArrowRight,
-  ShieldCheck,
-  Users,
-  Sparkles,
-  Layers,
-  CheckCircle2,
-  Clock,
-  Target,
-  Compass,
-  BookOpen,
-  HelpCircle,
-  FileText,
-  Phone,
-  Mail,
-  Building2,
-  Shield,
-  UserCheck,
-  ExternalLink,
-} from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Card, CardTitle, CardDescription } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { CountdownTimer } from "@/components/ui/CountdownTimer";
 import { HomePageClient } from "@/components/home/HomePageClient";
 import { prisma } from "@/lib/database/prisma";
+import {
+  DEFAULT_EVENTS,
+  DEFAULT_FACULTY_COORDINATORS,
+  DEFAULT_STUDENT_COORDINATORS,
+  DEFAULT_SPONSORS,
+  DEFAULT_ANNOUNCEMENTS,
+} from "@/lib/constants/defaults";
 
 export const revalidate = 60;
 
@@ -51,12 +27,20 @@ export default async function HomePage() {
         },
       },
     });
-  } catch (err) { console.warn("page: prisma events failed", err); }
+  } catch (err) {
+    console.warn("page: prisma events failed", err);
+  }
 
   try { sponsors = await prisma.sponsor.findMany(); } catch (err) { console.warn("page: prisma sponsors failed", err); }
   try { facultyCoordinators = await prisma.coordinator.findMany({ where: { role: "FACULTY" } }); } catch (err) { console.warn("page: prisma faculty failed", err); }
   try { studentCoordinators = await prisma.coordinator.findMany({ where: { role: "STUDENT" } }); } catch (err) { console.warn("page: prisma students failed", err); }
   try { announcements = await prisma.announcement.findMany({ orderBy: { date: "desc" } }); } catch (err) { console.warn("page: prisma announcements failed", err); }
+
+  const finalEvents = events && events.length > 0 ? events : DEFAULT_EVENTS;
+  const finalSponsors = sponsors && sponsors.length > 0 ? sponsors : DEFAULT_SPONSORS;
+  const finalFaculty = facultyCoordinators && facultyCoordinators.length > 0 ? facultyCoordinators : DEFAULT_FACULTY_COORDINATORS;
+  const finalStudents = studentCoordinators && studentCoordinators.length > 0 ? studentCoordinators : DEFAULT_STUDENT_COORDINATORS;
+  const finalAnnouncements = announcements && announcements.length > 0 ? announcements : DEFAULT_ANNOUNCEMENTS;
 
   const symposiumDate = process.env.NEXT_PUBLIC_SYMPOSIUM_DATE || "September 16, 2026";
   const collegeName = process.env.NEXT_PUBLIC_COLLEGE_NAME || "St. Joseph's Institute of Technology";
@@ -93,11 +77,11 @@ export default async function HomePage() {
 
   return (
     <HomePageClient
-      events={events as any}
-      sponsors={sponsors as any}
-      facultyCoordinators={facultyCoordinators as any}
-      studentCoordinators={studentCoordinators as any}
-      announcements={announcements as any}
+      events={finalEvents as any}
+      sponsors={finalSponsors as any}
+      facultyCoordinators={finalFaculty as any}
+      studentCoordinators={finalStudents as any}
+      announcements={finalAnnouncements as any}
       schedule={schedule}
       faqs={faqs}
       symposiumDate={symposiumDate}
@@ -106,3 +90,4 @@ export default async function HomePage() {
     />
   );
 }
+
