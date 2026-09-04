@@ -186,8 +186,6 @@ export function AdminDashboardClient({
 
   useEffect(() => {
     fetchContactMessages();
-    const interval = setInterval(fetchContactMessages, 25000);
-    return () => clearInterval(interval);
   }, [fetchContactMessages]);
 
   const unreadMessagesCount = messagesList.filter((m) => m.status === "UNREAD").length;
@@ -434,17 +432,11 @@ export function AdminDashboardClient({
     }
   }, [showToast]);
 
-  // ─── Auto-refresh: Polling every 3s + Supabase real-time ────────────
+  // ─── Event-driven Realtime Updates (No periodic polling interval) ──
   useEffect(() => {
-    // Immediate first fetch
+    // Initial fetch on mount
     refreshRegistrations(true, false);
     fetchContactMessages();
-
-    // ⏱ Fast Polling every 3 seconds for registrations and contact messages
-    const interval = setInterval(() => {
-      refreshRegistrations(true, true);
-      fetchContactMessages();
-    }, 3000);
 
     // 🔴 Supabase Real-time subscription for Registrations
     const regChannel = supabase
@@ -480,7 +472,6 @@ export function AdminDashboardClient({
       .subscribe();
 
     return () => {
-      clearInterval(interval);
       supabase.removeChannel(regChannel);
       supabase.removeChannel(msgChannel);
     };
@@ -1111,8 +1102,10 @@ export function AdminDashboardClient({
               type="button"
               variant="ghost"
               size="sm"
-              leftIcon={<RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />}
-              onClick={() => refreshRegistrations(false)}
+              leftIcon={<RefreshCw className={`w-4 h-4 ${isRefreshing || loadingMessages ? "animate-spin" : ""}`} />}
+              onClick={async () => {
+                await Promise.all([refreshRegistrations(false), fetchContactMessages()]);
+              }}
             >
               Refresh
             </Button>
@@ -1186,9 +1179,6 @@ export function AdminDashboardClient({
               <span className={`text-xs font-mono px-3 py-1.5 rounded-lg border font-bold ${isLight ? "bg-amber-50 text-amber-800 border-amber-200" : "bg-amber-950/60 text-amber-300 border-amber-800"}`}>
                 Unread: {unreadMessagesCount}
               </span>
-              <Button variant="outline" size="sm" onClick={fetchContactMessages} isLoading={loadingMessages}>
-                Refresh Messages
-              </Button>
             </div>
           </div>
 
