@@ -339,7 +339,7 @@ export function RegistrationModal({
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Input
                       label="Mobile Phone *"
                       placeholder="9876543210"
@@ -352,6 +352,28 @@ export function RegistrationModal({
                       {...register(`participants.${index}.college` as const)}
                       error={errors.participants?.[index]?.college?.message}
                     />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Select
+                      label="Department *"
+                      options={[
+                        { label: "ECE - Electronics & Communication", value: "ECE" },
+                        { label: "EEE - Electrical & Electronics", value: "EEE" },
+                        { label: "EIE - Electronics & Instrumentation", value: "EIE" },
+                        { label: "CSE - Computer Science & Engineering", value: "CSE" },
+                        { label: "IT - Information Technology", value: "IT" },
+                        { label: "AI & DS - Artificial Intelligence & Data Science", value: "AIDS" },
+                        { label: "AI & ML - Artificial Intelligence & Machine Learning", value: "AIML" },
+                        { label: "Mechanical Engineering", value: "Mechanical" },
+                        { label: "Civil Engineering", value: "Civil" },
+                        { label: "Mechatronics", value: "Mechatronics" },
+                        { label: "Other / Diploma", value: "Other" },
+                      ]}
+                      {...register(`participants.${index}.department` as const)}
+                      error={errors.participants?.[index]?.department?.message}
+                    />
+
                     <Select
                       label="Food Preference *"
                       options={[
@@ -364,6 +386,71 @@ export function RegistrationModal({
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* SECTION 3: UPI PAYMENT & VERIFICATION (GPay / PhonePe / BHIM) */}
+          <div className="space-y-4 pt-2 border-t border-slate-800">
+            <div className="flex items-center gap-2">
+              <span className="p-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <ShieldCheck className="w-3.5 h-3.5" />
+              </span>
+              <h4 className="text-xs font-semibold text-slate-200 uppercase tracking-wider">
+                Section 3: UPI Payment (Optional / Pay Spot at Desk)
+              </h4>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-4">
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                {/* SVG UPI QR CODE PREVIEW */}
+                <div className="w-32 h-32 rounded-xl bg-white p-2 flex flex-col items-center justify-center border-2 border-cyan-500 shrink-0 shadow-md">
+                  <svg viewBox="0 0 100 100" className="w-full h-full text-slate-900 fill-current">
+                    <rect x="0" y="0" width="30" height="30" fill="#000" />
+                    <rect x="5" y="5" width="20" height="20" fill="#fff" />
+                    <rect x="10" y="10" width="10" height="10" fill="#000" />
+                    <rect x="70" y="0" width="30" height="30" fill="#000" />
+                    <rect x="75" y="5" width="20" height="20" fill="#fff" />
+                    <rect x="80" y="10" width="10" height="10" fill="#000" />
+                    <rect x="0" y="70" width="30" height="30" fill="#000" />
+                    <rect x="5" y="75" width="20" height="20" fill="#fff" />
+                    <rect x="10" y="80" width="10" height="10" fill="#000" />
+                    <rect x="40" y="40" width="20" height="20" fill="#000" />
+                    <rect x="35" y="10" width="10" height="25" fill="#000" />
+                    <rect x="70" y="45" width="25" height="10" fill="#000" />
+                    <rect x="45" y="70" width="25" height="25" fill="#000" />
+                  </svg>
+                  <span className="text-[9px] font-mono font-bold text-slate-900 mt-1">UPI: sparktron@upi</span>
+                </div>
+
+                <div className="space-y-1.5 text-xs">
+                  <p className="font-bold text-slate-100 flex items-center gap-1.5">
+                    Scan & Pay ₹200 (Pass Fee) via GPay / PhonePe / Paytm / BHIM
+                  </p>
+                  <p className="text-slate-400">
+                    UPI ID: <strong className="text-cyan-400 font-mono">sparktron2k26@upi</strong>
+                  </p>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    If paying online now, upload the payment screenshot and enter the 12-digit UTR / Transaction ID below. Or select <span className="text-amber-400 font-bold">Pay Cash Offline at Desk</span>.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <Input
+                  label="12-Digit UTR / Transaction ID (Optional)"
+                  placeholder="e.g. 425676898712"
+                  {...register("transactionId")}
+                />
+
+                <Select
+                  label="Payment Option *"
+                  options={[
+                    { label: "Pay Online via UPI (GPay/PhonePe)", value: "PAID" },
+                    { label: "Pay Cash Offline at Spot Desk", value: "UNPAID" },
+                  ]}
+                  {...register("paymentStatus")}
+                />
+              </div>
             </div>
           </div>
 

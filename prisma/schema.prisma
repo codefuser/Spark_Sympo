@@ -52,6 +52,9 @@ model Registration {
   nonTechnicalEvent   Event         @relation("NonTechnicalEvent", fields: [nonTechnicalEventId], references: [id])
   teamName            String?
   status              String        @default("CONFIRMED")
+  paymentStatus       String        @default("UNPAID")
+  transactionId       String?
+  paymentProofUrl     String?
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
   participants        Participant[]
@@ -65,6 +68,7 @@ model Participant {
   email          String
   phone          String
   college        String
+  department     String?
   foodPreference String       @default("Veg") // Veg, Non-Veg
   isTeamLeader   Boolean      @default(false)
   createdAt      DateTime     @default(now())

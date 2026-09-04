@@ -148,6 +148,87 @@ export function AdminDashboardClient({
 
   const isLight = theme === "light";
 
+  // Edit & Delete Pass States
+  const [editingRegistration, setEditingRegistration] = useState<any | null>(null);
+  const [submittingEdit, setSubmittingEdit] = useState<boolean>(false);
+  const [deletingRegId, setDeletingRegId] = useState<string | null>(null);
+  const [submittingDelete, setSubmittingDelete] = useState<boolean>(false);
+  const [updatingPaymentId, setUpdatingPaymentId] = useState<string | null>(null);
+
+  const handleUpdateRegistration = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingRegistration) return;
+    setSubmittingEdit(true);
+    try {
+      const res = await fetch(`/api/admin/registrations/${editingRegistration.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editingRegistration),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast("Pass Updated", "Registration details saved successfully", "success");
+        setEditingRegistration(null);
+        setSelectedRegistration(null);
+        refreshRegistrations(true);
+      } else {
+        showToast("Update Failed", data.message || "Could not update registration", "error");
+      }
+    } catch (err: any) {
+      showToast("Error", err.message || "Failed to update registration pass", "error");
+    } finally {
+      setSubmittingEdit(false);
+    }
+  };
+
+  const handleDeleteRegistration = async (regId: string) => {
+    if (!confirm("Are you sure you want to delete this registration pass? This action cannot be undone.")) return;
+    setSubmittingDelete(true);
+    try {
+      const res = await fetch(`/api/admin/registrations/${regId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast("Pass Deleted", "Registration pass has been permanently removed", "success");
+        setSelectedRegistration(null);
+        setDeletingRegId(null);
+        refreshRegistrations(true);
+      } else {
+        showToast("Delete Failed", data.message || "Could not delete registration", "error");
+      }
+    } catch (err: any) {
+      showToast("Error", err.message || "Failed to delete pass", "error");
+    } finally {
+      setSubmittingDelete(false);
+    }
+  };
+
+  const handleMarkAsPaid = async (regId: string) => {
+    setUpdatingPaymentId(regId);
+    try {
+      const res = await fetch(`/api/admin/registrations/${regId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentStatus: "PAID" }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast("Payment Updated", "Pass marked as PAID (Cash Received)", "success");
+        if (selectedRegistration) {
+          setSelectedRegistration({ ...selectedRegistration, paymentStatus: "PAID" });
+        }
+        refreshRegistrations(true);
+      } else {
+        showToast("Error", data.message || "Failed to update payment status", "error");
+      }
+    } catch (err: any) {
+      showToast("Error", "Failed to update payment status", "error");
+    } finally {
+      setUpdatingPaymentId(null);
+    }
+  };
+
   const handleMouseDownResize = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsResizing(true);
@@ -1038,18 +1119,18 @@ export function AdminDashboardClient({
       {/* Registered Passes Table */}
       <div className={`rounded-2xl border overflow-hidden shadow-xs transition-all duration-200 ${isLight ? "bg-white border-slate-300" : "bg-slate-900/60 border-slate-800"}`}>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left text-sm border-collapse">
             <thead className={`border-b-2 text-xs font-mono uppercase tracking-wider transition-colors duration-200 ${isLight ? "bg-slate-100 border-slate-300 text-slate-800 font-extrabold" : "bg-slate-900 border-slate-800 text-slate-300"}`}>
               <tr>
-                <th className="py-3 px-3 text-center w-12">#</th>
-                <th className="py-3 px-4 w-36">Pass Code</th>
-                <th className="py-3 px-3 w-24">Type</th>
-                <th className="py-3 px-4 min-w-[220px]">Student / Team Roster</th>
-                <th className="py-3 px-4 min-w-[200px]">College & Dept</th>
-                <th className="py-3 px-3 w-32">Phone</th>
-                <th className="py-3 px-4 min-w-[200px]">Registered Events</th>
-                <th className="py-3 px-3 w-24 text-center">Food</th>
-                <th className="py-3 px-3 w-20 text-center">Action</th>
+                <th className="py-3 px-2 text-center w-10">#</th>
+                <th className="py-3 px-3 whitespace-nowrap min-w-[140px]">Pass Code</th>
+                <th className="py-3 px-2 w-20">Type</th>
+                <th className="py-3 px-3 min-w-[220px]">Student / Team Roster</th>
+                <th className="py-3 px-3 min-w-[180px]">College & Dept</th>
+                <th className="py-3 px-3 min-w-[140px]">Phone</th>
+                <th className="py-3 px-3 min-w-[180px]">Registered Events</th>
+                <th className="py-3 px-2 text-center w-24">Payment</th>
+                <th className="py-3 px-2 text-center w-20">Food</th>
               </tr>
             </thead>
             <tbody className={`font-sans text-xs ${isLight ? "text-slate-900" : "text-slate-100"}`}>
@@ -1063,27 +1144,26 @@ export function AdminDashboardClient({
                 filteredRegistrations.map((r, index) => {
                   const members = r.participants || [];
                   const isOffline = r.registrationType === "offline";
-                  const primaryMember = members[0] || {};
-                  const colleges = Array.from(new Set(members.map((p: any) => p.college).filter(Boolean))) as string[];
-                  const depts = Array.from(new Set(members.map((p: any) => p.department).filter(Boolean))) as string[];
-                  const phones = (members.map((p: any) => p.phone).filter(Boolean)) as string[];
+                  const payStatus = r.paymentStatus || (isOffline ? "PAID" : "UNPAID");
 
                   return (
                     <tr
                       key={r.id}
-                      className={`border-b transition-colors ${
+                      onClick={() => setSelectedRegistration(r)}
+                      title="Click row to inspect, edit, or delete registration pass"
+                      className={`border-b cursor-pointer transition-colors ${
                         isLight
-                          ? "border-slate-200 hover:bg-slate-50 text-slate-900 even:bg-slate-50/40"
-                          : "border-slate-800 hover:bg-slate-800/40 text-slate-100 even:bg-slate-900/30"
+                          ? "border-slate-200 hover:bg-blue-50/60 text-slate-900 even:bg-slate-50/40"
+                          : "border-slate-800/80 hover:bg-slate-800/60 text-slate-100 even:bg-slate-900/30"
                       }`}
                     >
                       {/* S.No */}
-                      <td className="py-3.5 px-3 text-center align-top font-mono font-semibold text-slate-500 text-xs">
+                      <td className="py-3.5 px-2 text-center align-top font-mono font-semibold text-slate-500 text-xs">
                         {index + 1}
                       </td>
 
-                      {/* Pass Code */}
-                      <td className="py-3.5 px-4 align-top">
+                      {/* Pass Code (Single Line Code + Date below) */}
+                      <td className="py-3.5 px-3 align-top whitespace-nowrap">
                         <span className="font-mono font-extrabold text-sm text-slate-900 dark:text-slate-100 block">
                           {r.registrationCode}
                         </span>
@@ -1093,14 +1173,14 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* Registration Type */}
-                      <td className="py-3.5 px-3 align-top">
+                      <td className="py-3.5 px-2 align-top">
                         <Badge variant={isOffline ? "warning" : "success"}>
                           {r.registrationType}
                         </Badge>
                       </td>
 
-                      {/* Student / Team Roster */}
-                      <td className="py-3.5 px-4 align-top space-y-1">
+                      {/* Student Roster (Name + Email below) */}
+                      <td className="py-3.5 px-3 align-top space-y-2">
                         {r.teamName && (
                           <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-mono font-bold mb-1 ${isLight ? "bg-slate-100 border-slate-300 text-slate-800" : "bg-slate-800 border-slate-700 text-slate-200"}`}>
                             🚩 {r.teamName} ({members.length})
@@ -1111,12 +1191,12 @@ export function AdminDashboardClient({
                           <span className="text-xs font-mono text-slate-400 italic">No members listed</span>
                         ) : (
                           members.map((p: any, idx: number) => (
-                            <div key={p.id || idx} className="space-y-0.5">
-                              <p className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                            <div key={p.id || idx} className="h-10 flex flex-col justify-center">
+                              <p className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-1">
                                 <span className="text-slate-500 font-mono text-[10px]">#{idx + 1}</span>
-                                {p.fullName}
+                                <span className="truncate max-w-[160px]">{p.fullName}</span>
                               </p>
-                              <p className="text-[11px] font-mono text-slate-600 dark:text-slate-400 truncate pl-4">
+                              <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate pl-3.5">
                                 {p.email}
                               </p>
                             </div>
@@ -1125,73 +1205,61 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* College & Dept */}
-                      <td className="py-3.5 px-4 align-top space-y-1">
-                        {colleges.length === 0 ? (
-                          <span className="text-xs text-slate-400 italic">N/A</span>
-                        ) : (
-                          colleges.map((c, i) => (
-                            <p key={i} className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[220px]" title={c}>
-                              {c}
+                      <td className="py-3.5 px-3 align-top space-y-1">
+                        {members.map((p: any, idx: number) => (
+                          <div key={idx} className="h-10 flex flex-col justify-center">
+                            <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title={p.college}>
+                              {p.college || "N/A"}
                             </p>
-                          ))
-                        )}
-                        {depts.length > 0 && (
-                          <div className="flex flex-wrap gap-1 pt-0.5">
-                            {depts.map((d, i) => (
-                              <span key={i} className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                                {d}
-                              </span>
-                            ))}
+                            <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400">
+                              Dept: {p.department || "ECE"}
+                            </span>
                           </div>
-                        )}
+                        ))}
                       </td>
 
-                      {/* Mobile Phone */}
+                      {/* Phone Number (Strict Line-by-Line Alignment with Roster) */}
                       <td className="py-3.5 px-3 align-top font-mono text-xs text-slate-700 dark:text-slate-300">
-                        {phones.length === 0 ? (
-                          <span className="text-slate-400 italic">N/A</span>
-                        ) : (
-                          phones.map((ph, i) => (
-                            <p key={i} className="font-semibold">{ph}</p>
-                          ))
-                        )}
+                        {members.map((p: any, idx: number) => (
+                          <div key={idx} className="h-10 flex items-center font-semibold text-xs">
+                            📞 {p.phone || "N/A"}
+                          </div>
+                        ))}
                       </td>
 
                       {/* Registered Events */}
-                      <td className="py-3.5 px-4 align-top space-y-1.5">
+                      <td className="py-3.5 px-3 align-top space-y-1.5">
                         {r.technicalEvent && (
-                          <Badge variant="primary" size="sm" className="block text-[11px] truncate max-w-[180px]">
-                            {r.technicalEvent.title}
+                          <Badge variant="primary" size="sm" className="block text-[11px] truncate max-w-[170px]">
+                            Tech: {r.technicalEvent.title}
                           </Badge>
                         )}
                         {r.nonTechnicalEvent && (
-                          <Badge variant="neutral" size="sm" className="block text-[11px] truncate max-w-[180px]">
-                            {r.nonTechnicalEvent.title}
+                          <Badge variant="neutral" size="sm" className="block text-[11px] truncate max-w-[170px]">
+                            Non-Tech: {r.nonTechnicalEvent.title}
                           </Badge>
                         )}
                       </td>
 
+                      {/* Payment Status */}
+                      <td className="py-3.5 px-2 align-top text-center">
+                        <Badge
+                          variant={payStatus === "PAID" ? "success" : payStatus === "PENDING" ? "warning" : "danger"}
+                          size="sm"
+                        >
+                          {payStatus === "PAID" ? "PAID 🟢" : payStatus === "PENDING" ? "PENDING ⏳" : "UNPAID 🔴"}
+                        </Badge>
+                      </td>
+
                       {/* Food */}
-                      <td className="py-3.5 px-3 align-top text-center">
+                      <td className="py-3.5 px-2 align-top text-center">
                         <div className="space-y-1">
                           {members.map((p: any, idx: number) => (
-                            <Badge key={idx} variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm" className="text-[10px]">
+                            <Badge key={idx} variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm" className="text-[10px] block">
                               {p.foodPreference || "Veg"}
                             </Badge>
                           ))}
                         </div>
-                      </td>
-
-                      {/* Action */}
-                      <td className="py-3.5 px-3 align-top text-center">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setSelectedRegistration(r)}
-                          className="text-xs px-2.5 py-1"
-                        >
-                          View
-                        </Button>
                       </td>
                     </tr>
                   );
@@ -1202,61 +1270,80 @@ export function AdminDashboardClient({
         </div>
       </div>
 
-      {/* Registration Details & Team Roster Modal */}
+      {/* Registration Details, Payment Verification & Management Modal */}
       {selectedRegistration && (
         <Modal
           isOpen={!!selectedRegistration}
           onClose={() => setSelectedRegistration(null)}
           title={`Registration Pass — ${selectedRegistration.registrationCode}`}
-          description={`Registered on ${formatDateSafe(selectedRegistration.createdAt)}`}
+          description={`Registered on ${formatDateSafe(selectedRegistration.createdAt)} • Status: ${selectedRegistration.status || "CONFIRMED"}`}
+          maxWidth="lg"
         >
           <div className="space-y-4 py-2">
-            <div className={`p-3.5 rounded-xl border text-xs space-y-1.5 ${isLight ? "bg-slate-50 border-slate-200 text-slate-900" : "bg-slate-900/80 border-slate-800 text-slate-100"}`}>
-              <p>
-                <span className={isLight ? "text-slate-600 font-medium" : "text-slate-400"}>Technical Event:</span>{" "}
-                <strong className={isLight ? "text-slate-900 font-bold" : "text-cyan-400"}>
-                  {selectedRegistration.technicalEvent?.title}
-                </strong>
-              </p>
-              <p>
-                <span className={isLight ? "text-slate-600 font-medium" : "text-slate-400"}>Non-Technical Event:</span>{" "}
-                <strong className={isLight ? "text-slate-900 font-bold" : "text-cyan-300"}>
-                  {selectedRegistration.nonTechnicalEvent?.title}
-                </strong>
-              </p>
-              <p>
-                <span className={isLight ? "text-slate-600 font-medium" : "text-slate-400"}>Registration Type:</span>{" "}
-                <span className="text-amber-600 dark:text-amber-400 font-bold uppercase">
-                  {selectedRegistration.registrationType}
-                </span>
-              </p>
-              {selectedRegistration.teamName && (
+            {/* Header info & Payment Summary */}
+            <div className={`p-4 rounded-xl border text-xs space-y-2 ${isLight ? "bg-slate-50 border-slate-200 text-slate-900" : "bg-slate-900/90 border-slate-800 text-slate-100"}`}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
                 <p>
-                  <span className={isLight ? "text-slate-600 font-medium" : "text-slate-400"}>Team Name:</span>{" "}
-                  <strong className={isLight ? "text-slate-900 font-bold" : "text-white"}>{selectedRegistration.teamName}</strong>
+                  <span className="text-slate-500 font-medium">Technical Track:</span>{" "}
+                  <strong className="text-blue-600 dark:text-cyan-400 font-bold">
+                    {selectedRegistration.technicalEvent?.title}
+                  </strong>
                 </p>
-              )}
+                <p>
+                  <span className="text-slate-500 font-medium">Non-Technical Track:</span>{" "}
+                  <strong className="text-slate-800 dark:text-slate-200 font-bold">
+                    {selectedRegistration.nonTechnicalEvent?.title}
+                  </strong>
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                <div>
+                  <span className="text-slate-500 font-medium">Payment Status:</span>{" "}
+                  <Badge variant={selectedRegistration.paymentStatus === "PAID" ? "success" : "danger"} className="ml-1 font-bold">
+                    {selectedRegistration.paymentStatus === "PAID" ? "PAID 🟢" : "UNPAID / PENDING 🔴"}
+                  </Badge>
+                  {selectedRegistration.transactionId && (
+                    <span className="ml-2 font-mono text-slate-600 dark:text-slate-300">
+                      UTR: <strong>{selectedRegistration.transactionId}</strong>
+                    </span>
+                  )}
+                </div>
+
+                {selectedRegistration.paymentStatus !== "PAID" && (
+                  <Button
+                    size="sm"
+                    variant="cyan"
+                    onClick={() => handleMarkAsPaid(selectedRegistration.id)}
+                    isLoading={updatingPaymentId === selectedRegistration.id}
+                  >
+                    Mark as Paid (Offline Cash)
+                  </Button>
+                )}
+              </div>
             </div>
 
+            {/* Participant Roster Details */}
             <div className="space-y-2">
               <h4 className={`text-xs font-mono font-bold uppercase flex items-center gap-1.5 ${isLight ? "text-slate-800" : "text-slate-200"}`}>
-                <Users className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" /> Participant Roster (
+                <Users className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" /> Participant Details (
                 {selectedRegistration.participants?.length || 0})
               </h4>
 
-              <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+              <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
                 {selectedRegistration.participants?.map((p: any, idx: number) => (
                   <div
                     key={p.id || idx}
-                    className={`p-3 rounded-xl border text-xs flex justify-between items-center ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-2xs" : "bg-slate-900/90 border-slate-800 text-slate-100"}`}
+                    className={`p-3.5 rounded-xl border text-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-2xs" : "bg-slate-900/90 border-slate-800 text-slate-100"}`}
                   >
-                    <div>
-                      <p className={`font-bold ${isLight ? "text-slate-900" : "text-white"}`}>
+                    <div className="space-y-0.5">
+                      <p className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <span className="text-slate-500 font-mono text-xs">#{idx + 1}</span>
                         {p.fullName} {p.isTeamLeader ? "(Leader)" : ""}
                       </p>
-                      <p className={`font-mono ${isLight ? "text-slate-600" : "text-slate-400"}`}>{p.email}</p>
-                      <p className={isLight ? "text-slate-600" : "text-slate-400"}>
-                        {p.college} • {p.department || "ECE"} • {p.phone}
+                      <p className="font-mono text-slate-600 dark:text-slate-400">{p.email} • 📞 {p.phone}</p>
+                      <p className="text-slate-600 dark:text-slate-400 font-medium">
+                        {p.college} • <strong className="text-slate-800 dark:text-slate-200">{p.department || "ECE"}</strong>
                       </p>
                     </div>
 
@@ -1268,14 +1355,204 @@ export function AdminDashboardClient({
               </div>
             </div>
 
-            <Button
-              variant="primary"
-              className="w-full mt-2"
-              onClick={() => setSelectedRegistration(null)}
-            >
-              Close
-            </Button>
+            {/* Admin Management Actions: Edit, Delete, Close */}
+            <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+              <Button
+                variant="danger"
+                size="sm"
+                leftIcon={<Trash2 className="w-4 h-4" />}
+                onClick={() => handleDeleteRegistration(selectedRegistration.id)}
+                isLoading={submittingDelete}
+              >
+                Delete Pass
+              </Button>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  leftIcon={<Copy className="w-4 h-4" />}
+                  onClick={() => {
+                    setEditingRegistration({
+                      id: selectedRegistration.id,
+                      technicalEventId: selectedRegistration.technicalEventId || events[0]?.id,
+                      nonTechnicalEventId: selectedRegistration.nonTechnicalEventId || events[0]?.id,
+                      teamName: selectedRegistration.teamName || "",
+                      registrationType: selectedRegistration.registrationType || "online",
+                      paymentStatus: selectedRegistration.paymentStatus || "UNPAID",
+                      transactionId: selectedRegistration.transactionId || "",
+                      participants: (selectedRegistration.participants || []).map((p: any) => ({
+                        fullName: p.fullName || "",
+                        email: p.email || "",
+                        phone: p.phone || "",
+                        college: p.college || "",
+                        department: p.department || "ECE",
+                        foodPreference: p.foodPreference || "Veg",
+                      })),
+                    });
+                  }}
+                >
+                  Edit Pass Details
+                </Button>
+
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => setSelectedRegistration(null)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
           </div>
+        </Modal>
+      )}
+
+      {/* EDIT PASS MODAL */}
+      {editingRegistration && (
+        <Modal
+          isOpen={!!editingRegistration}
+          onClose={() => setEditingRegistration(null)}
+          title="Edit Registration Pass Details"
+          description="Update participant information, college, department, event tracks, or payment status."
+          maxWidth="xl"
+        >
+          <form onSubmit={handleUpdateRegistration} className="space-y-4 py-2 max-h-[70vh] overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Select
+                label="Technical Event Track"
+                value={editingRegistration.technicalEventId}
+                onChange={(e) => setEditingRegistration({ ...editingRegistration, technicalEventId: e.target.value })}
+                options={technicalEvents.map((ev) => ({ label: ev.title, value: ev.id }))}
+              />
+
+              <Select
+                label="Non-Technical Event Track"
+                value={editingRegistration.nonTechnicalEventId}
+                onChange={(e) => setEditingRegistration({ ...editingRegistration, nonTechnicalEventId: e.target.value })}
+                options={nonTechnicalEvents.map((ev) => ({ label: ev.title, value: ev.id }))}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <Input
+                label="Team Name (Optional)"
+                value={editingRegistration.teamName}
+                onChange={(e) => setEditingRegistration({ ...editingRegistration, teamName: e.target.value })}
+              />
+
+              <Select
+                label="Registration Type"
+                value={editingRegistration.registrationType}
+                onChange={(e) => setEditingRegistration({ ...editingRegistration, registrationType: e.target.value })}
+                options={[
+                  { label: "Online", value: "online" },
+                  { label: "Offline", value: "offline" },
+                ]}
+              />
+
+              <Select
+                label="Payment Status"
+                value={editingRegistration.paymentStatus}
+                onChange={(e) => setEditingRegistration({ ...editingRegistration, paymentStatus: e.target.value })}
+                options={[
+                  { label: "PAID 🟢", value: "PAID" },
+                  { label: "PENDING ⏳", value: "PENDING" },
+                  { label: "UNPAID 🔴", value: "UNPAID" },
+                ]}
+              />
+            </div>
+
+            {/* Edit Participants List */}
+            <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-slate-800">
+              <h4 className="text-xs font-mono font-bold uppercase text-slate-700 dark:text-slate-300">
+                Participant Details ({editingRegistration.participants?.length || 0})
+              </h4>
+
+              {editingRegistration.participants?.map((p: any, idx: number) => (
+                <div key={idx} className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3 bg-slate-50 dark:bg-slate-900/80">
+                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                    Participant #{idx + 1}
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Input
+                      label="Full Name *"
+                      value={p.fullName}
+                      onChange={(e) => {
+                        const updated = [...editingRegistration.participants];
+                        updated[idx].fullName = e.target.value;
+                        setEditingRegistration({ ...editingRegistration, participants: updated });
+                      }}
+                      required
+                    />
+                    <Input
+                      label="Email Address *"
+                      type="email"
+                      value={p.email}
+                      onChange={(e) => {
+                        const updated = [...editingRegistration.participants];
+                        updated[idx].email = e.target.value;
+                        setEditingRegistration({ ...editingRegistration, participants: updated });
+                      }}
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <Input
+                      label="Mobile Phone *"
+                      value={p.phone}
+                      onChange={(e) => {
+                        const updated = [...editingRegistration.participants];
+                        updated[idx].phone = e.target.value;
+                        setEditingRegistration({ ...editingRegistration, participants: updated });
+                      }}
+                      required
+                    />
+                    <Input
+                      label="College / Institution *"
+                      value={p.college}
+                      onChange={(e) => {
+                        const updated = [...editingRegistration.participants];
+                        updated[idx].college = e.target.value;
+                        setEditingRegistration({ ...editingRegistration, participants: updated });
+                      }}
+                      required
+                    />
+                    <Select
+                      label="Department *"
+                      value={p.department}
+                      onChange={(e) => {
+                        const updated = [...editingRegistration.participants];
+                        updated[idx].department = e.target.value;
+                        setEditingRegistration({ ...editingRegistration, participants: updated });
+                      }}
+                      options={DEPARTMENTS}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditingRegistration(null)}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                type="submit"
+                variant="primary"
+                isLoading={submittingEdit}
+              >
+                Save Registration Changes
+              </Button>
+            </div>
+          </form>
         </Modal>
       )}
     </div>

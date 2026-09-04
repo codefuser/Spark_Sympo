@@ -11,7 +11,7 @@ export const participantSchema = z.object({
     .min(10, "Phone number must be at least 10 digits")
     .regex(/^[0-9+\-\s]+$/, "Invalid phone number format"),
   college: z.string().min(2, "College/Institution name is required"),
-  department: z.string().optional().default("ECE"),
+  department: z.string().min(1, "Department is required").default("ECE"),
   foodPreference: z.enum(["Veg", "Non-Veg"], {
     required_error: "Please select food preference",
   }),
@@ -23,6 +23,9 @@ export const registrationSchema = z.object({
   nonTechnicalEventId: z.string().min(1, "Please select 1 Non-Technical Event"),
   teamName: z.string().optional(),
   registrationType: z.enum(["online", "offline"]).default("online"),
+  paymentStatus: z.enum(["PAID", "PENDING", "UNPAID", "OFFLINE_CASH"]).default("UNPAID"),
+  transactionId: z.string().optional().nullable(),
+  paymentProofUrl: z.string().optional().nullable(),
   participants: z
     .array(participantSchema)
     .min(1, "At least 1 participant is required"),

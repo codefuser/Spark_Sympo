@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = registrationSchema.parse(body);
 
-    const { technicalEventId, nonTechnicalEventId, participants: rawParticipants, teamName, registrationType } = validatedData;
+    const { technicalEventId, nonTechnicalEventId, participants: rawParticipants, teamName, registrationType, paymentStatus, transactionId, paymentProofUrl } = validatedData;
 
     // 1. Fetch events from Supabase
     const { data: techEvent, error: techErr } = await supabase
@@ -98,6 +98,7 @@ export async function POST(request: Request) {
     // 5. Generate registration code
     const regCode = generateRegistrationId();
     const regType = registrationType || "online";
+    const payStatus = paymentStatus || (regType === "offline" ? "PAID" : transactionId ? "PAID" : "UNPAID");
 
     // 6. Insert registration into Supabase
     const { data: supaReg, error: regInsertErr } = await supabase
@@ -109,6 +110,9 @@ export async function POST(request: Request) {
         non_technical_event_id: nonTechEvent.id,
         team_name: teamName || null,
         status: "CONFIRMED",
+        payment_status: payStatus,
+        transaction_id: transactionId || null,
+        payment_proof_url: paymentProofUrl || null,
       })
       .select()
       .single();
@@ -128,6 +132,7 @@ export async function POST(request: Request) {
       email: p.email,
       phone: p.phone,
       college: p.college,
+      department: p.department || "ECE",
       food_preference: p.foodPreference,
       is_team_leader: p.isTeamLeader,
     }));
