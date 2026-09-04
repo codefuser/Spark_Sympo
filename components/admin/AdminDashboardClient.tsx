@@ -1050,9 +1050,9 @@ export function AdminDashboardClient({
                   const members = r.participants || [];
                   const isOffline = r.registrationType === "offline";
                   const primaryMember = members[0] || {};
-                  const colleges = Array.from(new Set(members.map((p: any) => p.college).filter(Boolean)));
-                  const depts = Array.from(new Set(members.map((p: any) => p.department).filter(Boolean)));
-                  const phones = members.map((p: any) => p.phone).filter(Boolean);
+                  const colleges = Array.from(new Set(members.map((p: any) => p.college).filter(Boolean))) as string[];
+                  const depts = Array.from(new Set(members.map((p: any) => p.department).filter(Boolean))) as string[];
+                  const phones = (members.map((p: any) => p.phone).filter(Boolean)) as string[];
 
                   return (
                     <tr
