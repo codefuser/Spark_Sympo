@@ -172,10 +172,57 @@ export function AdminDashboardClient({
   const fetchContactMessages = useCallback(async (silent = false) => {
     if (!silent) setLoadingMessages(true);
     try {
-      const res = await fetch("/api/contact");
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setMessagesList(data.messages || []);
+      // ⚡ Direct Supabase client-side fetch (0 Next.js server log spam & super fast)
+      const { data: supaMsgs, error } = await supabase
+        .from("contact_messages")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (!error && supaMsgs) {
+        // Cross-reference with participants to check registration status
+        const { data: matchedParticipants } = await supabase
+          .from("participants")
+          .select("email, full_name, college, department");
+
+        const partsByEmail: Record<string, any[]> = {};
+        (matchedParticipants || []).forEach((p: any) => {
+          const em = (p.email || "").toLowerCase().trim();
+          if (em) {
+            if (!partsByEmail[em]) partsByEmail[em] = [];
+            partsByEmail[em].push({
+              fullName: p.full_name || "Unknown",
+              email: p.email,
+              college: p.college || "",
+              department: p.department || "ECE",
+            });
+          }
+        });
+
+        const mapped = supaMsgs.map((m: any) => {
+          const em = (m.email || "").toLowerCase().trim();
+          const matched = partsByEmail[em] || [];
+          return {
+            id: m.id,
+            name: m.name,
+            email: m.email,
+            phone: m.phone || "",
+            subject: m.subject,
+            message: m.message,
+            status: m.status || "UNREAD",
+            created_at: m.created_at,
+            isRegistered: matched.length > 0,
+            participantDetails: matched,
+          };
+        });
+
+        setMessagesList(mapped);
+      } else {
+        // Fallback to API route if direct query encounters an issue
+        const res = await fetch("/api/contact");
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setMessagesList(data.messages || []);
+        }
       }
     } catch (err) {
       console.warn("Failed to fetch contact messages:", err);
@@ -456,11 +503,17 @@ export function AdminDashboardClient({
     }
   }, [showToast]);
 
-  // ─── Instant Realtime Updates (No periodic polling interval) ────────
+  // ─── Instant Realtime + Silent Background Auto-Sync ──────────────
   useEffect(() => {
     // Initial fetch on mount
     refreshRegistrations(true, false);
     fetchContactMessages(true);
+
+    // ⏱ Silent background auto-sync every 4s (Direct Supabase DB query - 0 Next.js terminal logs!)
+    const interval = setInterval(() => {
+      refreshRegistrations(true, true);
+      fetchContactMessages(true);
+    }, 4000);
 
     // 🔴 Supabase Real-time subscription for Registrations
     const regChannel = supabase
@@ -496,6 +549,7 @@ export function AdminDashboardClient({
       .subscribe();
 
     return () => {
+      clearInterval(interval);
       supabase.removeChannel(regChannel);
       supabase.removeChannel(msgChannel);
     };
