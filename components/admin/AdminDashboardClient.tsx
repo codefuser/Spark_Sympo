@@ -1022,94 +1022,119 @@ export function AdminDashboardClient({
       </Card>
 
       {/* Registered Passes Table */}
-      <div className={`rounded-2xl border overflow-hidden shadow-xs transition-all duration-200 ${isLight ? "bg-white border-slate-200" : "bg-slate-900/60 border-slate-800"}`}>
+      <div className={`rounded-2xl border overflow-hidden shadow-xs transition-all duration-200 ${isLight ? "bg-white border-slate-300" : "bg-slate-900/60 border-slate-800"}`}>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className={`border-b text-xs font-mono uppercase transition-colors duration-200 ${isLight ? "bg-slate-50 border-slate-200 text-slate-700 font-bold tracking-wider" : "bg-slate-900/90 border-slate-800 text-slate-400"}`}>
+            <thead className={`border-b-2 text-xs font-mono uppercase tracking-wider transition-colors duration-200 ${isLight ? "bg-slate-100 border-slate-300 text-slate-800 font-extrabold" : "bg-slate-900 border-slate-800 text-slate-300"}`}>
               <tr>
-                <th className="py-3.5 px-4">Pass Code</th>
-                <th className="py-3.5 px-4">Type</th>
-                <th className="py-3.5 px-4 min-w-[280px]">Participants / Team Details</th>
-                <th className="py-3.5 px-4">Technical Event</th>
-                <th className="py-3.5 px-4">Non-Technical Event</th>
-                <th className="py-3.5 px-4 text-center">Team Members</th>
+                <th className="py-3 px-3 text-center w-12">#</th>
+                <th className="py-3 px-4 w-36">Pass Code</th>
+                <th className="py-3 px-3 w-28">Type</th>
+                <th className="py-3 px-4">Participant Roster & Details</th>
+                <th className="py-3 px-4 w-48">Technical Event</th>
+                <th className="py-3 px-4 w-48">Non-Technical Event</th>
               </tr>
             </thead>
-            <tbody className={`divide-y font-mono text-xs ${isLight ? "divide-slate-200 text-slate-900" : "divide-slate-800/80 text-slate-100"}`}>
+            <tbody className={`font-mono text-xs ${isLight ? "text-slate-900" : "text-slate-100"}`}>
               {filteredRegistrations.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className={`py-8 text-center font-mono ${isLight ? "text-slate-500" : "text-slate-500"}`}>
+                  <td colSpan={6} className={`py-12 text-center font-mono text-sm ${isLight ? "text-slate-500" : "text-slate-400"}`}>
                     No registrations found matching your filter query.
                   </td>
                 </tr>
               ) : (
-                filteredRegistrations.map((r) => {
+                filteredRegistrations.map((r, index) => {
                   const members = r.participants || [];
                   const isOffline = r.registrationType === "offline";
                   return (
-                    <tr key={r.id} className={`transition-colors ${isLight ? "hover:bg-slate-50 text-slate-900" : "hover:bg-slate-800/40 text-slate-100"}`}>
-                      <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-slate-100 font-mono">
-                        {r.registrationCode}
+                    <tr
+                      key={r.id}
+                      className={`border-b-2 transition-colors ${
+                        isLight
+                          ? "border-slate-200 hover:bg-slate-50/80 text-slate-900"
+                          : "border-slate-800/80 hover:bg-slate-800/40 text-slate-100"
+                      }`}
+                    >
+                      {/* S.No */}
+                      <td className="py-4 px-3 text-center align-top font-bold text-slate-500 text-xs">
+                        {index + 1}
                       </td>
-                      <td className="py-3.5 px-4">
+
+                      {/* Pass Code */}
+                      <td className="py-4 px-4 align-top">
+                        <span className="font-mono font-bold text-sm text-slate-900 dark:text-slate-100 block">
+                          {r.registrationCode}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedRegistration(r)}
+                          className="text-[11px] font-sans font-semibold text-blue-600 hover:underline mt-1 inline-block cursor-pointer"
+                        >
+                          View Pass Details →
+                        </button>
+                      </td>
+
+                      {/* Registration Type */}
+                      <td className="py-4 px-3 align-top">
                         <Badge variant={isOffline ? "warning" : "success"}>
                           {r.registrationType}
                         </Badge>
                       </td>
-                      <td className="py-3.5 px-4 font-sans space-y-2">
+
+                      {/* Participant Roster Details */}
+                      <td className="py-4 px-4 align-top font-sans space-y-2">
                         {r.teamName && (
-                          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-mono font-bold mb-1 ${isLight ? "bg-slate-100 border-slate-300 text-slate-800" : "bg-slate-800 border-slate-700 text-slate-200"}`}>
-                            🚩 Team: {r.teamName}
+                          <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md border text-[11px] font-mono font-bold mb-1.5 ${isLight ? "bg-slate-100 border-slate-300 text-slate-800" : "bg-slate-800 border-slate-700 text-slate-200"}`}>
+                            🚩 Team: {r.teamName} ({members.length} member{members.length > 1 ? "s" : ""})
                           </div>
                         )}
 
                         {members.length === 0 ? (
-                          <p className="text-slate-500 italic text-xs">No member details</p>
+                          <div className="py-1">
+                            <span className={`inline-block text-xs font-mono italic px-2.5 py-1 rounded border ${isLight ? "bg-slate-50 text-slate-500 border-slate-200" : "bg-slate-800/50 text-slate-400 border-slate-700"}`}>
+                              No member details registered
+                            </span>
+                          </div>
                         ) : (
                           members.map((p: any, idx: number) => (
                             <div
                               key={p.id || idx}
-                              className={`pl-3 py-2 my-1 border-l-4 rounded-r-xl shadow-2xs ${
+                              className={`p-3 my-1.5 border-l-4 rounded-r-xl shadow-2xs space-y-1 transition-colors ${
                                 isOffline
-                                  ? (isLight ? "border-l-amber-500 bg-amber-50/60 text-slate-900 border border-slate-200/80" : "border-l-amber-400 bg-amber-500/5")
-                                  : (isLight ? "border-l-blue-600 bg-blue-50/50 text-slate-900 border border-slate-200/80" : "border-l-blue-500 bg-blue-500/5")
+                                  ? (isLight ? "border-l-amber-500 bg-amber-50/40 text-slate-900 border border-slate-200/80" : "border-l-amber-400 bg-amber-500/5")
+                                  : (isLight ? "border-l-blue-600 bg-blue-50/40 text-slate-900 border border-slate-200/80" : "border-l-blue-500 bg-blue-500/5")
                               }`}
                             >
                               <div className="flex items-center justify-between gap-2">
                                 <p className={`font-bold text-xs flex items-center gap-1.5 ${isLight ? "text-slate-900" : "text-slate-100"}`}>
-                                  <span className="text-slate-500 font-mono text-[10px] font-bold">#{idx + 1}</span>
-                                  {p.fullName || "N/A"}
+                                  <span className="text-slate-500 font-mono text-[11px] font-bold">#{idx + 1}</span>
+                                  <span className="text-sm font-semibold">{p.fullName || "N/A"}</span>
                                 </p>
                                 <Badge variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm">
                                   {p.foodPreference || "Veg"}
                                 </Badge>
                               </div>
-                              <p className={`text-[11px] font-mono truncate ${isLight ? "text-slate-600 font-medium" : "text-slate-300"}`}>{p.email}</p>
-                              <p className={`text-[10px] font-mono truncate ${isLight ? "text-slate-600 font-medium" : "text-slate-400"}`}>
+                              <p className={`text-xs font-mono truncate ${isLight ? "text-slate-600 font-medium" : "text-slate-300"}`}>{p.email}</p>
+                              <p className={`text-[11px] font-mono truncate ${isLight ? "text-slate-600 font-medium" : "text-slate-400"}`}>
                                 {p.college} • <span className="font-bold text-slate-800 dark:text-slate-200">{p.department || "ECE"}</span> • 📞 {p.phone}
                               </p>
                             </div>
                           ))
                         )}
                       </td>
-                      <td className="py-3.5 px-4">
-                        <Badge variant="primary">
+
+                      {/* Technical Event */}
+                      <td className="py-4 px-4 align-top">
+                        <Badge variant="primary" size="md">
                           {r.technicalEvent?.title || "N/A"}
                         </Badge>
                       </td>
-                      <td className="py-3.5 px-4">
-                        <Badge variant="neutral">
+
+                      {/* Non-Technical Event */}
+                      <td className="py-4 px-4 align-top">
+                        <Badge variant="neutral" size="md">
                           {r.nonTechnicalEvent?.title || "N/A"}
                         </Badge>
-                      </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setSelectedRegistration(r)}
-                        >
-                          {members.length} Member(s)
-                        </Button>
                       </td>
                     </tr>
                   );
