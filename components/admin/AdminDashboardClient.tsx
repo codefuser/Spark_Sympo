@@ -209,6 +209,16 @@ export function AdminDashboardClient({
   const [deletingMessageTarget, setDeletingMessageTarget] = useState<any | null>(null);
   const [submittingDeleteMessage, setSubmittingDeleteMessage] = useState<boolean>(false);
 
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleCopyText = (text: string, fieldName: string) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedField(fieldName);
+    showToast(`Copied ${fieldName}`, text, "success");
+    setTimeout(() => setCopiedField(null), 2000);
+  };
+
   const confirmDeleteMessage = async () => {
     if (!deletingMessageTarget) return;
     setSubmittingDeleteMessage(true);
@@ -2109,75 +2119,116 @@ export function AdminDashboardClient({
           onClose={() => setSelectedMessageDetail(null)}
           title={`Student Inquiry — ${selectedMessageDetail.name}`}
           description={`Received: ${formatDateSafe(selectedMessageDetail.created_at)}`}
-          maxWidth="md"
+          maxWidth="lg"
         >
-          <div className="space-y-4">
-            {/* Header info */}
-            <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold text-slate-500">Contact Details</span>
+          <div className="space-y-4 font-mono">
+            {/* Top Contact Details Card */}
+            <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/60 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
+                <div className="flex items-center gap-2.5">
+                  <div className={`w-9 h-9 rounded-xl border flex items-center justify-center font-bold text-sm shrink-0 ${
+                    selectedMessageDetail.isRegistered
+                      ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                      : "bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-cyan-400"
+                  }`}>
+                    {selectedMessageDetail.name?.charAt(0).toUpperCase() || "S"}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                      {selectedMessageDetail.name}
+                    </h4>
+                    <span className="text-[11px] text-slate-500">
+                      Status: <strong className={selectedMessageDetail.status === "UNREAD" ? "text-amber-500 font-extrabold" : "text-emerald-500 font-extrabold"}>{selectedMessageDetail.status}</strong>
+                    </span>
+                  </div>
+                </div>
+
                 {selectedMessageDetail.isRegistered ? (
-                  <Badge variant="success">REGISTERED STUDENT Pass</Badge>
+                  <Badge variant="success" className="px-2.5 py-1">REGISTERED PASS</Badge>
                 ) : (
-                  <Badge variant="warning">GUEST / UNREGISTERED</Badge>
+                  <Badge variant="warning" className="px-2.5 py-1">GUEST / UNREGISTERED</Badge>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
-                <div>
-                  <span className="text-slate-500">Name:</span>{" "}
-                  <strong className="text-slate-900 dark:text-slate-100">{selectedMessageDetail.name}</strong>
+
+              {/* Email & Phone Rows with Copy Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+                  <div className="flex items-center gap-2 min-w-0 pr-1">
+                    <Mail className="w-4 h-4 text-blue-500 shrink-0" />
+                    <a href={`mailto:${selectedMessageDetail.email}`} className="text-blue-600 dark:text-cyan-400 font-bold underline truncate" title="Send Email">
+                      {selectedMessageDetail.email}
+                    </a>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyText(selectedMessageDetail.email, "Email")}
+                    className="px-2 py-1 rounded-md text-[11px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-blue-500 hover:text-white transition-all shrink-0 flex items-center gap-1 border border-slate-200 dark:border-slate-700"
+                    title="Copy Email"
+                  >
+                    {copiedField === "Email" ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
+                    <span>{copiedField === "Email" ? "Copied!" : "Copy"}</span>
+                  </button>
                 </div>
-                <div>
-                  <span className="text-slate-500">Email:</span>{" "}
-                  <a href={`mailto:${selectedMessageDetail.email}`} className="text-blue-600 dark:text-cyan-400 font-bold underline">
-                    {selectedMessageDetail.email}
-                  </a>
-                </div>
-                <div>
-                  <span className="text-slate-500">Phone:</span>{" "}
-                  <a href={`tel:${selectedMessageDetail.phone}`} className="text-blue-600 dark:text-cyan-400 font-bold underline">
-                    {selectedMessageDetail.phone || "N/A"}
-                  </a>
-                </div>
-                <div>
-                  <span className="text-slate-500">Status:</span>{" "}
-                  <strong className={selectedMessageDetail.status === "UNREAD" ? "text-amber-500 font-bold" : "text-emerald-500"}>
-                    {selectedMessageDetail.status}
-                  </strong>
+
+                <div className="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+                  <div className="flex items-center gap-2 min-w-0 pr-1">
+                    <PhoneCall className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <a href={`tel:${selectedMessageDetail.phone}`} className="text-emerald-600 dark:text-emerald-400 font-bold underline truncate" title="Call Phone">
+                      {selectedMessageDetail.phone || "N/A"}
+                    </a>
+                  </div>
+                  {selectedMessageDetail.phone && (
+                    <button
+                      type="button"
+                      onClick={() => handleCopyText(selectedMessageDetail.phone, "Phone")}
+                      className="px-2 py-1 rounded-md text-[11px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-emerald-500 hover:text-white transition-all shrink-0 flex items-center gap-1 border border-slate-200 dark:border-slate-700"
+                      title="Copy Phone"
+                    >
+                      {copiedField === "Phone" ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
+                      <span>{copiedField === "Phone" ? "Copied!" : "Copy"}</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Subject & Full Message */}
+            {/* Subject Card */}
             <div className="space-y-1.5">
-              <label className="text-xs font-mono font-bold uppercase text-slate-500">Subject</label>
-              <p className="text-sm font-bold text-slate-900 dark:text-slate-100 p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-amber-500" /> Subject Line
+              </label>
+              <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-bold text-slate-900 dark:text-slate-100 shadow-2xs">
                 {selectedMessageDetail.subject}
-              </p>
+              </div>
             </div>
 
+            {/* Full Message Content Card with break-words break-all */}
             <div className="space-y-1.5">
-              <label className="text-xs font-mono font-bold uppercase text-slate-500">Full Message Content</label>
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-sans text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <MessageSquare className="w-3.5 h-3.5 text-blue-500" /> Full Message Content
+              </label>
+              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-sans text-slate-800 dark:text-slate-200 whitespace-pre-wrap break-words break-all overflow-x-hidden overflow-y-auto max-h-56 leading-relaxed select-text shadow-2xs">
                 {selectedMessageDetail.message}
               </div>
             </div>
 
             {/* Matched Registered Student Pass Information */}
             {selectedMessageDetail.isRegistered && selectedMessageDetail.participantDetails?.length > 0 && (
-              <div className="p-4 rounded-xl border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/50 dark:bg-emerald-950/20 space-y-2">
-                <h4 className="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Matched Pass Roster
+              <div className="p-4 rounded-xl border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/60 dark:bg-emerald-950/20 space-y-2">
+                <h4 className="text-xs font-mono font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Matched Registered Student Pass Roster
                 </h4>
-                {selectedMessageDetail.participantDetails.map((part: any, i: number) => (
-                  <div key={i} className="text-xs font-mono text-slate-700 dark:text-slate-300">
-                    • <strong>{part.fullName}</strong> ({part.email}) — {part.college} ({part.department})
-                  </div>
-                ))}
+                <div className="space-y-1">
+                  {selectedMessageDetail.participantDetails.map((part: any, i: number) => (
+                    <div key={i} className="text-xs font-mono text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      • <strong>{part.fullName}</strong> ({part.email}) — <span className="text-emerald-700 dark:text-emerald-400 font-bold">{part.college}</span> ({part.department})
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
-            {/* Modal Actions */}
+            {/* Modal Actions Footer */}
             <div className="flex items-center justify-between pt-3 border-t border-slate-200 dark:border-slate-800">
               <Button
                 variant="danger"
