@@ -437,14 +437,16 @@ export function AdminDashboardClient({
   useEffect(() => {
     // Immediate first fetch
     refreshRegistrations(true, false);
+    fetchContactMessages();
 
-    // ⏱ Polling every 3 seconds (fallback when Supabase real-time fails)
+    // ⏱ Fast Polling every 3 seconds for registrations and contact messages
     const interval = setInterval(() => {
       refreshRegistrations(true, true);
+      fetchContactMessages();
     }, 3000);
 
-    // 🔴 Supabase Real-time subscription (instant push when available)
-    const channel = supabase
+    // 🔴 Supabase Real-time subscription for Registrations
+    const regChannel = supabase
       .channel("admin-registrations-live")
       .on(
         "postgres_changes",
@@ -457,11 +459,31 @@ export function AdminDashboardClient({
         setIsLive(status === "SUBSCRIBED");
       });
 
+    // 🔴 Supabase Real-time subscription for Contact Messages (Instant push!)
+    const msgChannel = supabase
+      .channel("admin-contact-messages-live")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "contact_messages" },
+        async (payload) => {
+          await fetchContactMessages();
+          if (payload.eventType === "INSERT") {
+            showToast(
+              "📬 New Student Message Received!",
+              `From: ${payload.new?.name || "Student"} — ${payload.new?.subject || "Inquiry"}`,
+              "info"
+            );
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
       clearInterval(interval);
-      supabase.removeChannel(channel);
+      supabase.removeChannel(regChannel);
+      supabase.removeChannel(msgChannel);
     };
-  }, [refreshRegistrations]);
+  }, [refreshRegistrations, fetchContactMessages, showToast]);
 
   const technicalEvents = events.filter(
     (e) => e.category === "TECHNICAL" || e.slug === "paper-presentation" || e.slug === "technical-quiz" || e.slug === "circuit-debugging"
@@ -1180,96 +1202,128 @@ export function AdminDashboardClient({
                 const matchedParts = msg.participantDetails || [];
 
                 return (
-                  <Card
+                  <div
                     key={msg.id}
-                    className={`p-5 transition-all space-y-4 border ${
+                    className={`p-5 sm:p-6 rounded-2xl border transition-all duration-200 space-y-4 ${
                       isUnread
                         ? isLight
-                          ? "border-amber-400/80 bg-amber-50/30 shadow-xs"
-                          : "border-amber-500/50 bg-amber-950/20 shadow-md"
+                          ? "bg-gradient-to-r from-amber-50/70 via-white to-white border-amber-300 shadow-xs border-l-4 border-l-amber-500"
+                          : "bg-gradient-to-r from-amber-950/30 via-slate-900/90 to-slate-900/90 border-amber-800/80 shadow-md border-l-4 border-l-amber-500"
                         : isLight
-                        ? "bg-white border-slate-200"
-                        : "bg-slate-900/60 border-slate-800"
+                        ? "bg-white border-slate-200 shadow-2xs hover:border-slate-300"
+                        : "bg-slate-900/70 border-slate-800 hover:border-slate-700"
                     }`}
                   >
-                    {/* Header Info */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
-                      <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-base font-bold font-mono text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                            {msg.name}
-                          </h3>
-
-                          {msg.isRegistered ? (
-                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-700/80 flex items-center gap-1 shadow-2xs">
-                              <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> REGISTERED STUDENT
-                            </span>
-                          ) : (
-                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800/60 flex items-center gap-1">
-                              ℹ️ GUEST / UNREGISTERED
-                            </span>
-                          )}
-
-                          {isUnread ? (
-                            <span className="px-2 py-0.5 rounded text-[9px] font-mono font-extrabold bg-amber-500 text-slate-950 uppercase tracking-wider animate-pulse">
-                              NEW UNREAD
-                            </span>
-                          ) : (
-                            <span className="px-2 py-0.5 rounded text-[9px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-800">
-                              READ
-                            </span>
-                          )}
+                    {/* Top Row: Avatar, Name, Badges & Action Buttons */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800/80 pb-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-11 h-11 rounded-xl border flex items-center justify-center font-mono font-bold text-sm shrink-0 ${
+                          msg.isRegistered
+                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                            : "bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-cyan-400"
+                        }`}>
+                          {msg.name?.charAt(0).toUpperCase() || "S"}
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-600 dark:text-slate-400 pt-0.5">
-                          <a href={`tel:${msg.phone}`} className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-cyan-400 font-bold">
-                            📞 {msg.phone || "N/A"}
-                          </a>
-                          <a href={`mailto:${msg.email}`} className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-cyan-400">
-                            ✉️ {msg.email}
-                          </a>
-                          <span className="text-slate-400 text-[11px]">{formatDateSafe(msg.created_at)}</span>
+                        <div className="space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="text-base font-bold font-mono text-slate-900 dark:text-white">
+                              {msg.name}
+                            </h3>
+
+                            {msg.isRegistered ? (
+                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-700/80 flex items-center gap-1 shadow-2xs">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> REGISTERED STUDENT
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 flex items-center gap-1">
+                                🌐 GUEST / UNREGISTERED
+                              </span>
+                            )}
+
+                            {isUnread ? (
+                              <span className="px-2 py-0.5 rounded-md text-[9px] font-mono font-extrabold bg-amber-500 text-slate-950 uppercase tracking-wider animate-pulse">
+                                NEW UNREAD
+                              </span>
+                            ) : (
+                              <span className="px-2 py-0.5 rounded-md text-[9px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-800">
+                                READ
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Contact Links Bar */}
+                          <div className="flex flex-wrap items-center gap-3 text-xs font-mono pt-1">
+                            <a
+                              href={`tel:${msg.phone}`}
+                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md border text-[11px] font-bold transition-colors ${
+                                isLight ? "bg-slate-100 border-slate-200 text-slate-800 hover:bg-blue-50 hover:text-blue-700" : "bg-slate-800/80 border-slate-700 text-slate-200 hover:text-cyan-300"
+                              }`}
+                            >
+                              📞 {msg.phone || "No phone"}
+                            </a>
+
+                            <a
+                              href={`mailto:${msg.email}`}
+                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md border text-[11px] font-semibold transition-colors ${
+                                isLight ? "bg-slate-100 border-slate-200 text-slate-700 hover:bg-blue-50 hover:text-blue-700" : "bg-slate-800/80 border-slate-700 text-slate-300 hover:text-cyan-300"
+                              }`}
+                            >
+                              ✉️ {msg.email}
+                            </a>
+
+                            <span className="text-[11px] font-mono text-slate-400">
+                              🕒 {formatDateSafe(msg.created_at)}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
+                      {/* Actions Bar */}
+                      <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant={isUnread ? "primary" : "outline"}
                           onClick={() => handleToggleMessageStatus(msg.id, msg.status)}
                         >
-                          {isUnread ? "Mark as Read" : "Mark as Unread"}
+                          {isUnread ? "Mark as Read ✓" : "Mark Unread"}
                         </Button>
+
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                          className="text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-2 rounded-lg"
                           onClick={() => handleDeleteMessage(msg.id)}
+                          title="Delete notification"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4 text-rose-500" />
                         </Button>
                       </div>
                     </div>
 
-                    {/* Subject & Message Content */}
-                    <div className="space-y-1.5">
-                      <p className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        Subject: <span className="text-slate-900 dark:text-slate-100 font-extrabold">{msg.subject}</span>
-                      </p>
-                      <div className={`p-3.5 rounded-xl border text-xs font-sans leading-relaxed ${isLight ? "bg-slate-50 border-slate-200 text-slate-800" : "bg-slate-950/80 border-slate-800 text-slate-200"}`}>
+                    {/* Subject & Message Content Box */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        <MessageSquare className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
+                        Subject: <span className="text-slate-900 dark:text-white font-extrabold normal-case text-sm">{msg.subject}</span>
+                      </div>
+
+                      <div className={`p-4 rounded-xl border text-xs sm:text-sm font-sans leading-relaxed transition-colors shadow-2xs ${
+                        isLight ? "bg-slate-50/90 border-slate-200/90 text-slate-800" : "bg-slate-950/80 border-slate-800 text-slate-200"
+                      }`}>
                         {msg.message}
                       </div>
                     </div>
 
-                    {/* REGISTERED STUDENT DETAILS BOX */}
+                    {/* Registered Student Info Box or Unregistered Spot Pass Button */}
                     {msg.isRegistered && matchedParts.length > 0 ? (
-                      <div className={`p-4 rounded-xl border space-y-2.5 transition-all ${isLight ? "bg-emerald-50/60 border-emerald-200 text-emerald-950" : "bg-emerald-950/30 border-emerald-800/80 text-emerald-100"}`}>
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs font-mono font-bold flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300">
-                            <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                            Matched Registered Student Pass ({matchedParts.length} Participant Record{matchedParts.length > 1 ? "s" : ""})
-                          </p>
-                        </div>
+                      <div className={`p-4 rounded-xl border space-y-3 transition-all ${
+                        isLight ? "bg-emerald-50/70 border-emerald-200 text-emerald-950" : "bg-emerald-950/30 border-emerald-800/80 text-emerald-100"
+                      }`}>
+                        <p className="text-xs font-mono font-bold flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300">
+                          <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                          Matched Registered Student Pass ({matchedParts.length} Record{matchedParts.length > 1 ? "s" : ""})
+                        </p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs font-mono">
                           {matchedParts.map((p: any, pIdx: number) => {
@@ -1277,8 +1331,8 @@ export function AdminDashboardClient({
                             return (
                               <div
                                 key={pIdx}
-                                className={`p-3 rounded-lg border space-y-1.5 cursor-pointer hover:border-emerald-500 transition-colors ${
-                                  isLight ? "bg-white border-emerald-200 shadow-2xs" : "bg-slate-900/90 border-slate-800"
+                                className={`p-3 rounded-lg border space-y-1.5 cursor-pointer hover:border-emerald-500 transition-all ${
+                                  isLight ? "bg-white border-emerald-200 shadow-2xs hover:shadow-xs" : "bg-slate-900/90 border-slate-800"
                                 }`}
                                 onClick={() => {
                                   if (reg.id) {
@@ -1320,7 +1374,7 @@ export function AdminDashboardClient({
                         <Button
                           size="sm"
                           variant="outline"
-                          leftIcon={<UserPlus className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />}
+                          leftIcon={<UserPlus className="w-4 h-4 text-blue-600 dark:text-cyan-400" />}
                           onClick={() => {
                             setOfflineForm({
                               technicalEventId: technicalEvents[0]?.id || "",
@@ -1341,11 +1395,11 @@ export function AdminDashboardClient({
                             setIsOfflineDeskView(true);
                           }}
                         >
-                          Register Spot Pass for this Student
+                          Register Spot Pass for {msg.name}
                         </Button>
                       </div>
                     )}
-                  </Card>
+                  </div>
                 );
               })}
             </div>
