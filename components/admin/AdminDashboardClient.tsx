@@ -1365,7 +1365,7 @@ export function AdminDashboardClient({
                         )}
                       </td>
 
-                      {/* Phone Number (Strict Line-by-Line Alignment with Roster) */}
+                      {/* Phone Number (Strict Line-by-Line Alignment with Roster Cards) */}
                       <td className="py-3 px-2.5 align-top font-mono text-xs text-slate-700 dark:text-slate-300 whitespace-nowrap">
                         {r.teamName && (
                           <div className="h-7 mb-1.5" />
@@ -1378,7 +1378,13 @@ export function AdminDashboardClient({
                             {members.map((p: any, idx: number) => (
                               <div
                                 key={idx}
-                                className="h-[50px] flex items-center font-semibold text-xs whitespace-nowrap px-1"
+                                className={`h-[50px] flex items-center px-2.5 rounded-lg border font-semibold text-xs whitespace-nowrap ${
+                                  members.length > 1
+                                    ? isLight
+                                      ? "bg-slate-50/80 border-slate-200/90 shadow-2xs"
+                                      : "bg-slate-800/40 border-slate-700/60"
+                                    : "border-transparent"
+                                }`}
                               >
                                 📞 {p.phone || "N/A"}
                               </div>
@@ -1407,34 +1413,54 @@ export function AdminDashboardClient({
                         </div>
                       </td>
 
-                      {/* Payment Status */}
-                      <td className="py-3 px-2 align-top text-center whitespace-nowrap">
+                      {/* Payment Status (Individual per Person Line-by-Line Alignment) */}
+                      <td className="py-3 px-2.5 align-top text-center whitespace-nowrap">
                         {r.teamName && (
                           <div className="h-7 mb-1.5" />
                         )}
 
-                        <div className="py-1 flex justify-center">
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-bold whitespace-nowrap shadow-2xs ${
-                              payStatus === "PAID"
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800"
-                                : payStatus === "PENDING"
-                                ? "bg-amber-50 text-amber-700 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-300 dark:border-amber-800"
-                                : "bg-rose-50 text-rose-700 border border-rose-300 dark:bg-rose-950/70 dark:text-rose-300 dark:border-rose-800"
-                            }`}
-                          >
-                            <span
-                              className={`w-1.5 h-1.5 rounded-full ${
-                                payStatus === "PAID" ? "bg-emerald-500 animate-pulse" : payStatus === "PENDING" ? "bg-amber-500" : "bg-rose-500"
-                              }`}
-                            />
-                            {payStatus === "PAID" ? "PAID" : payStatus === "PENDING" ? "PENDING" : "UNPAID"}
-                          </span>
-                        </div>
+                        {members.length === 0 ? (
+                          <div className="h-11 flex items-center justify-center text-xs font-mono text-slate-400 italic">-</div>
+                        ) : (
+                          <div className="space-y-1.5">
+                            {members.map((p: any, idx: number) => {
+                              const pPayStatus = p.paymentStatus || r.paymentStatus || (isOffline ? "PAID" : "UNPAID");
+                              return (
+                                <div
+                                  key={idx}
+                                  className={`h-[50px] flex items-center justify-center px-2.5 rounded-lg border ${
+                                    members.length > 1
+                                      ? isLight
+                                        ? "bg-slate-50/80 border-slate-200/90 shadow-2xs"
+                                        : "bg-slate-800/40 border-slate-700/60"
+                                      : "border-transparent"
+                                  }`}
+                                >
+                                  <span
+                                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-bold whitespace-nowrap shadow-2xs ${
+                                      pPayStatus === "PAID"
+                                        ? "bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800"
+                                        : pPayStatus === "PENDING"
+                                        ? "bg-amber-50 text-amber-700 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-300 dark:border-amber-800"
+                                        : "bg-rose-50 text-rose-700 border border-rose-300 dark:bg-rose-950/70 dark:text-rose-300 dark:border-rose-800"
+                                    }`}
+                                  >
+                                    <span
+                                      className={`w-1.5 h-1.5 rounded-full ${
+                                        pPayStatus === "PAID" ? "bg-emerald-500 animate-pulse" : pPayStatus === "PENDING" ? "bg-amber-500" : "bg-rose-500"
+                                      }`}
+                                    />
+                                    {pPayStatus === "PAID" ? "PAID" : pPayStatus === "PENDING" ? "PENDING" : "UNPAID"}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </td>
 
-                      {/* Food */}
-                      <td className="py-3 px-2 align-top text-center whitespace-nowrap">
+                      {/* Food (Individual per Person Line-by-Line Alignment) */}
+                      <td className="py-3 px-2.5 align-top text-center whitespace-nowrap">
                         {r.teamName && (
                           <div className="h-7 mb-1.5" />
                         )}
@@ -1446,7 +1472,16 @@ export function AdminDashboardClient({
                             {members.map((p: any, idx: number) => {
                               const isNonVeg = (p.foodPreference || "").toLowerCase().includes("non");
                               return (
-                                <div key={idx} className="h-[50px] flex items-center justify-center">
+                                <div
+                                  key={idx}
+                                  className={`h-[50px] flex items-center justify-center px-2.5 rounded-lg border ${
+                                    members.length > 1
+                                      ? isLight
+                                        ? "bg-slate-50/80 border-slate-200/90 shadow-2xs"
+                                        : "bg-slate-800/40 border-slate-700/60"
+                                      : "border-transparent"
+                                  }`}
+                                >
                                   <span
                                     className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap shadow-2xs border ${
                                       isNonVeg
