@@ -68,6 +68,20 @@ const DEPARTMENTS = [
   { label: "Other / Diploma", value: "Other" },
 ];
 
+function formatDateSafe(dateStr?: string) {
+  if (!dateStr) return "";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${day}/${month}/${year}`;
+  } catch (e) {
+    return dateStr || "";
+  }
+}
+
 export function AdminDashboardClient({
   initialRegistrations,
   events,
@@ -1073,8 +1087,8 @@ export function AdminDashboardClient({
                         <span className="font-mono font-extrabold text-sm text-slate-900 dark:text-slate-100 block">
                           {r.registrationCode}
                         </span>
-                        <span className="text-[10px] font-mono text-slate-500 block mt-0.5">
-                          {new Date(r.createdAt).toLocaleDateString()}
+                        <span className="text-[10px] font-mono text-slate-500 block mt-0.5" suppressHydrationWarning>
+                          {formatDateSafe(r.createdAt)}
                         </span>
                       </td>
 
@@ -1194,7 +1208,7 @@ export function AdminDashboardClient({
           isOpen={!!selectedRegistration}
           onClose={() => setSelectedRegistration(null)}
           title={`Registration Pass — ${selectedRegistration.registrationCode}`}
-          description={`Registered on ${new Date(selectedRegistration.createdAt).toLocaleDateString()}`}
+          description={`Registered on ${formatDateSafe(selectedRegistration.createdAt)}`}
         >
           <div className="space-y-4 py-2">
             <div className={`p-3.5 rounded-xl border text-xs space-y-1.5 ${isLight ? "bg-slate-50 border-slate-200 text-slate-900" : "bg-slate-900/80 border-slate-800 text-slate-100"}`}>
