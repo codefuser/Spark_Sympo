@@ -858,11 +858,15 @@ export function AdminDashboardClient({
   // MAIN ADMIN DASHBOARD VIEW (Header & Metrics Shown Only Here)
   // =========================================================================
   return (
-    <div className={`space-y-8 p-3 rounded-3xl transition-colors duration-200 ${isLight ? "bg-slate-100/90 text-slate-900" : ""}`}>
+    <div className={`min-h-screen transition-all duration-300 -m-4 sm:-m-8 p-4 sm:p-8 space-y-8 ${isLight ? "bg-slate-100 text-slate-900" : "bg-slate-950 text-slate-100 circuit-bg"}`}>
       {/* Admin Header Bar */}
-      <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl border shadow-xl transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900" : "bg-card border-slate-800"}`}>
+      <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl border transition-all duration-200 ${
+        isLight ? "bg-white border-slate-200/90 shadow-md text-slate-900" : "bg-card border-slate-800 shadow-xl text-white"
+      }`}>
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center font-mono font-bold text-xl">
+          <div className={`w-12 h-12 rounded-xl border flex items-center justify-center font-mono font-bold text-xl ${
+            isLight ? "bg-cyan-50 border-cyan-200 text-cyan-600 shadow-xs" : "bg-cyan-500/10 border-cyan-500/30 text-cyan-400"
+          }`}>
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
@@ -870,10 +874,10 @@ export function AdminDashboardClient({
               <h1 className={`text-xl font-bold font-mono ${isLight ? "text-slate-900" : "text-white"}`}>
                 SPARKTRON 2K26 Registered Participants Portal
               </h1>
-              {session && <Badge variant="primary">{session.role}</Badge>}
+              {session && <Badge variant={isLight ? "cyan" : "primary"}>{session.role}</Badge>}
             </div>
-            <p className={`text-xs font-mono mt-0.5 ${isLight ? "text-slate-500" : "text-slate-400"}`}>
-              Live Supabase Cloud Monitor • Logged in as <span className={`font-bold ${isLight ? "text-slate-800" : "text-white"}`}>{session?.name || "Admin"}</span> ({session?.email || "admin@sparktron.ece"})
+            <p className={`text-xs font-mono mt-0.5 ${isLight ? "text-slate-600 font-medium" : "text-slate-400"}`}>
+              Live Supabase Cloud Monitor • Logged in as <span className={`font-bold ${isLight ? "text-slate-900" : "text-white"}`}>{session?.name || "Admin"}</span> ({session?.email || "admin@sparktron.ece"})
             </p>
           </div>
         </div>
@@ -881,8 +885,12 @@ export function AdminDashboardClient({
         <form action="/api/admin/logout" method="POST">
           <div className="flex items-center gap-2">
             {/* Live status indicator */}
-            <span className={`hidden sm:flex items-center gap-1.5 text-xs font-mono px-2.5 py-1.5 rounded-lg border ${isLive ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/30" : "text-slate-500 bg-slate-800/50 border-slate-700"}`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${isLive ? "bg-emerald-400 animate-pulse" : "bg-slate-500"}`} />
+            <span className={`hidden sm:flex items-center gap-1.5 text-xs font-mono px-2.5 py-1.5 rounded-lg border font-bold ${
+              isLive
+                ? isLight ? "text-emerald-800 bg-emerald-100 border-emerald-300" : "text-emerald-400 bg-emerald-500/10 border-emerald-500/30"
+                : isLight ? "text-slate-600 bg-slate-100 border-slate-300" : "text-slate-500 bg-slate-800/50 border-slate-700"
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${isLive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`} />
               {isLive ? "LIVE" : "Connecting..."}
             </span>
             <Button
@@ -892,6 +900,7 @@ export function AdminDashboardClient({
               leftIcon={isLight ? <Moon className="w-4 h-4 text-purple-600" /> : <Sun className="w-4 h-4 text-amber-400" />}
               onClick={toggleTheme}
               title={`Switch to ${isLight ? "Dark" : "Light"} Mode`}
+              className={isLight ? "bg-white border-slate-300 text-slate-800 hover:bg-slate-100 font-bold shadow-xs" : ""}
             >
               {isLight ? "Dark Mode" : "Light Mode"}
             </Button>
@@ -901,10 +910,17 @@ export function AdminDashboardClient({
               size="sm"
               leftIcon={<RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />}
               onClick={() => refreshRegistrations(false)}
+              className={isLight ? "text-slate-700 hover:bg-slate-100 font-semibold" : ""}
             >
               Refresh
             </Button>
-            <Button type="submit" variant="ghost" size="sm" leftIcon={<LogOut className="w-4 h-4" />}>
+            <Button
+              type="submit"
+              variant="ghost"
+              size="sm"
+              leftIcon={<LogOut className="w-4 h-4" />}
+              className={isLight ? "text-rose-600 hover:bg-rose-50 font-semibold" : ""}
+            >
               Sign Out
             </Button>
           </div>
@@ -913,49 +929,58 @@ export function AdminDashboardClient({
 
       {/* Live Registration Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-6">
-        <Card className={`p-5 transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-sm" : ""}`}>
+        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200/90 shadow-md text-slate-900" : ""}`}>
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-xs font-mono uppercase ${isLight ? "text-slate-500" : "text-slate-400"}`}>Total Registrations</span>
-            <Calendar className="w-5 h-5 text-cyan-500" />
+            <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Total Registrations</span>
+            <div className={`p-2 rounded-lg ${isLight ? "bg-cyan-50 text-cyan-600" : ""}`}>
+              <Calendar className="w-5 h-5 text-cyan-500" />
+            </div>
           </div>
           <p className={`text-3xl font-extrabold font-mono ${isLight ? "text-slate-900" : "text-white"}`}>{totalRegistrations}</p>
         </Card>
 
-        <Card className={`p-5 transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-sm" : ""}`}>
+        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200/90 shadow-md text-slate-900" : ""}`}>
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-xs font-mono uppercase ${isLight ? "text-slate-500" : "text-slate-400"}`}>Total Participants</span>
-            <Users className="w-5 h-5 text-emerald-500" />
+            <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Total Participants</span>
+            <div className={`p-2 rounded-lg ${isLight ? "bg-emerald-50 text-emerald-600" : ""}`}>
+              <Users className="w-5 h-5 text-emerald-500" />
+            </div>
           </div>
-          <p className="text-3xl font-extrabold font-mono text-emerald-500">{totalParticipants}</p>
+          <p className="text-3xl font-extrabold font-mono text-emerald-600">{totalParticipants}</p>
         </Card>
 
-        <Card className={`p-5 transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-sm" : ""}`}>
+        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200/90 shadow-md text-slate-900" : ""}`}>
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-xs font-mono uppercase ${isLight ? "text-slate-500" : "text-slate-400"}`}>Online / Offline</span>
-            <Laptop className="w-5 h-5 text-purple-500" />
+            <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Online / Offline</span>
+            <div className={`p-2 rounded-lg ${isLight ? "bg-purple-50 text-purple-600" : ""}`}>
+              <Laptop className="w-5 h-5 text-purple-500" />
+            </div>
           </div>
           <p className={`text-2xl font-bold font-mono ${isLight ? "text-slate-900" : "text-white"}`}>
-            <span className="text-cyan-600">{onlineRegistrations}</span> / <span className="text-amber-500">{offlineRegistrations}</span>
+            <span className="text-cyan-600 font-extrabold">{onlineRegistrations}</span> / <span className="text-amber-600 font-extrabold">{offlineRegistrations}</span>
           </p>
         </Card>
 
-        <Card className={`p-5 transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-sm" : ""}`}>
+        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200/90 shadow-md text-slate-900" : ""}`}>
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-xs font-mono uppercase ${isLight ? "text-slate-500" : "text-slate-400"}`}>Active Event Tracks</span>
-            <Award className="w-5 h-5 text-amber-500" />
+            <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Active Event Tracks</span>
+            <div className={`p-2 rounded-lg ${isLight ? "bg-amber-50 text-amber-600" : ""}`}>
+              <Award className="w-5 h-5 text-amber-500" />
+            </div>
           </div>
-          <p className="text-3xl font-extrabold font-mono text-amber-500">{totalEvents}</p>
+          <p className="text-3xl font-extrabold font-mono text-amber-600">{totalEvents}</p>
         </Card>
       </div>
 
       {/* Search, Filter & Offline Spot Desk Toggle Button */}
-      <Card className={`p-4 flex flex-col lg:flex-row items-center justify-between gap-4 transition-colors duration-200 ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-sm" : ""}`}>
+      <Card className={`p-4 flex flex-col lg:flex-row items-center justify-between gap-4 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-md" : ""}`}>
         <div className="w-full lg:w-96">
           <Input
             placeholder="Search by Code, Name, Email, College, Phone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            leftIcon={<Search className="w-4 h-4" />}
+            leftIcon={<Search className={`w-4 h-4 ${isLight ? "text-slate-500" : ""}`} />}
+            className={isLight ? "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-cyan-600 focus:ring-cyan-500/20 font-medium" : ""}
           />
         </div>
 
@@ -969,6 +994,7 @@ export function AdminDashboardClient({
                 { label: "Online (Web 1)", value: "online" },
                 { label: "Offline (Web 2)", value: "offline" },
               ]}
+              className={isLight ? "bg-white border-slate-300 text-slate-900 font-medium" : ""}
             />
           </div>
 
@@ -980,6 +1006,7 @@ export function AdminDashboardClient({
                 { label: "All Event Tracks", value: "ALL" },
                 ...events.map((e) => ({ label: e.title, value: e.id })),
               ]}
+              className={isLight ? "bg-white border-slate-300 text-slate-900 font-medium" : ""}
             />
           </div>
 
@@ -988,6 +1015,7 @@ export function AdminDashboardClient({
             size="sm"
             leftIcon={<PlusCircle className="w-4 h-4" />}
             onClick={() => setIsOfflineDeskView(true)}
+            className={isLight ? "bg-cyan-600 hover:bg-cyan-700 text-white font-bold shadow-md shadow-cyan-600/20 border-none" : ""}
           >
             Offline Spot Reg Desk
           </Button>
@@ -997,6 +1025,7 @@ export function AdminDashboardClient({
             size="sm"
             leftIcon={<Download className="w-4 h-4" />}
             onClick={handleExportJSON}
+            className={isLight ? "bg-white border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold" : ""}
           >
             Export JSON
           </Button>
@@ -1004,10 +1033,10 @@ export function AdminDashboardClient({
       </Card>
 
       {/* Registered Passes Table */}
-      <div className={`rounded-2xl border overflow-hidden shadow-2xl transition-colors duration-200 ${isLight ? "bg-white border-slate-200 shadow-md" : "bg-slate-900/60 border-slate-800"}`}>
+      <div className={`rounded-2xl border overflow-hidden shadow-xl transition-all duration-200 ${isLight ? "bg-white border-slate-200" : "bg-slate-900/60 border-slate-800"}`}>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className={`border-b text-xs font-mono uppercase transition-colors duration-200 ${isLight ? "bg-slate-100 border-slate-200 text-slate-700 font-bold" : "bg-slate-900/90 border-slate-800 text-slate-400"}`}>
+            <thead className={`border-b text-xs font-mono uppercase transition-colors duration-200 ${isLight ? "bg-slate-100/90 border-slate-200 text-slate-700 font-bold tracking-wider" : "bg-slate-900/90 border-slate-800 text-slate-400"}`}>
               <tr>
                 <th className="py-3.5 px-4">Pass Code</th>
                 <th className="py-3.5 px-4">Type</th>
@@ -1017,7 +1046,7 @@ export function AdminDashboardClient({
                 <th className="py-3.5 px-4 text-center">Team Members</th>
               </tr>
             </thead>
-            <tbody className={`divide-y font-mono text-xs ${isLight ? "divide-slate-200" : "divide-slate-800/80"}`}>
+            <tbody className={`divide-y font-mono text-xs ${isLight ? "divide-slate-200 text-slate-900" : "divide-slate-800/80 text-slate-100"}`}>
               {filteredRegistrations.length === 0 ? (
                 <tr>
                   <td colSpan={6} className={`py-8 text-center font-mono ${isLight ? "text-slate-500" : "text-slate-500"}`}>
@@ -1029,16 +1058,16 @@ export function AdminDashboardClient({
                   const members = r.participants || [];
                   const isOffline = r.registrationType === "offline";
                   return (
-                    <tr key={r.id} className={`transition-colors ${isLight ? "hover:bg-slate-50 text-slate-900" : "hover:bg-slate-800/40 text-slate-100"}`}>
-                      <td className="py-3.5 px-4 font-bold text-cyan-600">
+                    <tr key={r.id} className={`transition-colors ${isLight ? "hover:bg-slate-50/80 text-slate-900" : "hover:bg-slate-800/40 text-slate-100"}`}>
+                      <td className="py-3.5 px-4 font-bold text-cyan-700 font-mono">
                         {r.registrationCode}
                       </td>
                       <td className="py-3.5 px-4">
                         <span
                           className={`px-2.5 py-1 rounded-full text-[10px] uppercase font-extrabold ${
                             isOffline
-                              ? "bg-amber-500/15 text-amber-600 border border-amber-500/40"
-                              : "bg-cyan-500/15 text-cyan-600 border border-cyan-500/40"
+                              ? isLight ? "bg-amber-100 text-amber-800 border border-amber-300" : "bg-amber-500/15 text-amber-400 border border-amber-500/40"
+                              : isLight ? "bg-cyan-100 text-cyan-800 border border-cyan-300" : "bg-cyan-500/15 text-cyan-400 border border-cyan-500/40"
                           }`}
                         >
                           {r.registrationType}
@@ -1046,7 +1075,7 @@ export function AdminDashboardClient({
                       </td>
                       <td className="py-3.5 px-4 font-sans space-y-2">
                         {r.teamName && (
-                          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-mono font-bold mb-1 ${isLight ? "bg-cyan-50 border-cyan-200 text-cyan-700" : "bg-cyan-500/10 border-cyan-500/30 text-cyan-300"}`}>
+                          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-mono font-bold mb-1 ${isLight ? "bg-cyan-50 border-cyan-200 text-cyan-800" : "bg-cyan-500/10 border-cyan-500/30 text-cyan-300"}`}>
                             🚩 Team: {r.teamName}
                           </div>
                         )}
@@ -1057,37 +1086,37 @@ export function AdminDashboardClient({
                           members.map((p: any, idx: number) => (
                             <div
                               key={p.id || idx}
-                              className={`pl-3 py-1 my-1 border-l-2 rounded-r-lg ${
+                              className={`pl-3 py-1.5 my-1 border-l-4 rounded-r-xl shadow-xs ${
                                 isOffline
-                                  ? (isLight ? "border-l-amber-500 bg-amber-50/70" : "border-l-amber-400 bg-amber-500/5")
-                                  : (isLight ? "border-l-cyan-600 bg-cyan-50/70" : "border-l-cyan-400 bg-cyan-500/5")
+                                  ? (isLight ? "border-l-amber-500 bg-amber-50/80 text-slate-900 border border-slate-200/60" : "border-l-amber-400 bg-amber-500/5")
+                                  : (isLight ? "border-l-cyan-600 bg-cyan-50/80 text-slate-900 border border-slate-200/60" : "border-l-cyan-400 bg-cyan-500/5")
                               }`}
                             >
                               <div className="flex items-center justify-between gap-2">
-                                <p className={`font-bold text-xs flex items-center gap-1.5 ${isLight ? "text-slate-900" : "text-slate-100"}`}>
-                                  <span className="text-cyan-600 font-mono text-[10px]">#{idx + 1}</span>
+                                <p className={`font-bold text-xs flex items-center gap-1.5 ${isLight ? "text-slate-900 font-extrabold" : "text-slate-100"}`}>
+                                  <span className={isLight ? "text-cyan-700 font-mono text-[10px] font-bold" : "text-cyan-400 font-mono text-[10px]"}>#{idx + 1}</span>
                                   {p.fullName || "N/A"}
                                 </p>
                                 <span
                                   className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
                                     p.foodPreference === "Non-Veg"
-                                      ? "bg-rose-500/10 text-rose-600 border border-rose-500/20"
-                                      : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
+                                      ? isLight ? "bg-rose-100 text-rose-800 border border-rose-200" : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                                      : isLight ? "bg-emerald-100 text-emerald-800 border border-emerald-200" : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                                   }`}
                                 >
                                   {p.foodPreference || "Veg"}
                                 </span>
                               </div>
-                              <p className={`text-[11px] font-mono truncate ${isLight ? "text-slate-700" : "text-slate-300"}`}>{p.email}</p>
-                              <p className={`text-[10px] font-mono truncate ${isLight ? "text-slate-600" : "text-slate-400"}`}>
-                                {p.college} • <span className="text-cyan-600 font-bold">{p.department || "ECE"}</span> • 📞 {p.phone}
+                              <p className={`text-[11px] font-mono truncate ${isLight ? "text-slate-700 font-medium" : "text-slate-300"}`}>{p.email}</p>
+                              <p className={`text-[10px] font-mono truncate ${isLight ? "text-slate-600 font-medium" : "text-slate-400"}`}>
+                                {p.college} • <span className={isLight ? "text-cyan-700 font-bold" : "text-cyan-400"}>{p.department || "ECE"}</span> • 📞 {p.phone}
                               </p>
                             </div>
                           ))
                         )}
                       </td>
                       <td className="py-3.5 px-4">
-                        <Badge variant="primary">
+                        <Badge variant={isLight ? "secondary" : "primary"}>
                           {r.technicalEvent?.title || "N/A"}
                         </Badge>
                       </td>
@@ -1101,6 +1130,7 @@ export function AdminDashboardClient({
                           size="sm"
                           variant="outline"
                           onClick={() => setSelectedRegistration(r)}
+                          className={isLight ? "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-800 font-bold shadow-xs" : ""}
                         >
                           {members.length} Member(s)
                         </Button>

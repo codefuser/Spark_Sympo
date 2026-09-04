@@ -123,12 +123,18 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           />
         </button>
 
-        {/* Custom Glassmorphism Dropdown Menu */}
+        {/* Custom Dropdown Menu */}
         {isOpen && (
-          <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0E1526]/95 backdrop-blur-xl border border-slate-700/80 shadow-2xl shadow-black/90 rounded-xl overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150">
+          <div
+            className={cn(
+              "absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0E1526]/95 backdrop-blur-xl border border-slate-700/80 shadow-2xl shadow-black/90 rounded-xl overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150",
+              className?.includes("bg-white") && "bg-white/95 border-slate-200 shadow-xl shadow-slate-400/20 text-slate-900"
+            )}
+          >
             <div className="max-h-60 overflow-y-auto p-1.5 space-y-0.5 scrollbar-thin">
               {options.map((opt) => {
                 const isSelected = opt.value === selectedVal;
+                const isLightSelect = className?.includes("bg-white");
                 return (
                   <button
                     key={opt.value}
@@ -137,12 +143,18 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                     className={cn(
                       "w-full flex items-center justify-between px-3 py-2 text-xs rounded-lg transition-colors duration-150 text-left font-medium",
                       isSelected
-                        ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shadow-sm"
+                        ? isLightSelect
+                          ? "bg-cyan-50 text-cyan-800 border border-cyan-200 font-bold"
+                          : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shadow-sm"
+                        : isLightSelect
+                        ? "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                         : "text-slate-300 hover:bg-slate-800/80 hover:text-slate-100"
                     )}
                   >
                     <span className="truncate pr-2">{opt.label}</span>
-                    {isSelected && <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
+                    {isSelected && (
+                      <Check className={cn("w-3.5 h-3.5 shrink-0", isLightSelect ? "text-cyan-600" : "text-cyan-400")} />
+                    )}
                   </button>
                 );
               })}
