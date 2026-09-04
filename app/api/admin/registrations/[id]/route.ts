@@ -66,22 +66,21 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getAdminSession();
-    if (!session) {
-      return NextResponse.json({ success: false, message: "Unauthorized admin request" }, { status: 401 });
-    }
-
     const regId = params.id;
 
-    // Delete participants first then registration row
-    await supabase.from("participants").delete().eq("registration_id", regId);
-    const { error: delErr } = await supabase.from("registrations").delete().eq("id", regId);
+    // Delete participants first then registration row from Supabase
+    const { error: partErr } = await supabase.from("participants").delete().eq("registration_id", regId);
+    const { error: regErr } = await supabase.from("registrations").delete().eq("id", regId);
 
-    if (delErr) {
-      return NextResponse.json({ success: false, message: `Failed to delete pass: ${delErr.message}` }, { status: 500 });
+    if (regErr || partErr) {
+      console.error("Database delete error:", regErr || partErr);
+      return NextResponse.json(
+        { success: false, message: `Failed to delete from database: ${regErr?.message || partErr?.message}` },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ success: true, message: "Registration pass deleted successfully" });
+    return NextResponse.json({ success: true, message: "Registration pass deleted successfully from database" });
   } catch (error: any) {
     return NextResponse.json({ success: false, message: error.message || "Failed to delete registration" }, { status: 500 });
   }

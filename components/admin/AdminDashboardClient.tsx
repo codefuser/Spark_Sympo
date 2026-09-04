@@ -104,6 +104,7 @@ export function AdminDashboardClient({
   const [selectedEventId, setSelectedEventId] = useState<string>("ALL");
   const [selectedType, setSelectedType] = useState<string>("ALL");
   const [selectedRegistration, setSelectedRegistration] = useState<any | null>(null);
+  const [deletingRegistrationTarget, setDeletingRegistrationTarget] = useState<any | null>(null);
   const [isExportOpen, setIsExportOpen] = useState(false);
 
   // Full Screen Offline Spot Desk Mode Toggle
@@ -188,32 +189,33 @@ export function AdminDashboardClient({
     }
   };
 
-  const handleDeleteRegistration = async (regId: string) => {
-    if (!confirm("Are you sure you want to permanently delete this registration pass from the database? This action cannot be undone.")) return;
+  const confirmDeletePass = async (regId: string) => {
+    if (!regId) return;
     setSubmittingDelete(true);
     try {
       // 1. Direct Supabase deletion for instant database update
-      await supabase.from("participants").delete().eq("registration_id", regId);
-      const { error: supaErr } = await supabase.from("registrations").delete().eq("id", regId);
+      const { error: partErr } = await supabase.from("participants").delete().eq("registration_id", regId);
+      const { error: regErr } = await supabase.from("registrations").delete().eq("id", regId);
 
-      // 2. Fallback server API delete
+      // 2. Server API delete
       await fetch(`/api/admin/registrations/${regId}`, { method: "DELETE" });
 
-      if (supaErr) {
-        showToast("Delete Warning", supaErr.message, "error");
+      if (regErr || partErr) {
+        showToast("Delete Failed", regErr?.message || partErr?.message || "Could not delete from database", "error");
       } else {
         showToast("Pass Permanently Deleted", "Registration pass and all member details removed from database", "success");
+        // Update local state immediately
+        setRegistrationsList((prev) => prev.filter((r) => r.id !== regId));
+        setSelectedRegistration(null);
+        setEditingRegistration(null);
+        setDeletingRegistrationTarget(null);
+        refreshRegistrations(true);
       }
-
-      // 3. Immediately update UI state
-      setSelectedRegistration(null);
-      setEditingRegistration(null);
-      setRegistrationsList((prev) => prev.filter((r) => r.id !== regId));
-      refreshRegistrations(true);
     } catch (err: any) {
-      showToast("Error", err.message || "Failed to delete pass", "error");
+      showToast("Error", err.message || "Failed to delete pass from database", "error");
     } finally {
       setSubmittingDelete(false);
+      setDeletingRegistrationTarget(null);
     }
   };
 
@@ -1466,7 +1468,7 @@ export function AdminDashboardClient({
                 variant="danger"
                 size="sm"
                 leftIcon={<Trash2 className="w-4 h-4" />}
-                onClick={() => handleDeleteRegistration(selectedRegistration.id)}
+                onClick={() => setDeletingRegistrationTarget(selectedRegistration)}
                 isLoading={submittingDelete}
               >
                 Delete Pass
@@ -1658,6 +1660,54 @@ export function AdminDashboardClient({
               </Button>
             </div>
           </form>
+        </Modal>
+      )}
+
+      {/* CUSTOM THEME-STYLED DELETE CONFIRMATION MODAL */}
+      {deletingRegistrationTarget && (
+        <Modal
+          isOpen={!!deletingRegistrationTarget}
+          onClose={() => setDeletingRegistrationTarget(null)}
+          maxWidth="md"
+        >
+          <div className="text-center py-3 space-y-4">
+            <div className="w-14 h-14 rounded-2xl bg-rose-100 dark:bg-rose-950/80 border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto shadow-sm">
+              <Trash2 className="w-7 h-7" />
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">
+                Delete Registration Pass?
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
+                Are you sure you want to permanently delete registration pass{" "}
+                <strong className="text-slate-900 dark:text-slate-100 font-mono font-extrabold underline decoration-rose-500">
+                  {deletingRegistrationTarget.registrationCode}
+                </strong>{" "}
+                from the database? All participant roster records will be permanently removed.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setDeletingRegistrationTarget(null)}
+                disabled={submittingDelete}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                type="button"
+                variant="danger"
+                isLoading={submittingDelete}
+                onClick={() => confirmDeletePass(deletingRegistrationTarget.id)}
+              >
+                Yes, Permanently Delete
+              </Button>
+            </div>
+          </div>
         </Modal>
       )}
     </div>
