@@ -1230,14 +1230,14 @@ export function AdminDashboardClient({
             <thead className={`border-b-2 text-xs font-mono uppercase tracking-wider transition-colors duration-200 ${isLight ? "bg-slate-100 border-slate-300 text-slate-800 font-extrabold" : "bg-slate-900 border-slate-800 text-slate-300"}`}>
               <tr>
                 <th className="py-3 px-2 text-center w-10">#</th>
-                <th className="py-3 px-3 whitespace-nowrap min-w-[140px]">Pass Code</th>
-                <th className="py-3 px-2 w-20">Type</th>
-                <th className="py-3 px-3 min-w-[220px]">Student / Team Roster</th>
-                <th className="py-3 px-3 min-w-[180px]">College & Dept</th>
-                <th className="py-3 px-3 min-w-[140px]">Phone</th>
-                <th className="py-3 px-3 min-w-[180px]">Registered Events</th>
-                <th className="py-3 px-2 text-center w-24">Payment</th>
-                <th className="py-3 px-2 text-center w-20">Food</th>
+                <th className="py-3 px-2.5 whitespace-nowrap min-w-[130px]">Pass Code</th>
+                <th className="py-3 px-2 text-center w-16">Type</th>
+                <th className="py-3 px-2.5 min-w-[200px]">Student / Team Roster</th>
+                <th className="py-3 px-2.5 min-w-[160px]">College & Dept</th>
+                <th className="py-3 px-2.5 whitespace-nowrap">Phone</th>
+                <th className="py-3 px-2.5">Registered Events</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">Payment</th>
+                <th className="py-3 px-2 text-center whitespace-nowrap">Food</th>
               </tr>
             </thead>
             <tbody className={`font-sans text-xs ${isLight ? "text-slate-900" : "text-slate-100"}`}>
@@ -1270,7 +1270,7 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* Pass Code (Single Line Code + Date below) */}
-                      <td className="py-3.5 px-3 align-top whitespace-nowrap">
+                      <td className="py-3.5 px-2.5 align-top whitespace-nowrap">
                         <span className="font-mono font-extrabold text-sm text-slate-900 dark:text-slate-100 block">
                           {r.registrationCode}
                         </span>
@@ -1280,14 +1280,14 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* Registration Type */}
-                      <td className="py-3.5 px-2 align-top">
+                      <td className="py-3.5 px-2 align-top text-center">
                         <Badge variant={isOffline ? "warning" : "success"}>
                           {r.registrationType}
                         </Badge>
                       </td>
 
                       {/* Student Roster (Name + Email below) */}
-                      <td className="py-3 px-3 align-top">
+                      <td className="py-3 px-2.5 align-top">
                         {r.teamName && (
                           <div className="h-7 mb-1.5 flex items-center">
                             <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[10px] font-mono font-bold shadow-xs ${isLight ? "bg-blue-50 border-blue-200 text-blue-800" : "bg-blue-950/60 border-blue-800 text-blue-200"}`}>
@@ -1321,7 +1321,7 @@ export function AdminDashboardClient({
                                   >
                                     #{idx + 1} {idx === 0 ? "Leader" : "Member"}
                                   </span>
-                                  <span className="truncate max-w-[150px]" title={p.fullName}>{p.fullName}</span>
+                                  <span className="truncate max-w-[140px]" title={p.fullName}>{p.fullName}</span>
                                 </p>
                                 <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate mt-0.5">
                                   {p.email}
@@ -1333,7 +1333,7 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* College & Dept */}
-                      <td className="py-3 px-3 align-top">
+                      <td className="py-3 px-2.5 align-top">
                         {r.teamName && (
                           <div className="h-7 mb-1.5" />
                         )}
@@ -1353,7 +1353,7 @@ export function AdminDashboardClient({
                                     : "border-transparent"
                                 }`}
                               >
-                                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title={p.college}>
+                                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[160px]" title={p.college}>
                                   {p.college || "N/A"}
                                 </p>
                                 <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400 mt-0.5">
@@ -1366,7 +1366,7 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* Phone Number (Strict Line-by-Line Alignment with Roster) */}
-                      <td className="py-3 px-3 align-top font-mono text-xs text-slate-700 dark:text-slate-300">
+                      <td className="py-3 px-2.5 align-top font-mono text-xs text-slate-700 dark:text-slate-300 whitespace-nowrap">
                         {r.teamName && (
                           <div className="h-7 mb-1.5" />
                         )}
@@ -1378,13 +1378,7 @@ export function AdminDashboardClient({
                             {members.map((p: any, idx: number) => (
                               <div
                                 key={idx}
-                                className={`h-[50px] flex items-center px-2.5 rounded-lg border font-semibold text-xs ${
-                                  members.length > 1
-                                    ? isLight
-                                      ? "bg-slate-50/80 border-slate-200/90 shadow-2xs"
-                                      : "bg-slate-800/40 border-slate-700/60"
-                                    : "border-transparent"
-                                }`}
+                                className="h-[50px] flex items-center font-semibold text-xs whitespace-nowrap px-1"
                               >
                                 📞 {p.phone || "N/A"}
                               </div>
@@ -1394,19 +1388,19 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* Registered Events */}
-                      <td className="py-3 px-3 align-top">
+                      <td className="py-3 px-2.5 align-top">
                         {r.teamName && (
                           <div className="h-7 mb-1.5" />
                         )}
 
                         <div className="space-y-1.5 py-1">
                           {r.technicalEvent && (
-                            <Badge variant="primary" size="sm" className="block text-[11px] truncate max-w-[170px]">
+                            <Badge variant="primary" size="sm" className="block text-[11px] truncate max-w-[160px]">
                               Tech: {r.technicalEvent.title}
                             </Badge>
                           )}
                           {r.nonTechnicalEvent && (
-                            <Badge variant="neutral" size="sm" className="block text-[11px] truncate max-w-[170px]">
+                            <Badge variant="neutral" size="sm" className="block text-[11px] truncate max-w-[160px]">
                               Non-Tech: {r.nonTechnicalEvent.title}
                             </Badge>
                           )}
@@ -1414,23 +1408,33 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* Payment Status */}
-                      <td className="py-3 px-2 align-top text-center">
+                      <td className="py-3 px-2 align-top text-center whitespace-nowrap">
                         {r.teamName && (
                           <div className="h-7 mb-1.5" />
                         )}
 
-                        <div className="py-1">
-                          <Badge
-                            variant={payStatus === "PAID" ? "success" : payStatus === "PENDING" ? "warning" : "danger"}
-                            size="sm"
+                        <div className="py-1 flex justify-center">
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-bold whitespace-nowrap shadow-2xs ${
+                              payStatus === "PAID"
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800"
+                                : payStatus === "PENDING"
+                                ? "bg-amber-50 text-amber-700 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-300 dark:border-amber-800"
+                                : "bg-rose-50 text-rose-700 border border-rose-300 dark:bg-rose-950/70 dark:text-rose-300 dark:border-rose-800"
+                            }`}
                           >
-                            {payStatus === "PAID" ? "PAID 🟢" : payStatus === "PENDING" ? "PENDING ⏳" : "UNPAID 🔴"}
-                          </Badge>
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                payStatus === "PAID" ? "bg-emerald-500 animate-pulse" : payStatus === "PENDING" ? "bg-amber-500" : "bg-rose-500"
+                              }`}
+                            />
+                            {payStatus === "PAID" ? "PAID" : payStatus === "PENDING" ? "PENDING" : "UNPAID"}
+                          </span>
                         </div>
                       </td>
 
                       {/* Food */}
-                      <td className="py-3 px-2 align-top text-center">
+                      <td className="py-3 px-2 align-top text-center whitespace-nowrap">
                         {r.teamName && (
                           <div className="h-7 mb-1.5" />
                         )}
@@ -1439,22 +1443,23 @@ export function AdminDashboardClient({
                           <div className="h-11 flex items-center justify-center text-xs font-mono text-slate-400 italic">-</div>
                         ) : (
                           <div className="space-y-1.5">
-                            {members.map((p: any, idx: number) => (
-                              <div
-                                key={idx}
-                                className={`h-[50px] flex items-center justify-center px-2 rounded-lg border ${
-                                  members.length > 1
-                                    ? isLight
-                                      ? "bg-slate-50/80 border-slate-200/90 shadow-2xs"
-                                      : "bg-slate-800/40 border-slate-700/60"
-                                    : "border-transparent"
-                                }`}
-                              >
-                                <Badge variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm" className="text-[10px]">
-                                  {p.foodPreference || "Veg"}
-                                </Badge>
-                              </div>
-                            ))}
+                            {members.map((p: any, idx: number) => {
+                              const isNonVeg = (p.foodPreference || "").toLowerCase().includes("non");
+                              return (
+                                <div key={idx} className="h-[50px] flex items-center justify-center">
+                                  <span
+                                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap shadow-2xs border ${
+                                      isNonVeg
+                                        ? "bg-amber-100/90 text-amber-900 border-amber-300 dark:bg-amber-950/80 dark:text-amber-200 dark:border-amber-700/80"
+                                        : "bg-emerald-100/90 text-emerald-900 border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-700/80"
+                                    }`}
+                                  >
+                                    <span>{isNonVeg ? "🍗" : "🌿"}</span>
+                                    {isNonVeg ? "Non-Veg" : "Veg"}
+                                  </span>
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
                       </td>
