@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/database/supabase";
 import { Card } from "@/components/ui/Card";
@@ -91,65 +91,99 @@ export function AdminDashboardClient({
   // Live registrations list for instant real-time UI updates
   const [registrationsList, setRegistrationsList] = useState<any[]>(initialRegistrations);
 
-  // ─── Fetch latest registrations from Supabase ───────────────────────
-  const refreshRegistrations = useCallback(async (silent = false) => {
+  // Track previous count to detect new registrations
+  const prevCountRef = useRef(initialRegistrations.length);
+
+  // ─── Fetch latest registrations from Supabase (separate queries for reliability) ─
+  const refreshRegistrations = useCallback(async (silent = false, detectNew = false) => {
     if (!silent) setIsRefreshing(true);
     try {
-      const { data: supaRegs, error } = await supabase
+      // Fetch registrations
+      const { data: regs, error } = await supabase
         .from("registrations")
-        .select("*, participants(*)")
+        .select("*")
         .order("created_at", { ascending: false });
 
-      if (!error && supaRegs) {
-        // Fetch events for mapping
-        const { data: eventsData } = await supabase.from("events").select("id, title, slug, category");
-        const eventsMap = new Map((eventsData || []).map((e: any) => [e.id, e]));
+      if (error || !regs) return;
 
-        const mapped = supaRegs.map((r: any) => ({
-          id: r.id,
-          registrationCode: r.registration_code || "SPK-2K26-PASS",
-          registrationType: r.registration_type || "online",
-          technicalEventId: r.technical_event_id,
-          nonTechnicalEventId: r.non_technical_event_id,
-          teamName: r.team_name || null,
-          status: r.status || "CONFIRMED",
-          createdAt: r.created_at || new Date().toISOString(),
-          technicalEvent: eventsMap.get(r.technical_event_id) || { title: "Technical Track" },
-          nonTechnicalEvent: eventsMap.get(r.non_technical_event_id) || { title: "Non-Technical Track" },
-          participants: (r.participants || []).map((p: any) => ({
-            id: p.id,
-            fullName: p.full_name || "Participant",
-            email: p.email || "",
-            phone: p.phone || "",
-            college: p.college || "",
-            department: p.department || "ECE",
-            foodPreference: p.food_preference || "Veg",
-            isTeamLeader: p.is_team_leader ?? false,
-          })),
-        }));
-        setRegistrationsList(mapped);
+      // Fetch participants separately (more reliable than nested join)
+      const { data: participants } = await supabase
+        .from("participants")
+        .select("*");
+
+      // Fetch events
+      const { data: eventsData } = await supabase
+        .from("events")
+        .select("id, title, slug, category");
+
+      const eventsMap = new Map((eventsData || []).map((e: any) => [e.id, e]));
+
+      // Group participants by registration_id for fast lookup
+      const partsByRegId: Record<string, any[]> = {};
+      (participants || []).forEach((p: any) => {
+        if (!partsByRegId[p.registration_id]) partsByRegId[p.registration_id] = [];
+        partsByRegId[p.registration_id].push(p);
+      });
+
+      const mapped = regs.map((r: any) => ({
+        id: r.id,
+        registrationCode: r.registration_code || "SPK-2K26-PASS",
+        registrationType: r.registration_type || "online",
+        technicalEventId: r.technical_event_id,
+        nonTechnicalEventId: r.non_technical_event_id,
+        teamName: r.team_name || null,
+        status: r.status || "CONFIRMED",
+        createdAt: r.created_at || new Date().toISOString(),
+        technicalEvent: eventsMap.get(r.technical_event_id) || { title: "Technical Track" },
+        nonTechnicalEvent: eventsMap.get(r.non_technical_event_id) || { title: "Non-Technical Track" },
+        participants: (partsByRegId[r.id] || []).map((p: any) => ({
+          id: p.id,
+          fullName: p.full_name || "Unknown",
+          email: p.email || "",
+          phone: p.phone || "",
+          college: p.college || "",
+          department: p.department || "ECE",
+          foodPreference: p.food_preference || "Veg",
+          isTeamLeader: p.is_team_leader ?? false,
+        })),
+      }));
+
+      // Show toast when new registration detected
+      if (detectNew && mapped.length > prevCountRef.current && prevCountRef.current > 0) {
+        const newCount = mapped.length - prevCountRef.current;
+        showToast(
+          `🔔 ${newCount} New Registration${newCount > 1 ? "s" : ""}!`,
+          `Pass: ${mapped[0]?.registrationCode}`,
+          "success"
+        );
       }
+      prevCountRef.current = mapped.length;
+      setRegistrationsList(mapped);
     } catch (err) {
       console.error("Refresh error:", err);
     } finally {
       if (!silent) setIsRefreshing(false);
     }
-  }, []);
+  }, [showToast]);
 
-  // ─── Supabase Real-time subscription ────────────────────────────────
+  // ─── Auto-refresh: Polling every 3s + Supabase real-time ────────────
   useEffect(() => {
-    // Initial refresh on mount
-    refreshRegistrations(true);
+    // Immediate first fetch
+    refreshRegistrations(true, false);
 
-    // Subscribe to registration changes
+    // ⏱ Polling every 3 seconds (fallback when Supabase real-time fails)
+    const interval = setInterval(() => {
+      refreshRegistrations(true, true);
+    }, 3000);
+
+    // 🔴 Supabase Real-time subscription (instant push when available)
     const channel = supabase
       .channel("admin-registrations-live")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "registrations" },
         async () => {
-          await refreshRegistrations(true);
-          showToast("Live Update", "New registration received!", "success");
+          await refreshRegistrations(true, true);
         }
       )
       .subscribe((status) => {
@@ -157,6 +191,7 @@ export function AdminDashboardClient({
       });
 
     return () => {
+      clearInterval(interval);
       supabase.removeChannel(channel);
     };
   }, [refreshRegistrations]);
@@ -657,7 +692,7 @@ export function AdminDashboardClient({
                           </div>
 
                           <span className="text-[11px] text-slate-400 font-mono">
-                            {r.participants?.length || 1} Member(s)
+                            {r.participants?.length ?? 0} Member(s)
                           </span>
                         </div>
 
@@ -907,7 +942,7 @@ export function AdminDashboardClient({
                           variant="outline"
                           onClick={() => setSelectedRegistration(r)}
                         >
-                          {r.participants?.length || 1} Member(s)
+                          {r.participants?.length ?? 0} Member(s)
                         </Button>
                       </td>
                     </tr>
