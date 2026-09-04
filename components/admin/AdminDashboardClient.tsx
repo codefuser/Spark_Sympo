@@ -805,19 +805,63 @@ export function AdminDashboardClient({
     }
   };
 
-  // Calculate live metrics
+  // Comprehensive Executive Metrics Calculations
   const totalRegistrations = registrationsList.length;
+
+  const onlineRegistrations = registrationsList.filter(
+    (r) => r.registrationType === "online"
+  ).length;
+
+  const offlineRegistrations = registrationsList.filter(
+    (r) => r.registrationType === "offline"
+  ).length;
+
+  const soloRegistrations = registrationsList.filter(
+    (r) => (r.participants?.length || 0) <= 1
+  ).length;
+
+  const teamRegistrations = registrationsList.filter(
+    (r) => (r.participants?.length || 0) > 1
+  ).length;
+
   const totalParticipants = registrationsList.reduce(
     (acc, r) => acc + (r.participants?.length || 0),
     0
   );
-  const onlineRegistrations = registrationsList.filter(
-    (r) => r.registrationType === "online"
+
+  const allParticipantsList = registrationsList.flatMap((r) => r.participants || []);
+
+  const vegCount = allParticipantsList.filter(
+    (p) => p.foodPreference === "Veg"
   ).length;
-  const offlineRegistrations = registrationsList.filter(
-    (r) => r.registrationType === "offline"
+
+  const nonVegCount = allParticipantsList.filter(
+    (p) => p.foodPreference === "Non-Veg"
   ).length;
+
+  const paidCount = registrationsList.filter(
+    (r) => r.paymentStatus === "PAID"
+  ).length;
+
+  const unpaidCount = registrationsList.filter(
+    (r) => r.paymentStatus !== "PAID"
+  ).length;
+
+  const paidPercentage = totalRegistrations > 0
+    ? Math.round((paidCount / totalRegistrations) * 100)
+    : 0;
+
   const totalEvents = events.length;
+
+  const techEventEnrollments = registrationsList.filter(
+    (r) => r.technicalEventId
+  ).length;
+
+  const nonTechEventEnrollments = registrationsList.filter(
+    (r) => r.nonTechnicalEventId
+  ).length;
+
+  const totalEnrollments = techEventEnrollments + nonTechEventEnrollments;
 
   // =========================================================================
   // RENDER FULL SCREEN OFFLINE SPOT REGISTRATION DESK (WEBSITE 2)
@@ -1424,48 +1468,133 @@ export function AdminDashboardClient({
         </div>
       ) : (
         <>
-          {/* Live Registration Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-6">
-        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
-          <div className="flex items-center justify-between mb-2">
-            <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Total Registrations</span>
-            <div className={`p-2 rounded-lg ${isLight ? "bg-blue-50 text-blue-600" : "bg-slate-800 text-blue-400"}`}>
-              <Calendar className="w-5 h-5 text-blue-600 dark:text-cyan-400" />
+          {/* Executive Registration Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* CARD 1: TOTAL REGISTRATIONS & PASSES */}
+        <Card className={`p-5 transition-all duration-200 space-y-3 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
+          <div className="flex items-center justify-between">
+            <span className={`text-xs font-mono uppercase font-extrabold tracking-wider ${isLight ? "text-slate-500" : "text-slate-400"}`}>
+              Total Registrations
+            </span>
+            <div className={`p-2 rounded-xl ${isLight ? "bg-blue-50 text-blue-600 border border-blue-200" : "bg-slate-800 text-cyan-400 border border-slate-700"}`}>
+              <Ticket className="w-5 h-5 text-blue-600 dark:text-cyan-400" />
             </div>
           </div>
-          <p className={`text-3xl font-extrabold font-mono ${isLight ? "text-slate-900" : "text-white"}`}>{totalRegistrations}</p>
+
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className={`text-3xl font-extrabold font-mono ${isLight ? "text-slate-900" : "text-white"}`}>
+                {totalRegistrations}
+              </span>
+              <span className="text-xs font-mono font-bold text-slate-500">Passes</span>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center gap-1.5 text-[11px] font-mono">
+            <span className="px-2 py-0.5 rounded-md font-bold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/60 dark:text-cyan-300 dark:border-blue-800/80">
+              🌐 {onlineRegistrations} Online
+            </span>
+            <span className="px-2 py-0.5 rounded-md font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800/80">
+              📍 {offlineRegistrations} Spot
+            </span>
+            <span className="px-2 py-0.5 rounded-md font-bold bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
+              👥 {teamRegistrations} Teams
+            </span>
+          </div>
         </Card>
 
-        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
-          <div className="flex items-center justify-between mb-2">
-            <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Total Participants</span>
-            <div className={`p-2 rounded-lg ${isLight ? "bg-emerald-50 text-emerald-600" : "bg-slate-800 text-emerald-400"}`}>
+        {/* CARD 2: TOTAL PARTICIPANTS & CATERING */}
+        <Card className={`p-5 transition-all duration-200 space-y-3 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
+          <div className="flex items-center justify-between">
+            <span className={`text-xs font-mono uppercase font-extrabold tracking-wider ${isLight ? "text-slate-500" : "text-slate-400"}`}>
+              Total Participants
+            </span>
+            <div className={`p-2 rounded-xl ${isLight ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-slate-800 text-emerald-400 border border-slate-700"}`}>
               <Users className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             </div>
           </div>
-          <p className="text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">{totalParticipants}</p>
-        </Card>
 
-        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
-          <div className="flex items-center justify-between mb-2">
-            <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Online / Offline</span>
-            <div className={`p-2 rounded-lg ${isLight ? "bg-purple-50 text-purple-600" : "bg-slate-800 text-purple-400"}`}>
-              <Laptop className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">
+                {totalParticipants}
+              </span>
+              <span className="text-xs font-mono font-bold text-slate-500">Students</span>
             </div>
           </div>
-          <p className={`text-2xl font-bold font-mono ${isLight ? "text-slate-900" : "text-white"}`}>
-            <span className="text-blue-600 dark:text-cyan-400 font-extrabold">{onlineRegistrations}</span> / <span className="text-amber-600 dark:text-amber-400 font-extrabold">{offlineRegistrations}</span>
-          </p>
+
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center gap-1.5 text-[11px] font-mono">
+            <span className="px-2 py-0.5 rounded-md font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/80">
+              🥗 {vegCount} Veg
+            </span>
+            <span className="px-2 py-0.5 rounded-md font-bold bg-rose-50 text-rose-800 border border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800/80">
+              🍗 {nonVegCount} Non-Veg
+            </span>
+            <span className="px-2 py-0.5 rounded-md font-bold bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
+              👤 {soloRegistrations} Solos
+            </span>
+          </div>
         </Card>
 
-        <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
-          <div className="flex items-center justify-between mb-2">
-            <span className={`text-xs font-mono uppercase font-bold ${isLight ? "text-slate-500" : "text-slate-400"}`}>Active Event Tracks</span>
-            <div className={`p-2 rounded-lg ${isLight ? "bg-amber-50 text-amber-600" : "bg-slate-800 text-amber-400"}`}>
+        {/* CARD 3: PAYMENT & REVENUE STATUS */}
+        <Card className={`p-5 transition-all duration-200 space-y-3 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
+          <div className="flex items-center justify-between">
+            <span className={`text-xs font-mono uppercase font-extrabold tracking-wider ${isLight ? "text-slate-500" : "text-slate-400"}`}>
+              Payment Status
+            </span>
+            <div className={`p-2 rounded-xl ${isLight ? "bg-purple-50 text-purple-600 border border-purple-200" : "bg-slate-800 text-purple-400 border border-slate-700"}`}>
+              <ShieldCheck className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className={`text-3xl font-extrabold font-mono ${isLight ? "text-slate-900" : "text-white"}`}>
+                <span className="text-emerald-600 dark:text-emerald-400">{paidCount}</span>
+                <span className="text-slate-400 font-normal text-xl"> / {totalRegistrations}</span>
+              </span>
+              <span className="text-xs font-mono font-bold text-slate-500">Paid ({paidPercentage}%)</span>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center gap-1.5 text-[11px] font-mono">
+            <span className="px-2 py-0.5 rounded-md font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/80">
+              🟢 {paidCount} Verified
+            </span>
+            <span className="px-2 py-0.5 rounded-md font-bold bg-rose-50 text-rose-800 border border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800/80">
+              🔴 {unpaidCount} Pending
+            </span>
+          </div>
+        </Card>
+
+        {/* CARD 4: ACTIVE EVENT TRACKS & ENROLLMENTS */}
+        <Card className={`p-5 transition-all duration-200 space-y-3 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
+          <div className="flex items-center justify-between">
+            <span className={`text-xs font-mono uppercase font-extrabold tracking-wider ${isLight ? "text-slate-500" : "text-slate-400"}`}>
+              Event Track Activity
+            </span>
+            <div className={`p-2 rounded-xl ${isLight ? "bg-amber-50 text-amber-600 border border-amber-200" : "bg-slate-800 text-amber-400 border border-slate-700"}`}>
               <Award className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </div>
           </div>
-          <p className="text-3xl font-extrabold font-mono text-amber-600 dark:text-amber-400">{totalEvents}</p>
+
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-extrabold font-mono text-amber-600 dark:text-amber-400">
+                {totalEvents}
+              </span>
+              <span className="text-xs font-mono font-bold text-slate-500">Tracks ({totalEnrollments} Entries)</span>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center gap-1.5 text-[11px] font-mono">
+            <span className="px-2 py-0.5 rounded-md font-bold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/60 dark:text-cyan-300 dark:border-blue-800/80">
+              🔬 {techEventEnrollments} Technical
+            </span>
+            <span className="px-2 py-0.5 rounded-md font-bold bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800/80">
+              🎭 {nonTechEventEnrollments} Non-Tech
+            </span>
+          </div>
         </Card>
       </div>
 
