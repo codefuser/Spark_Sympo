@@ -50,10 +50,8 @@ export function RegistrationModal({
     participantCount: number;
   } | null>(null);
 
-  // Filter Technical & Non-Technical events
-  const technicalEvents = events.filter(
-    (e) => e.category === "TECHNICAL" || (e as any).minMembers !== undefined
-  );
+  // Filter Technical & Non-Technical events by category
+  const technicalEvents = events.filter((e) => e.category === "TECHNICAL");
   const nonTechnicalEvents = events.filter((e) => e.category === "NON_TECHNICAL");
 
   const defaultTechId =

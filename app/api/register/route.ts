@@ -1,5 +1,4 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/database/prisma";
+﻿import { NextResponse } from "next/server";
 import { supabase } from "@/lib/database/supabase";
 import { registrationSchema } from "@/lib/validations/schemas";
 import { generateRegistrationId } from "@/lib/utils";
@@ -9,205 +8,164 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = registrationSchema.parse(body);
 
-    // 1. Fetch Technical & Non-Technical Events
-    const [techEvent, nonTechEvent] = await Promise.all([
-      prisma.event.findUnique({ where: { id: validatedData.technicalEventId } }),
-      prisma.event.findUnique({ where: { id: validatedData.nonTechnicalEventId } }),
-    ]);
+    const { technicalEventId, nonTechnicalEventId, participants: rawParticipants, teamName, registrationType } = validatedData;
 
-    if (!techEvent || techEvent.category !== "TECHNICAL") {
+    // 1. Fetch events from Supabase
+    const { data: techEvent, error: techErr } = await supabase
+      .from("events")
+      .select("*")
+      .eq("id", technicalEventId)
+      .maybeSingle();
+
+    const { data: nonTechEvent, error: nonTechErr } = await supabase
+      .from("events")
+      .select("*")
+      .eq("id", nonTechnicalEventId)
+      .maybeSingle();
+
+    if (techErr || !techEvent) {
       return NextResponse.json(
         { success: false, message: "Please select a valid Technical Event track." },
         { status: 400 }
       );
     }
 
-    if (!nonTechEvent || nonTechEvent.category !== "NON_TECHNICAL") {
+    if (nonTechErr || !nonTechEvent) {
       return NextResponse.json(
         { success: false, message: "Please select a valid Non-Technical Event track." },
         { status: 400 }
       );
     }
 
-    if (techEvent.status !== "OPEN" || nonTechEvent.status !== "OPEN") {
+    if (techEvent.category !== "TECHNICAL") {
       return NextResponse.json(
-        { success: false, message: "One of your selected event tracks is currently closed for registration." },
+        { success: false, message: "Selected Technical Event is not a valid technical track." },
         { status: 400 }
       );
     }
 
-    // 2. Validate participant bounds
-    const maxAllowedMembers = Math.max(techEvent.maxMembers, nonTechEvent.maxMembers);
-    if (validatedData.participants.length > maxAllowedMembers) {
+    if (nonTechEvent.category !== "NON_TECHNICAL") {
       return NextResponse.json(
-        {
-          success: false,
-          message: `Maximum allowed team size for your selected event combination is ${maxAllowedMembers} members.`,
-        },
+        { success: false, message: "Selected Non-Technical Event is not a valid non-technical track." },
         { status: 400 }
       );
     }
 
-    // 3. Normalize Emails & Check Duplicate Registration
-    const normalizedParticipants = validatedData.participants.map((p, idx) => ({
+    // 2. Validate team size
+    const maxAllowed = Math.max(techEvent.max_members || 5, nonTechEvent.max_members || 5);
+    if (rawParticipants.length > maxAllowed) {
+      return NextResponse.json(
+        { success: false, message: `Maximum allowed team size for your selected events is ${maxAllowed} members.` },
+        { status: 400 }
+      );
+    }
+
+    // 3. Normalize emails
+    const normalizedParticipants = rawParticipants.map((p, idx) => ({
       ...p,
       email: p.email.trim().toLowerCase(),
       isTeamLeader: idx === 0,
     }));
-
     const emails = normalizedParticipants.map((p) => p.email);
 
-    // Check if any participant is already registered for these events in Prisma or Supabase
-    const existingParticipants = await prisma.participant.findMany({
-      where: {
-        email: { in: emails },
-        registration: {
-          OR: [
-            { technicalEventId: techEvent.id },
-            { nonTechnicalEventId: nonTechEvent.id },
-          ],
-        },
-      },
-      include: {
-        registration: true,
-      },
-    });
+    // 4. Duplicate check in Supabase
+    try {
+      const { data: existingRegs } = await supabase
+        .from("registrations")
+        .select("id")
+        .or(`technical_event_id.eq.${techEvent.id},non_technical_event_id.eq.${nonTechEvent.id}`);
 
-    if (existingParticipants.length > 0) {
-      const dup = existingParticipants[0];
+      if (existingRegs && existingRegs.length > 0) {
+        const regIds = existingRegs.map((r: any) => r.id);
+        const { data: dupParticipants } = await supabase
+          .from("participants")
+          .select("full_name, email, registration_id")
+          .in("email", emails)
+          .in("registration_id", regIds);
+
+        if (dupParticipants && dupParticipants.length > 0) {
+          const dup = dupParticipants[0];
+          return NextResponse.json(
+            { success: false, message: `Participant ${dup.full_name} (${dup.email}) is already registered for one of these events.` },
+            { status: 400 }
+          );
+        }
+      }
+    } catch (dupErr) {
+      console.warn("Duplicate check warning:", dupErr);
+    }
+
+    // 5. Generate registration code
+    const regCode = generateRegistrationId();
+    const regType = registrationType || "online";
+
+    // 6. Insert registration into Supabase
+    const { data: supaReg, error: regInsertErr } = await supabase
+      .from("registrations")
+      .insert({
+        registration_code: regCode,
+        registration_type: regType,
+        technical_event_id: techEvent.id,
+        non_technical_event_id: nonTechEvent.id,
+        team_name: teamName || null,
+        status: "CONFIRMED",
+      })
+      .select()
+      .single();
+
+    if (regInsertErr || !supaReg) {
+      console.error("Supabase registration insert error:", regInsertErr);
       return NextResponse.json(
-        {
-          success: false,
-          message: `Participant ${dup.fullName} (${dup.email}) is already registered for one of these events under pass: ${dup.registration.registrationCode}`,
-        },
-        { status: 400 }
+        { success: false, message: "Failed to create registration. Please try again." },
+        { status: 500 }
       );
     }
 
-    // 4. Generate Unique Registration Code
-    const regCode = generateRegistrationId();
-    const regType = validatedData.registrationType || "online";
+    // 7. Insert participants into Supabase
+    const supaParticipants = normalizedParticipants.map((p) => ({
+      registration_id: supaReg.id,
+      full_name: p.fullName,
+      email: p.email,
+      phone: p.phone,
+      college: p.college,
+      department: p.department || "ECE",
+      food_preference: p.foodPreference,
+      is_team_leader: p.isTeamLeader,
+    }));
 
-    // 5. Insert into Local Database (Prisma)
-    const dbRegistration = await prisma.registration.create({
-      data: {
-        registrationCode: regCode,
-        registrationType: regType,
-        technicalEventId: techEvent.id,
-        nonTechnicalEventId: nonTechEvent.id,
-        teamName: validatedData.teamName || null,
-        status: "CONFIRMED",
-        participants: {
-          create: normalizedParticipants.map((p) => ({
-            fullName: p.fullName,
-            email: p.email,
-            phone: p.phone,
-            college: p.college,
-            foodPreference: p.foodPreference,
-            isTeamLeader: p.isTeamLeader,
-          })),
-        },
-      },
-      include: {
-        participants: true,
-      },
-    });
+    const { error: partInsertErr } = await supabase
+      .from("participants")
+      .insert(supaParticipants);
 
-    // 6. Insert into Supabase Shared Cloud Database (Website 1, 2, 3 shared DB)
+    if (partInsertErr) {
+      console.error("Supabase participants insert error:", partInsertErr);
+    }
+
+    // 8. Optional: also save to Prisma (local SQLite backup, skipped on Vercel)
     try {
-      // Find matching events in Supabase by slug
-      let supaTechId: string | null = null;
-      let supaNonTechId: string | null = null;
-
-      const { data: sTech } = await supabase
-        .from("events")
-        .select("id")
-        .eq("slug", techEvent.slug)
-        .maybeSingle();
-
-      const { data: sNonTech } = await supabase
-        .from("events")
-        .select("id")
-        .eq("slug", nonTechEvent.slug)
-        .maybeSingle();
-
-      if (sTech) supaTechId = sTech.id;
-      if (sNonTech) supaNonTechId = sNonTech.id;
-
-      // If events don't exist in Supabase yet, insert them
-      if (!supaTechId) {
-        const { data: newTech } = await supabase
-          .from("events")
-          .insert({
-            slug: techEvent.slug,
-            title: techEvent.title,
-            category: techEvent.category,
-            short_desc: techEvent.shortDesc,
-            full_desc: techEvent.fullDesc,
-            min_members: techEvent.minMembers,
-            max_members: techEvent.maxMembers,
-          })
-          .select()
-          .single();
-        if (newTech) supaTechId = newTech.id;
-      }
-
-      if (!supaNonTechId) {
-        const { data: newNonTech } = await supabase
-          .from("events")
-          .insert({
-            slug: nonTechEvent.slug,
-            title: nonTechEvent.title,
-            category: nonTechEvent.category,
-            short_desc: nonTechEvent.shortDesc,
-            full_desc: nonTechEvent.fullDesc,
-            min_members: nonTechEvent.minMembers,
-            max_members: nonTechEvent.maxMembers,
-          })
-          .select()
-          .single();
-        if (newNonTech) supaNonTechId = newNonTech.id;
-      }
-
-      const { data: supaReg, error: regError } = await supabase
-        .from("registrations")
-        .insert({
-          registration_code: regCode,
-          registration_type: regType,
-          technical_event_id: supaTechId,
-          non_technical_event_id: supaNonTechId,
-          team_name: validatedData.teamName || null,
+      const { prisma } = await import("@/lib/database/prisma");
+      await prisma.registration.create({
+        data: {
+          registrationCode: regCode,
+          registrationType: regType,
+          technicalEventId: techEvent.id,
+          nonTechnicalEventId: nonTechEvent.id,
+          teamName: teamName || null,
           status: "CONFIRMED",
-        })
-        .select()
-        .single();
-
-      if (regError) {
-        console.error("Supabase Registration insert error:", regError);
-      } else if (supaReg) {
-        console.log("✅ Supabase Registration inserted successfully:", supaReg.registration_code);
-        const supaParticipants = normalizedParticipants.map((p) => ({
-          registration_id: supaReg.id,
-          full_name: p.fullName,
-          email: p.email,
-          phone: p.phone,
-          college: p.college,
-          food_preference: p.foodPreference,
-          is_team_leader: p.isTeamLeader,
-        }));
-
-        const { error: partError } = await supabase
-          .from("participants")
-          .insert(supaParticipants);
-
-        if (partError) {
-          console.error("Supabase Participants insert error:", partError);
-        } else {
-          console.log("✅ Supabase Participants inserted successfully:", supaParticipants.length);
-        }
-      }
-    } catch (supaErr) {
-      console.error("Supabase connection exception:", supaErr);
+          participants: {
+            create: normalizedParticipants.map((p) => ({
+              fullName: p.fullName,
+              email: p.email,
+              phone: p.phone,
+              college: p.college,
+              foodPreference: p.foodPreference,
+              isTeamLeader: p.isTeamLeader,
+            })),
+          },
+        },
+      });
+    } catch (prismaErr) {
+      console.warn("Prisma backup skipped (Vercel/SQLite unavailable):", (prismaErr as any)?.message);
     }
 
     return NextResponse.json(

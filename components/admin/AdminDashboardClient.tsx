@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/database/supabase";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -29,6 +30,8 @@ import {
   Calendar,
   Laptop,
   LogOut,
+  RefreshCw,
+  Wifi,
 } from "lucide-react";
 
 const POPULAR_COLLEGES = [
@@ -82,9 +85,81 @@ export function AdminDashboardClient({
   // Full Screen Offline Spot Desk Mode Toggle
   const [isOfflineDeskView, setIsOfflineDeskView] = useState(false);
   const [submittingOffline, setSubmittingOffline] = useState(false);
+  const [isLive, setIsLive] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Live registrations list for instant real-time UI updates
   const [registrationsList, setRegistrationsList] = useState<any[]>(initialRegistrations);
+
+  // ─── Fetch latest registrations from Supabase ───────────────────────
+  const refreshRegistrations = useCallback(async (silent = false) => {
+    if (!silent) setIsRefreshing(true);
+    try {
+      const { data: supaRegs, error } = await supabase
+        .from("registrations")
+        .select("*, participants(*)")
+        .order("created_at", { ascending: false });
+
+      if (!error && supaRegs) {
+        // Fetch events for mapping
+        const { data: eventsData } = await supabase.from("events").select("id, title, slug, category");
+        const eventsMap = new Map((eventsData || []).map((e: any) => [e.id, e]));
+
+        const mapped = supaRegs.map((r: any) => ({
+          id: r.id,
+          registrationCode: r.registration_code || "SPK-2K26-PASS",
+          registrationType: r.registration_type || "online",
+          technicalEventId: r.technical_event_id,
+          nonTechnicalEventId: r.non_technical_event_id,
+          teamName: r.team_name || null,
+          status: r.status || "CONFIRMED",
+          createdAt: r.created_at || new Date().toISOString(),
+          technicalEvent: eventsMap.get(r.technical_event_id) || { title: "Technical Track" },
+          nonTechnicalEvent: eventsMap.get(r.non_technical_event_id) || { title: "Non-Technical Track" },
+          participants: (r.participants || []).map((p: any) => ({
+            id: p.id,
+            fullName: p.full_name || "Participant",
+            email: p.email || "",
+            phone: p.phone || "",
+            college: p.college || "",
+            department: p.department || "ECE",
+            foodPreference: p.food_preference || "Veg",
+            isTeamLeader: p.is_team_leader ?? false,
+          })),
+        }));
+        setRegistrationsList(mapped);
+      }
+    } catch (err) {
+      console.error("Refresh error:", err);
+    } finally {
+      if (!silent) setIsRefreshing(false);
+    }
+  }, []);
+
+  // ─── Supabase Real-time subscription ────────────────────────────────
+  useEffect(() => {
+    // Initial refresh on mount
+    refreshRegistrations(true);
+
+    // Subscribe to registration changes
+    const channel = supabase
+      .channel("admin-registrations-live")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "registrations" },
+        async () => {
+          await refreshRegistrations(true);
+          showToast("Live Update", "New registration received!", "success");
+        }
+      )
+      .subscribe((status) => {
+        setIsLive(status === "SUBSCRIBED");
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [refreshRegistrations]);
 
   const technicalEvents = events.filter(
     (e) => e.category === "TECHNICAL" || e.slug === "paper-presentation" || e.slug === "technical-quiz" || e.slug === "circuit-debugging"
@@ -655,9 +730,25 @@ export function AdminDashboardClient({
         </div>
 
         <form action="/api/admin/logout" method="POST">
-          <Button type="submit" variant="ghost" size="sm" leftIcon={<LogOut className="w-4 h-4" />}>
-            Sign Out
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* Live status indicator */}
+            <span className={`hidden sm:flex items-center gap-1.5 text-xs font-mono px-2.5 py-1.5 rounded-lg border ${isLive ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/30" : "text-slate-500 bg-slate-800/50 border-slate-700"}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${isLive ? "bg-emerald-400 animate-pulse" : "bg-slate-500"}`} />
+              {isLive ? "LIVE" : "Connecting..."}
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              leftIcon={<RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />}
+              onClick={() => refreshRegistrations(false)}
+            >
+              Refresh
+            </Button>
+            <Button type="submit" variant="ghost" size="sm" leftIcon={<LogOut className="w-4 h-4" />}>
+              Sign Out
+            </Button>
+          </div>
         </form>
       </div>
 
