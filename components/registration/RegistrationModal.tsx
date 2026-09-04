@@ -309,7 +309,7 @@ export function RegistrationModal({
                   <div className="flex items-center justify-between text-xs font-semibold text-slate-200 border-b border-slate-800/80 pb-2">
                     <span className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
-                      Participant {index + 1} {index === 0 ? "(Team Leader *)" : ""}
+                      Participant {index + 1}
                     </span>
 
                     {index > 0 && (

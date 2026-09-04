@@ -32,6 +32,7 @@ import {
   LogOut,
   RefreshCw,
   Wifi,
+  GripVertical,
 } from "lucide-react";
 
 const POPULAR_COLLEGES = [
@@ -93,6 +94,53 @@ export function AdminDashboardClient({
 
   // Track previous count to detect new registrations
   const prevCountRef = useRef(initialRegistrations.length);
+
+  // Split pane resizer state for Spot Desk view (60% form, 40% stream default)
+  const [leftWidthPercent, setLeftWidthPercent] = useState<number>(60);
+  const [isResizing, setIsResizing] = useState<boolean>(false);
+  const splitContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDownResize = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing || !splitContainerRef.current) return;
+      const rect = splitContainerRef.current.getBoundingClientRect();
+      const newLeftWidth = ((e.clientX - rect.left) / rect.width) * 100;
+      if (newLeftWidth >= 35 && newLeftWidth <= 80) {
+        setLeftWidthPercent(newLeftWidth);
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isResizing || !splitContainerRef.current || !e.touches[0]) return;
+      const rect = splitContainerRef.current.getBoundingClientRect();
+      const newLeftWidth = ((e.touches[0].clientX - rect.left) / rect.width) * 100;
+      if (newLeftWidth >= 35 && newLeftWidth <= 80) {
+        setLeftWidthPercent(newLeftWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isResizing) setIsResizing(false);
+    };
+
+    if (isResizing) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchmove", handleTouchMove);
+      window.addEventListener("touchend", handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleMouseUp);
+    };
+  }, [isResizing]);
 
   // ─── Fetch latest registrations from Supabase (separate queries for reliability) ─
   const refreshRegistrations = useCallback(async (silent = false, detectNew = false) => {
@@ -444,10 +492,13 @@ export function AdminDashboardClient({
           </div>
         </div>
 
-        {/* 2-Column Split Layout: LEFT = Form (50%), RIGHT = Live Roster Feed (50%) */}
-        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-5">
-          {/* LEFT COLUMN: Fast Typing Registration Form (50% / 6 cols) */}
-          <div className="lg:col-span-6 h-full flex flex-col p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-2xl overflow-hidden">
+        {/* Resizable 2-Column Split Layout */}
+        <div ref={splitContainerRef} className="flex-1 min-h-0 flex flex-col lg:flex-row gap-3 overflow-hidden select-none">
+          {/* LEFT COLUMN: Fast Typing Registration Form (Resizable Width) */}
+          <div
+            style={{ width: typeof window !== "undefined" && window.innerWidth >= 1024 ? `${leftWidthPercent}%` : "100%" }}
+            className="w-full lg:w-auto h-full flex flex-col p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-2xl overflow-hidden shrink-0"
+          >
             <div className="shrink-0 flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
               <h3 className="text-sm font-semibold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-cyan-400" /> Spot Registration Form
@@ -457,196 +508,209 @@ export function AdminDashboardClient({
               </span>
             </div>
 
-            <form onSubmit={handleOfflineSubmit} className="flex-1 flex flex-col min-h-0 space-y-3.5">
-                {/* Event Track Selectors */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <Select
-                    label="Technical Event Track *"
-                    options={technicalEvents.map((e) => ({
-                      label: `${e.title}`,
-                      value: e.id,
-                    }))}
-                    value={offlineForm.technicalEventId}
-                    onChange={(e) =>
-                      setOfflineForm({ ...offlineForm, technicalEventId: e.target.value })
-                    }
-                  />
-
-                  <Select
-                    label="Non-Technical Event Track *"
-                    options={nonTechnicalEvents.map((e) => ({
-                      label: `${e.title}`,
-                      value: e.id,
-                    }))}
-                    value={offlineForm.nonTechnicalEventId}
-                    onChange={(e) =>
-                      setOfflineForm({ ...offlineForm, nonTechnicalEventId: e.target.value })
-                    }
-                  />
-                </div>
-
-                <Input
-                  label="Team Name (Optional)"
-                  placeholder="e.g. Offline Circuit Titans"
-                  value={offlineForm.teamName}
-                  onChange={(e) => setOfflineForm({ ...offlineForm, teamName: e.target.value })}
+            {/* ENTIRE FORM IS SCROLLABLE TOP-TO-BOTTOM */}
+            <form onSubmit={handleOfflineSubmit} className="flex-1 min-h-0 flex flex-col overflow-y-auto pr-2 space-y-4">
+              {/* Event Track Selectors */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <Select
+                  label="Technical Event Track *"
+                  options={technicalEvents.map((e) => ({
+                    label: `${e.title}`,
+                    value: e.id,
+                  }))}
+                  value={offlineForm.technicalEventId}
+                  onChange={(e) =>
+                    setOfflineForm({ ...offlineForm, technicalEventId: e.target.value })
+                  }
                 />
 
-                {/* Team Roster Bar & Quick Copy Button */}
-                <div className="flex items-center justify-between pt-2">
-                  <h4 className="text-xs font-mono font-bold text-slate-200 uppercase flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-cyan-400" /> Team Roster ({offlineForm.participants.length})
-                  </h4>
+                <Select
+                  label="Non-Technical Event Track *"
+                  options={nonTechnicalEvents.map((e) => ({
+                    label: `${e.title}`,
+                    value: e.id,
+                  }))}
+                  value={offlineForm.nonTechnicalEventId}
+                  onChange={(e) =>
+                    setOfflineForm({ ...offlineForm, nonTechnicalEventId: e.target.value })
+                  }
+                />
+              </div>
 
-                  <div className="flex items-center gap-2">
-                    {offlineForm.participants.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        leftIcon={<Copy className="w-3 h-3 text-cyan-400" />}
-                        onClick={handleCopyCollegeToAll}
-                        title="Copy Leader's college name to all team members"
-                      >
-                        Same College for All
-                      </Button>
-                    )}
+              <Input
+                label="Team Name (Optional)"
+                placeholder="e.g. Offline Circuit Titans"
+                value={offlineForm.teamName}
+                onChange={(e) => setOfflineForm({ ...offlineForm, teamName: e.target.value })}
+              />
 
+              {/* Team Roster Bar & Quick Copy Button */}
+              <div className="flex items-center justify-between pt-2">
+                <h4 className="text-xs font-mono font-bold text-slate-200 uppercase flex items-center gap-1.5">
+                  <Users className="w-3.5 h-3.5 text-cyan-400" /> Team Roster ({offlineForm.participants.length})
+                </h4>
+
+                <div className="flex items-center gap-2">
+                  {offlineForm.participants.length > 1 && (
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
-                      leftIcon={<UserPlus className="w-3.5 h-3.5" />}
-                      onClick={addOfflineParticipant}
+                      leftIcon={<Copy className="w-3 h-3 text-cyan-400" />}
+                      onClick={handleCopyCollegeToAll}
+                      title="Copy First Member's college name to all team members"
                     >
-                      Add Member
+                      Same College for All
                     </Button>
-                  </div>
+                  )}
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    leftIcon={<UserPlus className="w-3.5 h-3.5" />}
+                    onClick={addOfflineParticipant}
+                  >
+                    Add Member
+                  </Button>
                 </div>
+              </div>
 
-                {/* Participants Form Inputs */}
-                <div className="flex-1 min-h-0 overflow-y-auto pr-1.5 space-y-3.5">
-                  {offlineForm.participants.map((p, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3 relative"
-                    >
-                      <div className="flex items-center justify-between text-xs text-slate-300 font-semibold border-b border-slate-800/80 pb-2">
-                        <span className="flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                          Participant {idx + 1} {idx === 0 ? "(Team Leader *)" : ""}
-                        </span>
+              {/* Participants Form Inputs */}
+              <div className="space-y-3.5">
+                {offlineForm.participants.map((p, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3 relative"
+                  >
+                    <div className="flex items-center justify-between text-xs text-slate-300 font-semibold border-b border-slate-800/80 pb-2">
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+                        Participant {idx + 1}
+                      </span>
 
-                        {idx > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => removeOfflineParticipant(idx)}
-                            className="text-slate-400 hover:text-rose-400 transition-colors p-1"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
+                      {idx > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => removeOfflineParticipant(idx)}
+                          className="text-slate-400 hover:text-rose-400 transition-colors p-1"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <Input
-                          label="Full Name *"
-                          placeholder="e.g. Rahul Sharma"
-                          value={p.fullName}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Input
+                        label="Full Name *"
+                        placeholder="e.g. Rahul Sharma"
+                        value={p.fullName}
+                        onChange={(e) =>
+                          handleOfflineParticipantChange(idx, "fullName", e.target.value)
+                        }
+                        required
+                      />
+                      <Input
+                        label="Email Address *"
+                        type="email"
+                        placeholder="rahul@student.edu"
+                        value={p.email}
+                        onChange={(e) =>
+                          handleOfflineParticipantChange(idx, "email", e.target.value)
+                        }
+                        required
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Input
+                        label="Mobile Phone *"
+                        placeholder="9876543210"
+                        value={p.phone}
+                        onChange={(e) =>
+                          handleOfflineParticipantChange(idx, "phone", e.target.value)
+                        }
+                        required
+                      />
+
+                      {/* College Name with Autocomplete Datalist */}
+                      <div className="w-full space-y-1.5">
+                        <label className="block text-xs font-mono font-medium text-slate-400 tracking-wider uppercase">
+                          College / Institution *
+                        </label>
+                        <input
+                          list="college-suggestions"
+                          placeholder="e.g. SRM Institute"
+                          value={p.college}
                           onChange={(e) =>
-                            handleOfflineParticipantChange(idx, "fullName", e.target.value)
+                            handleOfflineParticipantChange(idx, "college", e.target.value)
                           }
                           required
-                        />
-                        <Input
-                          label="Email Address *"
-                          type="email"
-                          placeholder="rahul@student.edu"
-                          value={p.email}
-                          onChange={(e) =>
-                            handleOfflineParticipantChange(idx, "email", e.target.value)
-                          }
-                          required
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <Input
-                          label="Mobile Phone *"
-                          placeholder="9876543210"
-                          value={p.phone}
-                          onChange={(e) =>
-                            handleOfflineParticipantChange(idx, "phone", e.target.value)
-                          }
-                          required
-                        />
-
-                        {/* College Name with Autocomplete Datalist */}
-                        <div className="w-full space-y-1.5">
-                          <label className="block text-xs font-mono font-medium text-slate-400 tracking-wider uppercase">
-                            College / Institution *
-                          </label>
-                          <input
-                            list="college-suggestions"
-                            placeholder="e.g. SRM Institute"
-                            value={p.college}
-                            onChange={(e) =>
-                              handleOfflineParticipantChange(idx, "college", e.target.value)
-                            }
-                            required
-                            className="w-full rounded-xl bg-slate-900/80 border border-slate-700/80 px-3.5 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-200"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <Select
-                          label="Department *"
-                          options={DEPARTMENTS}
-                          value={p.department}
-                          onChange={(e) =>
-                            handleOfflineParticipantChange(idx, "department", e.target.value)
-                          }
-                        />
-
-                        <Select
-                          label="Food Preference *"
-                          options={[
-                            { label: "Veg 🥗", value: "Veg" },
-                            { label: "Non-Veg 🍗", value: "Non-Veg" },
-                          ]}
-                          value={p.foodPreference}
-                          onChange={(e) =>
-                            handleOfflineParticipantChange(idx, "foodPreference", e.target.value)
-                          }
+                          className="w-full rounded-xl bg-slate-900/80 border border-slate-700/80 px-3.5 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-200"
                         />
                       </div>
                     </div>
-                  ))}
-                </div>
 
-                {/* Datalist for College Autocomplete */}
-                <datalist id="college-suggestions">
-                  {POPULAR_COLLEGES.map((c, i) => (
-                    <option key={i} value={c} />
-                  ))}
-                </datalist>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Select
+                        label="Department *"
+                        options={DEPARTMENTS}
+                        value={p.department}
+                        onChange={(e) =>
+                          handleOfflineParticipantChange(idx, "department", e.target.value)
+                        }
+                      />
 
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="lg"
-                  className="w-full text-sm font-semibold tracking-wide py-3 mt-2 shadow-xl shadow-cyan-950/40 shrink-0"
-                  isLoading={submittingOffline}
-                  rightIcon={<ArrowRight className="w-4 h-4" />}
-                >
-                  Submit Offline Registration Pass
-                </Button>
-              </form>
-            </div>
+                      <Select
+                        label="Food Preference *"
+                        options={[
+                          { label: "Veg 🥗", value: "Veg" },
+                          { label: "Non-Veg 🍗", value: "Non-Veg" },
+                        ]}
+                        value={p.foodPreference}
+                        onChange={(e) =>
+                          handleOfflineParticipantChange(idx, "foodPreference", e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-          {/* RIGHT COLUMN: Live Stream Spot Roster (50% / 6 cols) */}
-          <div className="lg:col-span-6 h-full flex flex-col p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-2xl overflow-hidden space-y-3">
+              {/* Datalist for College Autocomplete */}
+              <datalist id="college-suggestions">
+                {POPULAR_COLLEGES.map((c, i) => (
+                  <option key={i} value={c} />
+                ))}
+              </datalist>
+
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                className="w-full text-sm font-semibold tracking-wide py-3.5 mt-2 shadow-xl shadow-cyan-950/40 shrink-0"
+                isLoading={submittingOffline}
+                rightIcon={<ArrowRight className="w-4 h-4" />}
+              >
+                Submit Offline Registration Pass
+              </Button>
+            </form>
+          </div>
+
+          {/* DRAGGABLE RESIZER DIVIDER BAR BETWEEN PANELS (Desktop Only) */}
+          <div
+            onMouseDown={handleMouseDownResize}
+            onTouchStart={() => setIsResizing(true)}
+            className={`hidden lg:flex items-center justify-center w-2.5 hover:w-3.5 bg-slate-800/80 hover:bg-cyan-500/50 cursor-col-resize transition-all rounded-full group shrink-0 select-none ${
+              isResizing ? "bg-cyan-500/80 ring-2 ring-cyan-400 w-3.5" : ""
+            }`}
+            title="Drag left / right to adjust panels size"
+          >
+            <GripVertical className="w-4 h-4 text-slate-400 group-hover:text-cyan-200 transition-colors" />
+          </div>
+
+          {/* RIGHT COLUMN: Live Stream Spot Roster (Fills remaining width) */}
+          <div className="flex-1 min-w-0 w-full h-full flex flex-col p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-2xl overflow-hidden space-y-3">
             <div className="shrink-0 flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-sm font-semibold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
                 <Ticket className="w-4 h-4 text-emerald-400" /> Live Registrations Roster Stream
@@ -656,88 +720,104 @@ export function AdminDashboardClient({
               </span>
             </div>
 
-            {/* Live Stream List */}
+            {/* Live Stream List - ALL TEAM PARTICIPANTS SHOWN */}
             <div className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-3">
-                {registrationsList.length === 0 ? (
-                  <div className="text-center py-12 text-slate-500 font-mono text-xs">
-                    No registrations in system yet.
-                  </div>
-                ) : (
-                  registrationsList.map((r, idx) => {
-                    const leader = r.participants?.[0] || {};
-                    const isNewest = idx === 0;
-                    return (
-                      <div
-                        key={r.id || idx}
-                        className={`p-4 rounded-xl border transition-all duration-200 ${
-                          isNewest
-                            ? "bg-slate-900 border-cyan-500/40 shadow-lg shadow-cyan-950/30"
-                            : "bg-slate-950/70 border-slate-800/80"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-sm text-cyan-400">
-                              {r.registrationCode}
-                            </span>
-                            <span
-                              className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-extrabold ${
-                                r.registrationType === "offline"
-                                  ? "bg-amber-500/15 text-amber-400 border border-amber-500/40"
-                                  : "bg-cyan-500/15 text-cyan-400 border border-cyan-500/40"
-                              }`}
-                            >
-                              {r.registrationType}
-                            </span>
-                          </div>
-
-                          <span className="text-[11px] text-slate-400 font-mono">
-                            {r.participants?.length ?? 0} Member(s)
+              {registrationsList.length === 0 ? (
+                <div className="text-center py-12 text-slate-500 font-mono text-xs">
+                  No registrations in system yet.
+                </div>
+              ) : (
+                registrationsList.map((r, idx) => {
+                  const isNewest = idx === 0;
+                  const members = r.participants || [];
+                  return (
+                    <div
+                      key={r.id || idx}
+                      className={`p-4 rounded-xl border transition-all duration-200 ${
+                        isNewest
+                          ? "bg-slate-900 border-cyan-500/40 shadow-lg shadow-cyan-950/30"
+                          : "bg-slate-950/70 border-slate-800/80"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-mono font-bold text-sm text-cyan-400">
+                            {r.registrationCode}
                           </span>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-extrabold ${
+                              r.registrationType === "offline"
+                                ? "bg-amber-500/15 text-amber-400 border border-amber-500/40"
+                                : "bg-cyan-500/15 text-cyan-400 border border-cyan-500/40"
+                            }`}
+                          >
+                            {r.registrationType}
+                          </span>
+                          {r.teamName && (
+                            <span className="text-[10px] font-mono font-semibold text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30">
+                              Team: {r.teamName}
+                            </span>
+                          )}
                         </div>
 
-                        <div className="space-y-1 text-xs">
-                          <p className="text-slate-100 font-semibold flex items-center justify-between">
-                            <span>{leader.fullName || "N/A"}</span>
-                            <span className="text-slate-400 font-mono text-[11px]">
-                              {leader.department || "ECE"}
-                            </span>
-                          </p>
-
-                          <p className="text-slate-400 truncate text-[11px]">
-                            {leader.college || "N/A"} • {leader.email}
-                          </p>
-
-                          <div className="flex items-center justify-between pt-1 text-[11px]">
-                            <div className="flex gap-1.5">
-                              <Badge variant="primary" className="text-[10px] py-0 px-2">
-                                {r.technicalEvent?.title || "Tech Track"}
-                              </Badge>
-                              <Badge variant="cyan" className="text-[10px] py-0 px-2">
-                                {r.nonTechnicalEvent?.title || "Non-Tech Track"}
-                              </Badge>
-                            </div>
-
-                            <span
-                              className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                                leader.foodPreference === "Non-Veg"
-                                  ? "bg-rose-500/10 text-rose-400"
-                                  : "bg-emerald-500/10 text-emerald-400"
-                              }`}
-                            >
-                              {leader.foodPreference}
-                            </span>
-                          </div>
-                        </div>
+                        <span className="text-[11px] text-slate-400 font-mono font-bold">
+                          {members.length} Member(s)
+                        </span>
                       </div>
-                    );
-                  })
-                )}
-              </div>
+
+                      {/* Display Events Summary */}
+                      <div className="flex flex-wrap gap-1.5 mb-2.5">
+                        <Badge variant="primary" className="text-[10px] py-0 px-2">
+                          {r.technicalEvent?.title || "Tech Track"}
+                        </Badge>
+                        <Badge variant="cyan" className="text-[10px] py-0 px-2">
+                          {r.nonTechnicalEvent?.title || "Non-Tech Track"}
+                        </Badge>
+                      </div>
+
+                      {/* Display ALL Team Members */}
+                      <div className="space-y-2">
+                        {members.length === 0 ? (
+                          <p className="text-slate-500 italic text-xs">No member details</p>
+                        ) : (
+                          members.map((p: any, pIdx: number) => (
+                            <div
+                              key={p.id || pIdx}
+                              className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 space-y-1"
+                            >
+                              <div className="flex items-center justify-between">
+                                <p className="text-slate-100 font-bold text-xs flex items-center gap-1.5">
+                                  <span className="text-cyan-400 font-mono text-[10px]">#{pIdx + 1}</span>
+                                  {p.fullName || "N/A"}
+                                </p>
+                                <span
+                                  className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
+                                    p.foodPreference === "Non-Veg"
+                                      ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                                      : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                  }`}
+                                >
+                                  {p.foodPreference || "Veg"}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-300 font-mono truncate">{p.email}</p>
+                              <p className="text-[10px] text-slate-400 font-mono truncate">
+                                {p.college} • <span className="text-cyan-400">{p.department || "ECE"}</span> • 📞 {p.phone}
+                              </p>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         </div>
+      </div>
     );
+  }
   }
 
   // =========================================================================
@@ -887,7 +967,7 @@ export function AdminDashboardClient({
               <tr>
                 <th className="py-3.5 px-4">Pass Code</th>
                 <th className="py-3.5 px-4">Type</th>
-                <th className="py-3.5 px-4">Primary Leader</th>
+                <th className="py-3.5 px-4 min-w-[280px]">Participants / Team Details</th>
                 <th className="py-3.5 px-4">Technical Event</th>
                 <th className="py-3.5 px-4">Non-Technical Event</th>
                 <th className="py-3.5 px-4 text-center">Team Members</th>
@@ -902,7 +982,8 @@ export function AdminDashboardClient({
                 </tr>
               ) : (
                 filteredRegistrations.map((r) => {
-                  const leader = r.participants?.[0] || {};
+                  const members = r.participants || [];
+                  const isOffline = r.registrationType === "offline";
                   return (
                     <tr key={r.id} className="hover:bg-slate-800/40 transition-colors">
                       <td className="py-3.5 px-4 font-bold text-cyan-400">
@@ -911,7 +992,7 @@ export function AdminDashboardClient({
                       <td className="py-3.5 px-4">
                         <span
                           className={`px-2.5 py-1 rounded-full text-[10px] uppercase font-extrabold ${
-                            r.registrationType === "offline"
+                            isOffline
                               ? "bg-amber-500/15 text-amber-400 border border-amber-500/40"
                               : "bg-cyan-500/15 text-cyan-400 border border-cyan-500/40"
                           }`}
@@ -919,12 +1000,47 @@ export function AdminDashboardClient({
                           {r.registrationType}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-sans">
-                        <p className="text-slate-100 font-bold">{leader.fullName || "N/A"}</p>
-                        <p className="text-xs text-slate-400 font-mono">{leader.email}</p>
-                        <p className="text-[11px] text-slate-400 font-mono">
-                          {leader.college} • <span className="text-cyan-400">{leader.department || "ECE"}</span>
-                        </p>
+                      <td className="py-3.5 px-4 font-sans space-y-2">
+                        {r.teamName && (
+                          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-mono text-cyan-300 font-bold mb-1">
+                            🚩 Team: {r.teamName}
+                          </div>
+                        )}
+
+                        {members.length === 0 ? (
+                          <p className="text-slate-500 italic text-xs">No member details</p>
+                        ) : (
+                          members.map((p: any, idx: number) => (
+                            <div
+                              key={p.id || idx}
+                              className={`pl-3 py-1 my-1 border-l-2 rounded-r-lg ${
+                                isOffline
+                                  ? "border-l-amber-400 bg-amber-500/5"
+                                  : "border-l-cyan-400 bg-cyan-500/5"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <p className="text-slate-100 font-bold text-xs flex items-center gap-1.5">
+                                  <span className="text-cyan-400 font-mono text-[10px]">#{idx + 1}</span>
+                                  {p.fullName || "N/A"}
+                                </p>
+                                <span
+                                  className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
+                                    p.foodPreference === "Non-Veg"
+                                      ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                                      : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                  }`}
+                                >
+                                  {p.foodPreference || "Veg"}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-300 font-mono truncate">{p.email}</p>
+                              <p className="text-[10px] text-slate-400 font-mono truncate">
+                                {p.college} • <span className="text-cyan-400">{p.department || "ECE"}</span> • 📞 {p.phone}
+                              </p>
+                            </div>
+                          ))
+                        )}
                       </td>
                       <td className="py-3.5 px-4">
                         <Badge variant="primary">
@@ -942,7 +1058,7 @@ export function AdminDashboardClient({
                           variant="outline"
                           onClick={() => setSelectedRegistration(r)}
                         >
-                          {r.participants?.length ?? 0} Member(s)
+                          {members.length} Member(s)
                         </Button>
                       </td>
                     </tr>
