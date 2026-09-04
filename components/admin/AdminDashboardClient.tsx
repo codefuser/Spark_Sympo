@@ -1029,16 +1029,19 @@ export function AdminDashboardClient({
               <tr>
                 <th className="py-3 px-3 text-center w-12">#</th>
                 <th className="py-3 px-4 w-36">Pass Code</th>
-                <th className="py-3 px-3 w-28">Type</th>
-                <th className="py-3 px-4">Participant Roster & Details</th>
-                <th className="py-3 px-4 w-48">Technical Event</th>
-                <th className="py-3 px-4 w-48">Non-Technical Event</th>
+                <th className="py-3 px-3 w-24">Type</th>
+                <th className="py-3 px-4 min-w-[220px]">Student / Team Roster</th>
+                <th className="py-3 px-4 min-w-[200px]">College & Dept</th>
+                <th className="py-3 px-3 w-32">Phone</th>
+                <th className="py-3 px-4 min-w-[200px]">Registered Events</th>
+                <th className="py-3 px-3 w-24 text-center">Food</th>
+                <th className="py-3 px-3 w-20 text-center">Action</th>
               </tr>
             </thead>
-            <tbody className={`font-mono text-xs ${isLight ? "text-slate-900" : "text-slate-100"}`}>
+            <tbody className={`font-sans text-xs ${isLight ? "text-slate-900" : "text-slate-100"}`}>
               {filteredRegistrations.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className={`py-12 text-center font-mono text-sm ${isLight ? "text-slate-500" : "text-slate-400"}`}>
+                  <td colSpan={9} className={`py-12 text-center font-mono text-sm ${isLight ? "text-slate-500" : "text-slate-400"}`}>
                     No registrations found matching your filter query.
                   </td>
                 </tr>
@@ -1046,95 +1049,135 @@ export function AdminDashboardClient({
                 filteredRegistrations.map((r, index) => {
                   const members = r.participants || [];
                   const isOffline = r.registrationType === "offline";
+                  const primaryMember = members[0] || {};
+                  const colleges = Array.from(new Set(members.map((p: any) => p.college).filter(Boolean)));
+                  const depts = Array.from(new Set(members.map((p: any) => p.department).filter(Boolean)));
+                  const phones = members.map((p: any) => p.phone).filter(Boolean);
+
                   return (
                     <tr
                       key={r.id}
-                      className={`border-b-2 transition-colors ${
+                      className={`border-b transition-colors ${
                         isLight
-                          ? "border-slate-200 hover:bg-slate-50/80 text-slate-900"
-                          : "border-slate-800/80 hover:bg-slate-800/40 text-slate-100"
+                          ? "border-slate-200 hover:bg-slate-50 text-slate-900 even:bg-slate-50/40"
+                          : "border-slate-800 hover:bg-slate-800/40 text-slate-100 even:bg-slate-900/30"
                       }`}
                     >
                       {/* S.No */}
-                      <td className="py-4 px-3 text-center align-top font-bold text-slate-500 text-xs">
+                      <td className="py-3.5 px-3 text-center align-top font-mono font-semibold text-slate-500 text-xs">
                         {index + 1}
                       </td>
 
                       {/* Pass Code */}
-                      <td className="py-4 px-4 align-top">
-                        <span className="font-mono font-bold text-sm text-slate-900 dark:text-slate-100 block">
+                      <td className="py-3.5 px-4 align-top">
+                        <span className="font-mono font-extrabold text-sm text-slate-900 dark:text-slate-100 block">
                           {r.registrationCode}
                         </span>
-                        <button
-                          type="button"
-                          onClick={() => setSelectedRegistration(r)}
-                          className="text-[11px] font-sans font-semibold text-blue-600 hover:underline mt-1 inline-block cursor-pointer"
-                        >
-                          View Pass Details →
-                        </button>
+                        <span className="text-[10px] font-mono text-slate-500 block mt-0.5">
+                          {new Date(r.createdAt).toLocaleDateString()}
+                        </span>
                       </td>
 
                       {/* Registration Type */}
-                      <td className="py-4 px-3 align-top">
+                      <td className="py-3.5 px-3 align-top">
                         <Badge variant={isOffline ? "warning" : "success"}>
                           {r.registrationType}
                         </Badge>
                       </td>
 
-                      {/* Participant Roster Details */}
-                      <td className="py-4 px-4 align-top font-sans space-y-2">
+                      {/* Student / Team Roster */}
+                      <td className="py-3.5 px-4 align-top space-y-1">
                         {r.teamName && (
-                          <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md border text-[11px] font-mono font-bold mb-1.5 ${isLight ? "bg-slate-100 border-slate-300 text-slate-800" : "bg-slate-800 border-slate-700 text-slate-200"}`}>
-                            🚩 Team: {r.teamName} ({members.length} member{members.length > 1 ? "s" : ""})
+                          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-mono font-bold mb-1 ${isLight ? "bg-slate-100 border-slate-300 text-slate-800" : "bg-slate-800 border-slate-700 text-slate-200"}`}>
+                            🚩 {r.teamName} ({members.length})
                           </div>
                         )}
 
                         {members.length === 0 ? (
-                          <div className="py-1">
-                            <span className={`inline-block text-xs font-mono italic px-2.5 py-1 rounded border ${isLight ? "bg-slate-50 text-slate-500 border-slate-200" : "bg-slate-800/50 text-slate-400 border-slate-700"}`}>
-                              No member details registered
-                            </span>
-                          </div>
+                          <span className="text-xs font-mono text-slate-400 italic">No members listed</span>
                         ) : (
                           members.map((p: any, idx: number) => (
-                            <div
-                              key={p.id || idx}
-                              className={`p-3 my-1.5 border-l-4 rounded-r-xl shadow-2xs space-y-1 transition-colors ${
-                                isOffline
-                                  ? (isLight ? "border-l-amber-500 bg-amber-50/40 text-slate-900 border border-slate-200/80" : "border-l-amber-400 bg-amber-500/5")
-                                  : (isLight ? "border-l-blue-600 bg-blue-50/40 text-slate-900 border border-slate-200/80" : "border-l-blue-500 bg-blue-500/5")
-                              }`}
-                            >
-                              <div className="flex items-center justify-between gap-2">
-                                <p className={`font-bold text-xs flex items-center gap-1.5 ${isLight ? "text-slate-900" : "text-slate-100"}`}>
-                                  <span className="text-slate-500 font-mono text-[11px] font-bold">#{idx + 1}</span>
-                                  <span className="text-sm font-semibold">{p.fullName || "N/A"}</span>
-                                </p>
-                                <Badge variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm">
-                                  {p.foodPreference || "Veg"}
-                                </Badge>
-                              </div>
-                              <p className={`text-xs font-mono truncate ${isLight ? "text-slate-600 font-medium" : "text-slate-300"}`}>{p.email}</p>
-                              <p className={`text-[11px] font-mono truncate ${isLight ? "text-slate-600 font-medium" : "text-slate-400"}`}>
-                                {p.college} • <span className="font-bold text-slate-800 dark:text-slate-200">{p.department || "ECE"}</span> • 📞 {p.phone}
+                            <div key={p.id || idx} className="space-y-0.5">
+                              <p className="font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                                <span className="text-slate-500 font-mono text-[10px]">#{idx + 1}</span>
+                                {p.fullName}
+                              </p>
+                              <p className="text-[11px] font-mono text-slate-600 dark:text-slate-400 truncate pl-4">
+                                {p.email}
                               </p>
                             </div>
                           ))
                         )}
                       </td>
 
-                      {/* Technical Event */}
-                      <td className="py-4 px-4 align-top">
-                        <Badge variant="primary" size="md">
-                          {r.technicalEvent?.title || "N/A"}
-                        </Badge>
+                      {/* College & Dept */}
+                      <td className="py-3.5 px-4 align-top space-y-1">
+                        {colleges.length === 0 ? (
+                          <span className="text-xs text-slate-400 italic">N/A</span>
+                        ) : (
+                          colleges.map((c, i) => (
+                            <p key={i} className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[220px]" title={c}>
+                              {c}
+                            </p>
+                          ))
+                        )}
+                        {depts.length > 0 && (
+                          <div className="flex flex-wrap gap-1 pt-0.5">
+                            {depts.map((d, i) => (
+                              <span key={i} className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                {d}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </td>
 
-                      {/* Non-Technical Event */}
-                      <td className="py-4 px-4 align-top">
-                        <Badge variant="neutral" size="md">
-                          {r.nonTechnicalEvent?.title || "N/A"}
-                        </Badge>
+                      {/* Mobile Phone */}
+                      <td className="py-3.5 px-3 align-top font-mono text-xs text-slate-700 dark:text-slate-300">
+                        {phones.length === 0 ? (
+                          <span className="text-slate-400 italic">N/A</span>
+                        ) : (
+                          phones.map((ph, i) => (
+                            <p key={i} className="font-semibold">{ph}</p>
+                          ))
+                        )}
+                      </td>
+
+                      {/* Registered Events */}
+                      <td className="py-3.5 px-4 align-top space-y-1.5">
+                        {r.technicalEvent && (
+                          <Badge variant="primary" size="sm" className="block text-[11px] truncate max-w-[180px]">
+                            {r.technicalEvent.title}
+                          </Badge>
+                        )}
+                        {r.nonTechnicalEvent && (
+                          <Badge variant="neutral" size="sm" className="block text-[11px] truncate max-w-[180px]">
+                            {r.nonTechnicalEvent.title}
+                          </Badge>
+                        )}
+                      </td>
+
+                      {/* Food */}
+                      <td className="py-3.5 px-3 align-top text-center">
+                        <div className="space-y-1">
+                          {members.map((p: any, idx: number) => (
+                            <Badge key={idx} variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm" className="text-[10px]">
+                              {p.foodPreference || "Veg"}
+                            </Badge>
+                          ))}
+                        </div>
+                      </td>
+
+                      {/* Action */}
+                      <td className="py-3.5 px-3 align-top text-center">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setSelectedRegistration(r)}
+                          className="text-xs px-2.5 py-1"
+                        >
+                          View
+                        </Button>
                       </td>
                     </tr>
                   );
