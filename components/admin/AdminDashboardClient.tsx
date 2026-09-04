@@ -40,6 +40,13 @@ import {
   GripVertical,
   Sun,
   Moon,
+  Bell,
+  Mail,
+  PhoneCall,
+  MessageSquare,
+  AlertCircle,
+  ExternalLink,
+  Check,
 } from "lucide-react";
 import { exportToJSON, exportToCSV, exportToExcel, exportToPDF } from "@/lib/utils/exportUtils";
 
@@ -155,6 +162,62 @@ export function AdminDashboardClient({
   };
 
   const isLight = theme === "light";
+
+  // Admin Dashboard Tabs & Contact Messages Notifications State
+  const [activeAdminTab, setActiveAdminTab] = useState<"registrations" | "notifications">("registrations");
+  const [messagesList, setMessagesList] = useState<any[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
+
+  const fetchContactMessages = useCallback(async () => {
+    setLoadingMessages(true);
+    try {
+      const res = await fetch("/api/contact");
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMessagesList(data.messages || []);
+      }
+    } catch (err) {
+      console.warn("Failed to fetch contact messages:", err);
+    } finally {
+      setLoadingMessages(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchContactMessages();
+    const interval = setInterval(fetchContactMessages, 25000);
+    return () => clearInterval(interval);
+  }, [fetchContactMessages]);
+
+  const unreadMessagesCount = messagesList.filter((m) => m.status === "UNREAD").length;
+
+  const handleToggleMessageStatus = async (id: string, currentStatus: string) => {
+    const nextStatus = currentStatus === "UNREAD" ? "READ" : "UNREAD";
+    setMessagesList((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, status: nextStatus } : m))
+    );
+    try {
+      await fetch("/api/contact", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: nextStatus }),
+      });
+    } catch (err) {
+      showToast("Error", "Failed to update notification status", "error");
+    }
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    setMessagesList((prev) => prev.filter((m) => m.id !== id));
+    try {
+      const res = await fetch(`/api/contact?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        showToast("Deleted", "Notification message removed", "success");
+      }
+    } catch (err) {
+      showToast("Error", "Failed to delete notification", "error");
+    }
+  };
 
   // Edit & Delete Pass States
   const [editingRegistration, setEditingRegistration] = useState<any | null>(null);
@@ -1043,7 +1106,254 @@ export function AdminDashboardClient({
         </form>
       </div>
 
-      {/* Live Registration Metric Cards */}
+      {/* Navigation Tabs Bar */}
+      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+        <button
+          onClick={() => setActiveAdminTab("registrations")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
+            activeAdminTab === "registrations"
+              ? isLight
+                ? "bg-blue-600 text-white shadow-sm"
+                : "bg-cyan-500 text-slate-950 font-extrabold shadow-sm"
+              : isLight
+              ? "bg-white text-slate-700 hover:bg-slate-200/70 border border-slate-300"
+              : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800"
+          }`}
+        >
+          <Ticket className="w-4 h-4" />
+          Registrations & Passes ({filteredRegistrations.length})
+        </button>
+
+        <button
+          onClick={() => setActiveAdminTab("notifications")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all relative ${
+            activeAdminTab === "notifications"
+              ? isLight
+                ? "bg-blue-600 text-white shadow-sm"
+                : "bg-cyan-500 text-slate-950 font-extrabold shadow-sm"
+              : isLight
+              ? "bg-white text-slate-700 hover:bg-slate-200/70 border border-slate-300"
+              : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800"
+          }`}
+        >
+          <Bell className="w-4 h-4" />
+          Student Messages & Notifications ({messagesList.length})
+          {unreadMessagesCount > 0 && (
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-rose-500 text-white animate-pulse">
+              {unreadMessagesCount} NEW
+            </span>
+          )}
+        </button>
+      </div>
+
+      {activeAdminTab === "notifications" ? (
+        /* STUDENT INQUIRY NOTIFICATIONS DESK VIEW */
+        <div className="space-y-6">
+          <div className={`p-6 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${isLight ? "bg-white border-slate-200 text-slate-900 shadow-xs" : "bg-slate-900/90 border-slate-800 text-white"}`}>
+            <div>
+              <h2 className="text-lg font-bold font-mono flex items-center gap-2">
+                <Bell className="w-5 h-5 text-amber-500" /> Student Inquiry Notifications Desk
+              </h2>
+              <p className="text-xs font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                Inquiries sent from Contact Us page. Registered student emails are automatically cross-referenced!
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className={`text-xs font-mono px-3 py-1.5 rounded-lg border font-bold ${isLight ? "bg-amber-50 text-amber-800 border-amber-200" : "bg-amber-950/60 text-amber-300 border-amber-800"}`}>
+                Unread: {unreadMessagesCount}
+              </span>
+              <Button variant="outline" size="sm" onClick={fetchContactMessages} isLoading={loadingMessages}>
+                Refresh Messages
+              </Button>
+            </div>
+          </div>
+
+          {messagesList.length === 0 ? (
+            <Card className="p-12 text-center text-slate-500 font-mono text-sm">
+              No student inquiry notifications logged yet.
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {messagesList.map((msg) => {
+                const isUnread = msg.status === "UNREAD";
+                const matchedParts = msg.participantDetails || [];
+
+                return (
+                  <Card
+                    key={msg.id}
+                    className={`p-5 transition-all space-y-4 border ${
+                      isUnread
+                        ? isLight
+                          ? "border-amber-400/80 bg-amber-50/30 shadow-xs"
+                          : "border-amber-500/50 bg-amber-950/20 shadow-md"
+                        : isLight
+                        ? "bg-white border-slate-200"
+                        : "bg-slate-900/60 border-slate-800"
+                    }`}
+                  >
+                    {/* Header Info */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-base font-bold font-mono text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                            {msg.name}
+                          </h3>
+
+                          {msg.isRegistered ? (
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-700/80 flex items-center gap-1 shadow-2xs">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> REGISTERED STUDENT
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800/60 flex items-center gap-1">
+                              ℹ️ GUEST / UNREGISTERED
+                            </span>
+                          )}
+
+                          {isUnread ? (
+                            <span className="px-2 py-0.5 rounded text-[9px] font-mono font-extrabold bg-amber-500 text-slate-950 uppercase tracking-wider animate-pulse">
+                              NEW UNREAD
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded text-[9px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-800">
+                              READ
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-600 dark:text-slate-400 pt-0.5">
+                          <a href={`tel:${msg.phone}`} className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-cyan-400 font-bold">
+                            📞 {msg.phone || "N/A"}
+                          </a>
+                          <a href={`mailto:${msg.email}`} className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-cyan-400">
+                            ✉️ {msg.email}
+                          </a>
+                          <span className="text-slate-400 text-[11px]">{formatDateSafe(msg.created_at)}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Button
+                          size="xs"
+                          variant="outline"
+                          onClick={() => handleToggleMessageStatus(msg.id, msg.status)}
+                        >
+                          {isUnread ? "Mark as Read" : "Mark as Unread"}
+                        </Button>
+                        <Button
+                          size="xs"
+                          variant="ghost"
+                          className="text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                          onClick={() => handleDeleteMessage(msg.id)}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Subject & Message Content */}
+                    <div className="space-y-1.5">
+                      <p className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        Subject: <span className="text-slate-900 dark:text-slate-100 font-extrabold">{msg.subject}</span>
+                      </p>
+                      <div className={`p-3.5 rounded-xl border text-xs font-sans leading-relaxed ${isLight ? "bg-slate-50 border-slate-200 text-slate-800" : "bg-slate-950/80 border-slate-800 text-slate-200"}`}>
+                        {msg.message}
+                      </div>
+                    </div>
+
+                    {/* REGISTERED STUDENT DETAILS BOX */}
+                    {msg.isRegistered && matchedParts.length > 0 ? (
+                      <div className={`p-4 rounded-xl border space-y-2.5 transition-all ${isLight ? "bg-emerald-50/60 border-emerald-200 text-emerald-950" : "bg-emerald-950/30 border-emerald-800/80 text-emerald-100"}`}>
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-mono font-bold flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300">
+                            <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                            Matched Registered Student Pass ({matchedParts.length} Participant Record{matchedParts.length > 1 ? "s" : ""})
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs font-mono">
+                          {matchedParts.map((p: any, pIdx: number) => {
+                            const reg = p.registrations || {};
+                            return (
+                              <div
+                                key={pIdx}
+                                className={`p-3 rounded-lg border space-y-1.5 cursor-pointer hover:border-emerald-500 transition-colors ${
+                                  isLight ? "bg-white border-emerald-200 shadow-2xs" : "bg-slate-900/90 border-slate-800"
+                                }`}
+                                onClick={() => {
+                                  if (reg.id) {
+                                    const foundReg = registrationsList.find((r) => r.id === reg.id) || reg;
+                                    setSelectedRegistration(foundReg);
+                                  }
+                                }}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="font-extrabold text-blue-600 dark:text-cyan-400 text-xs">
+                                    {reg.registrationCode || p.registration_id}
+                                  </span>
+                                  <Badge variant={reg.paymentStatus === "PAID" ? "success" : "danger"} size="sm">
+                                    {reg.paymentStatus || "UNPAID"}
+                                  </Badge>
+                                </div>
+
+                                <p className="font-bold text-slate-900 dark:text-slate-100 truncate">
+                                  {p.fullName || msg.name}
+                                </p>
+
+                                <p className="text-[11px] text-slate-600 dark:text-slate-400 truncate">
+                                  {p.college || "N/A"} ({p.department || "ECE"})
+                                </p>
+
+                                <div className="pt-1 flex items-center justify-between text-[10px] text-slate-500">
+                                  <span>Food: <strong>{p.foodPreference || "Veg"}</strong></span>
+                                  <span className="text-blue-600 dark:text-cyan-400 font-bold underline flex items-center gap-1">
+                                    Inspect Pass <ArrowRight className="w-3 h-3" />
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="pt-1 flex items-center gap-2">
+                        <Button
+                          size="xs"
+                          variant="outline"
+                          leftIcon={<UserPlus className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />}
+                          onClick={() => {
+                            setOfflineForm({
+                              technicalEventId: technicalEvents[0]?.id || "",
+                              nonTechnicalEventId: nonTechnicalEvents[0]?.id || "",
+                              teamName: "",
+                              participants: [
+                                {
+                                  fullName: msg.name || "",
+                                  email: msg.email || "",
+                                  phone: msg.phone || "",
+                                  college: POPULAR_COLLEGES[0],
+                                  department: "ECE",
+                                  foodPreference: "Veg",
+                                  isTeamLeader: true,
+                                },
+                              ],
+                            });
+                            setIsOfflineDeskView(true);
+                          }}
+                        >
+                          Register Spot Pass for this Student
+                        </Button>
+                      </div>
+                    )}
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* Live Registration Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-6">
         <Card className={`p-5 transition-all duration-200 ${isLight ? "bg-white border-slate-200 shadow-xs text-slate-900" : ""}`}>
           <div className="flex items-center justify-between mb-2">
@@ -1506,6 +1816,8 @@ export function AdminDashboardClient({
           </table>
         </div>
       </div>
+    </>
+  )}
 
       {/* Registration Details, Payment Verification & Management Modal */}
       {selectedRegistration && (

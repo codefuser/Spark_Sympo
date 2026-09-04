@@ -72,6 +72,7 @@ export function HomePageClient({
 
   // Contact Form state
   const [contactName, setContactName] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactSubject, setContactSubject] = useState("");
   const [contactMessage, setContactMessage] = useState("");
@@ -84,8 +85,8 @@ export function HomePageClient({
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contactName.trim() || !contactEmail.trim() || !contactMessage.trim()) {
-      showToast("Validation Error", "Please fill in all required contact fields", "error");
+    if (!contactName.trim() || !contactEmail.trim() || !contactPhone.trim() || !contactMessage.trim()) {
+      showToast("Validation Error", "Please fill in all required contact fields (Name, Phone, Email, Message)", "error");
       return;
     }
     setSubmittingContact(true);
@@ -95,6 +96,7 @@ export function HomePageClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: contactName,
+          phone: contactPhone,
           email: contactEmail,
           subject: contactSubject || "Symposium Inquiry",
           message: contactMessage,
@@ -106,6 +108,7 @@ export function HomePageClient({
         setContactSuccess(true);
         showToast("Message Sent!", "Our team will contact you shortly", "success");
         setContactName("");
+        setContactPhone("");
         setContactEmail("");
         setContactSubject("");
         setContactMessage("");
@@ -549,22 +552,30 @@ export function HomePageClient({
               </div>
             ) : (
               <form onSubmit={handleContactSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Input
+                    label="Your Name *"
+                    placeholder="Full Name"
+                    value={contactName}
+                    onChange={(e) => setContactName(e.target.value)}
+                  />
+                  <Input
+                    label="Phone Number *"
+                    placeholder="e.g. 9876543210"
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
+                  />
+                </div>
                 <Input
-                  label="Your Name *"
-                  placeholder="Full Name"
-                  value={contactName}
-                  onChange={(e) => setContactName(e.target.value)}
-                />
-                <Input
-                  label="Email Address *"
+                  label="Registered / Contact Email *"
                   type="email"
-                  placeholder="Email Address"
+                  placeholder="e.g. student@gmail.com"
                   value={contactEmail}
                   onChange={(e) => setContactEmail(e.target.value)}
                 />
                 <Input
-                  label="Subject"
-                  placeholder="e.g. Paper submission or Transport query"
+                  label="Inquiry Subject"
+                  placeholder="e.g. Paper presentation guidelines or Spot Registration"
                   value={contactSubject}
                   onChange={(e) => setContactSubject(e.target.value)}
                 />

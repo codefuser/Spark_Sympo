@@ -51,8 +51,9 @@ export const adminLoginSchema = z.object({
 export const contactSchema = z.object({
   name: z.string().min(2, "Name is required"),
   email: z.string().email("Valid email required"),
-  subject: z.string().min(3, "Subject is required"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+  phone: z.string().min(10, "Valid phone number required"),
+  subject: z.string().min(2, "Subject is required"),
+  message: z.string().min(5, "Message must be at least 5 characters"),
 });
 
 export const eventSchema = z.object({
