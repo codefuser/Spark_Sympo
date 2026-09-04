@@ -19,13 +19,19 @@ try {
     });
 } catch (err) {
   console.warn("Prisma initialization fallback warning:", err);
-  prismaInstance = new PrismaClient({
-    datasources: {
-      db: {
-        url: "file:./dev.db",
+  try {
+    prismaInstance = new PrismaClient({
+      datasources: {
+        db: {
+          url: "file:./dev.db",
+        },
       },
-    },
-  });
+    });
+  } catch (innerErr) {
+    console.warn("Prisma double-fallback:", innerErr);
+    // Return a minimal stub so imports don't crash
+    prismaInstance = {} as PrismaClient;
+  }
 }
 
 export const prisma = prismaInstance;
