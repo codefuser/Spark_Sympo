@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { supabase } from "@/lib/database/supabase";
 import { registrationSchema } from "@/lib/validations/schemas";
 import { generateRegistrationId } from "@/lib/utils";
@@ -128,7 +128,6 @@ export async function POST(request: Request) {
       email: p.email,
       phone: p.phone,
       college: p.college,
-      department: p.department || "ECE",
       food_preference: p.foodPreference,
       is_team_leader: p.isTeamLeader,
     }));
@@ -139,6 +138,11 @@ export async function POST(request: Request) {
 
     if (partInsertErr) {
       console.error("Supabase participants insert error:", partInsertErr);
+      await supabase.from("registrations").delete().eq("id", supaReg.id);
+      return NextResponse.json(
+        { success: false, message: `Failed to save participants: ${partInsertErr.message}` },
+        { status: 500 }
+      );
     }
 
     // 8. Optional: also save to Prisma (local SQLite backup, skipped on Vercel)

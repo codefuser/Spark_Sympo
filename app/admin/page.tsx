@@ -46,12 +46,22 @@ export default async function AdminDashboardPage() {
   // 3. Fetch Live Registrations & Participants from Supabase Shared Cloud Database
   let registrations: any[] = [];
   try {
-    const { data: supaRegs, error: supaErr } = await supabase
+    const { data: supaRegs } = await supabase
       .from("registrations")
-      .select("*, participants(*)")
+      .select("*")
       .order("created_at", { ascending: false });
 
-    if (!supaErr && supaRegs && supaRegs.length > 0) {
+    const { data: supaParts } = await supabase
+      .from("participants")
+      .select("*");
+
+    const partsByRegId: Record<string, any[]> = {};
+    (supaParts || []).forEach((p: any) => {
+      if (!partsByRegId[p.registration_id]) partsByRegId[p.registration_id] = [];
+      partsByRegId[p.registration_id].push(p);
+    });
+
+    if (supaRegs && supaRegs.length > 0) {
       registrations = supaRegs.map((r: any) => ({
         id: r.id,
         registrationCode: r.registration_code || "SPK-2K26-PASS",
@@ -63,7 +73,7 @@ export default async function AdminDashboardPage() {
         createdAt: r.created_at || new Date().toISOString(),
         technicalEvent: eventsMap.get(r.technical_event_id) || { title: "Technical Track" },
         nonTechnicalEvent: eventsMap.get(r.non_technical_event_id) || { title: "Non-Technical Track" },
-        participants: (r.participants || []).map((p: any) => ({
+        participants: (partsByRegId[r.id] || []).map((p: any) => ({
           id: p.id,
           fullName: p.full_name || "Participant",
           email: p.email || "",
