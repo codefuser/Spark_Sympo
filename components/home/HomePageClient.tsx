@@ -123,7 +123,7 @@ export function HomePageClient({
   };
 
   return (
-    <div className="space-y-24 pb-20">
+    <div className="space-y-24 pb-20 pt-20">
       {/* SECTION 1: HERO */}
       <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-6 sm:py-12 md:py-16 overflow-hidden border-b border-primary/10">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
