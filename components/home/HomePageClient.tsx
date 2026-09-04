@@ -230,7 +230,7 @@ export function HomePageClient({
                   <ShieldCheck className="w-4 h-4 text-primary" /> AICTE Approved, New Delhi
                 </span>
                 <span className="px-3 py-1.5 rounded-full bg-cyan/10 border border-cyan/30 text-cyan font-semibold flex items-center gap-1.5">
-                  <Award className="w-4 h-4 text-cyan" /> Anna University Affiliated
+                  <Award className="w-4 h-4 text-cyan" /> Autonomous Institution
                 </span>
               </div>
             </div>
@@ -240,7 +240,7 @@ export function HomePageClient({
                 Thamirabharani Engineering College which is in the Tirunelveli Corporation limits is located at Thatchanallur, 5km away from Palayamkottai and 40 km from Tuticorin airport. Unfolding its grandeur over 25 acres of land, the college exhibits an attractive panorama conducive to studies. Considering a holistic approach to life and education, an ambient infrastructure is provided for the students. They enjoy a natural sanctuary of birds, magnificent scenery of evergreen trees and amazing mountains and a gorgeous garden of multicolored flowers. Thamirabharani Engineering College was founded with the noble vision to raise professionals and leaders of high academic caliber and unblemished character, nurtured with a strong motivation and commitment to serve humanity. TEC aims at educating &amp; training its students to become not only competent professionals but also excellent human beings to influence the quality of life of people around.
               </p>
               <p>
-                Thamirabharani Engineering College was established with the goal of producing outstanding students in Technical and Business fields and preparing them to tackle the challenges of a dynamic and rapidly changing world. The management implements an interdisciplinary approach to the programs of Anna University, making sure that practical applications are combined with the classroom material. All the programs offered by the institute are recognized by and affiliated to statutory bodies like the All India Council of Technical Education (AICTE), New Delhi and Anna University, Chennai. In a nutshell, Thamirabharani Engineering College is a co-educational, residential, technological college imparting holistic education to develop the technical and the character of the students.
+                Thamirabharani Engineering College was established with the goal of producing outstanding students in Technical and Business fields and preparing them to tackle the challenges of a dynamic and rapidly changing world. The management implements an interdisciplinary curriculum as an Autonomous Institution, making sure that practical applications are combined with the classroom material. All the programs offered by the institute are recognized by statutory bodies like the All India Council of Technical Education (AICTE), New Delhi. In a nutshell, Thamirabharani Engineering College is an autonomous, co-educational, residential, technological college imparting holistic education to develop the technical and the character of the students.
               </p>
             </div>
 
@@ -254,8 +254,8 @@ export function HomePageClient({
                 <div className="text-slate-400 mt-1">Corporation Limits</div>
               </div>
               <div className="p-3.5 rounded-lg bg-background/80 border border-primary/20 text-center">
-                <div className="text-xl sm:text-2xl font-bold text-emerald-400">AICTE &amp; AU</div>
-                <div className="text-slate-400 mt-1">Approved &amp; Affiliated</div>
+                <div className="text-xl sm:text-2xl font-bold text-emerald-400">Autonomous</div>
+                <div className="text-slate-400 mt-1">AICTE Approved &amp; Autonomous</div>
               </div>
               <div className="p-3.5 rounded-lg bg-background/80 border border-primary/20 text-center">
                 <div className="text-xl sm:text-2xl font-bold text-amber-400">Co-Ed</div>
