@@ -32,10 +32,16 @@ import {
   LogOut,
   RefreshCw,
   Wifi,
+  FileText,
+  FileSpreadsheet,
+  Printer,
+  Code2,
+  ChevronDown,
   GripVertical,
   Sun,
   Moon,
 } from "lucide-react";
+import { exportToJSON, exportToCSV, exportToExcel, exportToPDF } from "@/lib/utils/exportUtils";
 
 const POPULAR_COLLEGES = [
   "St. Joseph's Institute of Technology",
@@ -98,6 +104,7 @@ export function AdminDashboardClient({
   const [selectedEventId, setSelectedEventId] = useState<string>("ALL");
   const [selectedType, setSelectedType] = useState<string>("ALL");
   const [selectedRegistration, setSelectedRegistration] = useState<any | null>(null);
+  const [isExportOpen, setIsExportOpen] = useState(false);
 
   // Full Screen Offline Spot Desk Mode Toggle
   const [isOfflineDeskView, setIsOfflineDeskView] = useState(false);
@@ -182,21 +189,27 @@ export function AdminDashboardClient({
   };
 
   const handleDeleteRegistration = async (regId: string) => {
-    if (!confirm("Are you sure you want to delete this registration pass? This action cannot be undone.")) return;
+    if (!confirm("Are you sure you want to permanently delete this registration pass from the database? This action cannot be undone.")) return;
     setSubmittingDelete(true);
     try {
-      const res = await fetch(`/api/admin/registrations/${regId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        showToast("Pass Deleted", "Registration pass has been permanently removed", "success");
-        setSelectedRegistration(null);
-        setDeletingRegId(null);
-        refreshRegistrations(true);
+      // 1. Direct Supabase deletion for instant database update
+      await supabase.from("participants").delete().eq("registration_id", regId);
+      const { error: supaErr } = await supabase.from("registrations").delete().eq("id", regId);
+
+      // 2. Fallback server API delete
+      await fetch(`/api/admin/registrations/${regId}`, { method: "DELETE" });
+
+      if (supaErr) {
+        showToast("Delete Warning", supaErr.message, "error");
       } else {
-        showToast("Delete Failed", data.message || "Could not delete registration", "error");
+        showToast("Pass Permanently Deleted", "Registration pass and all member details removed from database", "success");
       }
+
+      // 3. Immediately update UI state
+      setSelectedRegistration(null);
+      setEditingRegistration(null);
+      setRegistrationsList((prev) => prev.filter((r) => r.id !== regId));
+      refreshRegistrations(true);
     } catch (err: any) {
       showToast("Error", err.message || "Failed to delete pass", "error");
     } finally {
@@ -1105,14 +1118,94 @@ export function AdminDashboardClient({
             Offline Spot Reg Desk
           </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            leftIcon={<Download className="w-4 h-4" />}
-            onClick={handleExportJSON}
-          >
-            Export JSON
-          </Button>
+          {/* Interactive Multi-Format Export Dropdown */}
+          <div className="relative">
+            <Button
+              variant="outline"
+              size="sm"
+              leftIcon={<Download className="w-4 h-4 text-blue-600 dark:text-cyan-400" />}
+              rightIcon={<ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExportOpen ? "rotate-180" : ""}`} />}
+              onClick={() => setIsExportOpen(!isExportOpen)}
+            >
+              Export Data
+            </Button>
+
+            {isExportOpen && (
+              <div
+                className={`absolute right-0 mt-2 w-56 rounded-xl border shadow-xl z-50 py-1.5 transition-all animate-in fade-in zoom-in-95 ${
+                  isLight ? "bg-white border-slate-200 text-slate-900 shadow-slate-300/50" : "bg-slate-900 border-slate-800 text-slate-100 shadow-black/80"
+                }`}
+              >
+                <div className="px-3 py-1.5 border-b border-slate-100 dark:border-slate-800 text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">
+                  Select Export Format
+                </div>
+
+                <button
+                  onClick={() => {
+                    exportToExcel(filteredRegistrations);
+                    setIsExportOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold font-mono text-left transition-colors ${
+                    isLight ? "hover:bg-emerald-50 text-emerald-900" : "hover:bg-emerald-950/40 text-emerald-300"
+                  }`}
+                >
+                  <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <div>
+                    <p className="font-bold">Export to Excel (.xls)</p>
+                    <p className="text-[10px] text-slate-500 font-normal">Spreadsheet with formatting</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    exportToPDF(filteredRegistrations);
+                    setIsExportOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold font-mono text-left transition-colors ${
+                    isLight ? "hover:bg-rose-50 text-rose-900" : "hover:bg-rose-950/40 text-rose-300"
+                  }`}
+                >
+                  <Printer className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
+                  <div>
+                    <p className="font-bold">Export to PDF / Print</p>
+                    <p className="text-[10px] text-slate-500 font-normal">Printable summary roster</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    exportToCSV(filteredRegistrations);
+                    setIsExportOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold font-mono text-left transition-colors ${
+                    isLight ? "hover:bg-blue-50 text-blue-900" : "hover:bg-blue-950/40 text-blue-300"
+                  }`}
+                >
+                  <FileText className="w-4 h-4 text-blue-600 dark:text-cyan-400 shrink-0" />
+                  <div>
+                    <p className="font-bold">Export to CSV (.csv)</p>
+                    <p className="text-[10px] text-slate-500 font-normal">Excel & UTF-8 compatible</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    exportToJSON(filteredRegistrations);
+                    setIsExportOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold font-mono text-left transition-colors ${
+                    isLight ? "hover:bg-purple-50 text-purple-900" : "hover:bg-purple-950/40 text-purple-300"
+                  }`}
+                >
+                  <Code2 className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
+                  <div>
+                    <p className="font-bold">Export to JSON (.json)</p>
+                    <p className="text-[10px] text-slate-500 font-normal">Raw JSON dataset</p>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </Card>
 
@@ -1205,26 +1298,34 @@ export function AdminDashboardClient({
                       </td>
 
                       {/* College & Dept */}
-                      <td className="py-3.5 px-3 align-top space-y-1">
-                        {members.map((p: any, idx: number) => (
-                          <div key={idx} className="h-10 flex flex-col justify-center">
-                            <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title={p.college}>
-                              {p.college || "N/A"}
-                            </p>
-                            <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400">
-                              Dept: {p.department || "ECE"}
-                            </span>
-                          </div>
-                        ))}
+                      <td className="py-3.5 px-3 align-top">
+                        {members.length === 0 ? (
+                          <div className="h-10 flex items-center text-xs font-mono text-slate-400 italic">-</div>
+                        ) : (
+                          members.map((p: any, idx: number) => (
+                            <div key={idx} className="h-10 flex flex-col justify-center">
+                              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title={p.college}>
+                                {p.college || "N/A"}
+                              </p>
+                              <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400">
+                                Dept: {p.department || "ECE"}
+                              </span>
+                            </div>
+                          ))
+                        )}
                       </td>
 
                       {/* Phone Number (Strict Line-by-Line Alignment with Roster) */}
                       <td className="py-3.5 px-3 align-top font-mono text-xs text-slate-700 dark:text-slate-300">
-                        {members.map((p: any, idx: number) => (
-                          <div key={idx} className="h-10 flex items-center font-semibold text-xs">
-                            📞 {p.phone || "N/A"}
-                          </div>
-                        ))}
+                        {members.length === 0 ? (
+                          <div className="h-10 flex items-center text-xs font-mono text-slate-400 italic">-</div>
+                        ) : (
+                          members.map((p: any, idx: number) => (
+                            <div key={idx} className="h-10 flex items-center font-semibold text-xs">
+                              📞 {p.phone || "N/A"}
+                            </div>
+                          ))
+                        )}
                       </td>
 
                       {/* Registered Events */}
@@ -1253,13 +1354,17 @@ export function AdminDashboardClient({
 
                       {/* Food */}
                       <td className="py-3.5 px-2 align-top text-center">
-                        <div className="space-y-1">
-                          {members.map((p: any, idx: number) => (
-                            <Badge key={idx} variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm" className="text-[10px] block">
-                              {p.foodPreference || "Veg"}
-                            </Badge>
-                          ))}
-                        </div>
+                        {members.length === 0 ? (
+                          <div className="h-10 flex items-center justify-center text-xs font-mono text-slate-400 italic">-</div>
+                        ) : (
+                          members.map((p: any, idx: number) => (
+                            <div key={idx} className="h-10 flex items-center justify-center">
+                              <Badge variant={p.foodPreference === "Non-Veg" ? "danger" : "success"} size="sm" className="text-[10px]">
+                                {p.foodPreference || "Veg"}
+                              </Badge>
+                            </div>
+                          ))
+                        )}
                       </td>
                     </tr>
                   );
