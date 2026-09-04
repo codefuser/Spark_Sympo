@@ -20,7 +20,7 @@ async function main() {
   });
   console.log("✅ Admin user created:", admin.email);
 
-  // 2. Create Events (Exact prompt requirements)
+  // 2. Create Events (6 Comprehensive Tracks)
   const eventsData = [
     {
       slug: "paper-presentation",
@@ -83,6 +83,26 @@ async function main() {
       status: "OPEN",
     },
     {
+      slug: "iot-workshop",
+      title: "IoT & Robotics Workshop",
+      category: "WORKSHOP",
+      shortDesc: "Hands-on training session on ESP32 Microcontrollers, Sensors, & Cloud Dashboard Integration.",
+      fullDesc: "Master IoT sensor interfacing, Wi-Fi telemetry, MQTT protocols, and cloud dashboard design in a guided hands-on laboratory workshop led by industry engineers.",
+      rules: "1. Laptops with Arduino IDE pre-installed recommended.\n2. Hardware development kits will be provided per team.\n3. Participation certificate issued upon completion.",
+      eligibility: "Open to all engineering & diploma students",
+      teamSize: "1-2 Members",
+      minMembers: 1,
+      maxMembers: 2,
+      maxTeams: 80,
+      rounds: "Hands-on Guided Session",
+      date: "September 16, 2026",
+      time: "01:45 PM - 04:15 PM",
+      venue: "DSP & Advanced Microprocessor Lab",
+      coordinatorName: "Dr. P. Karthik",
+      coordinatorPhone: "+91 98405 12345",
+      status: "OPEN",
+    },
+    {
       slug: "rythemania",
       title: "Rythemania",
       category: "NON_TECHNICAL",
@@ -131,13 +151,13 @@ async function main() {
       create: item,
     });
   }
-  console.log("✅ Seeded 5 Technical & Non-Technical Symposium Events");
+  console.log("✅ Seeded 6 Technical, Non-Technical & Workshop Events");
 
-  // 3. Seed Quiz Settings (for Website 3 time control)
+  // 3. Seed Quiz Settings
   const startTime = new Date();
-  startTime.setHours(9, 0, 0, 0); // 09:00 AM today
+  startTime.setHours(9, 0, 0, 0);
   const endTime = new Date();
-  endTime.setHours(18, 0, 0, 0); // 06:00 PM today
+  endTime.setHours(18, 0, 0, 0);
 
   const existingSettings = await prisma.quizSettings.findFirst();
   if (!existingSettings) {
@@ -153,7 +173,9 @@ async function main() {
     console.log("✅ Seeded Quiz Settings (Active 09:00 AM - 06:00 PM)");
   }
 
-  // 4. Seed Coordinators
+  // 4. Clean & Seed Coordinators (Prevents Duplicates)
+  await prisma.coordinator.deleteMany();
+
   const coordinatorsData = [
     {
       name: "Dr. V. Rajeshwari",
@@ -172,6 +194,22 @@ async function main() {
       email: "ramprasath.ece@college.edu",
     },
     {
+      name: "Prof. S. Meenakshi",
+      role: "FACULTY",
+      designation: "Faculty Co-Convener & Academic Lead",
+      department: "ECE",
+      phone: "+91 98402 34567",
+      email: "meenakshi.ece@college.edu",
+    },
+    {
+      name: "Dr. R. Vigneshwaren",
+      role: "FACULTY",
+      designation: "Technical Committee Head",
+      department: "ECE",
+      phone: "+91 98403 45678",
+      email: "vigneshwaren.ece@college.edu",
+    },
+    {
       name: "Sanjay V.",
       role: "STUDENT",
       designation: "Student President & Lead Coordinator",
@@ -179,33 +217,83 @@ async function main() {
       phone: "+91 98765 43210",
       email: "sanjay.ece26@student.edu",
     },
+    {
+      name: "Ananya R.",
+      role: "STUDENT",
+      designation: "Student Vice-President & Technical Lead",
+      department: "ECE (Final Year)",
+      phone: "+91 98765 43211",
+      email: "ananya.ece26@student.edu",
+    },
+    {
+      name: "Karthik M.",
+      role: "STUDENT",
+      designation: "Event Operations & Logistics Lead",
+      department: "ECE (Third Year)",
+      phone: "+91 98765 43212",
+      email: "karthik.ece27@student.edu",
+    },
+    {
+      name: "Priya Dharshini",
+      role: "STUDENT",
+      designation: "Registration & Hospitality Lead",
+      department: "ECE (Final Year)",
+      phone: "+91 98765 43213",
+      email: "priya.ece26@student.edu",
+    },
+    {
+      name: "Aravind Kumar",
+      role: "STUDENT",
+      designation: "Robotics & Hardware Track Lead",
+      department: "ECE (Third Year)",
+      phone: "+91 98765 43214",
+      email: "aravind.ece27@student.edu",
+    },
+    {
+      name: "Divya Bharathi",
+      role: "STUDENT",
+      designation: "Media, Design & PR Lead",
+      department: "ECE (Third Year)",
+      phone: "+91 98765 43215",
+      email: "divya.ece27@student.edu",
+    },
   ];
 
   for (const item of coordinatorsData) {
     await prisma.coordinator.create({ data: item });
   }
-  console.log("✅ Seeded Coordinators");
+  console.log("✅ Cleaned & Seeded Distinct Faculty & Student Coordinators");
 
-  // 5. Seed Sponsors
+  // 5. Clean & Seed Sponsors (Prevents Duplicates)
+  await prisma.sponsor.deleteMany();
+
   const sponsorsData = [
     { name: "Texas Instruments", tier: "PLATINUM", websiteUrl: "https://www.ti.com" },
     { name: "Bosch Sensing Systems", tier: "PLATINUM", websiteUrl: "https://www.bosch.com" },
     { name: "Qualcomm Wireless", tier: "GOLD", websiteUrl: "https://www.qualcomm.com" },
+    { name: "Intel Embedded Solutions", tier: "GOLD", websiteUrl: "https://www.intel.com" },
+    { name: "Siemens EDA", tier: "GOLD", websiteUrl: "https://www.siemens.com" },
+    { name: "Microchip Technology", tier: "SILVER", websiteUrl: "https://www.microchip.com" },
+    { name: "Keysight Technologies", tier: "SILVER", websiteUrl: "https://www.keysight.com" },
+    { name: "MathWorks India", tier: "SILVER", websiteUrl: "https://www.mathworks.com" },
   ];
 
   for (const item of sponsorsData) {
     await prisma.sponsor.create({ data: item });
   }
-  console.log("✅ Seeded Sponsors");
+  console.log("✅ Cleaned & Seeded Distinct Industry Sponsors");
 
-  // 6. Seed Announcement
-  await prisma.announcement.create({
-    data: {
-      title: "SPARKTRON 2K26 Registration Now Live!",
-      content: "Online registration for Technical & Non-Technical event tracks is officially open.",
-      priority: "HIGH",
-    },
-  });
+  // 6. Seed Announcement if empty
+  const existingAnn = await prisma.announcement.findFirst();
+  if (!existingAnn) {
+    await prisma.announcement.create({
+      data: {
+        title: "SPARKTRON 2K26 Registration Now Live!",
+        content: "Online registration for Technical & Non-Technical event tracks is officially open.",
+        priority: "HIGH",
+      },
+    });
+  }
 
   console.log("🎉 Database seeding completed successfully!");
 }
