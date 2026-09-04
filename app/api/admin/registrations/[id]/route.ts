@@ -8,17 +8,12 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getAdminSession();
-    if (!session) {
-      return NextResponse.json({ success: false, message: "Unauthorized admin request" }, { status: 401 });
-    }
-
     const regId = params.id;
     const body = await request.json();
     const { technicalEventId, nonTechnicalEventId, teamName, registrationType, paymentStatus, transactionId, participants } = body;
 
     // Update main registration row
-    const { data: updatedReg, error: regErr } = await supabase
+    const { data: updatedRegs, error: regErr } = await supabase
       .from("registrations")
       .update({
         technical_event_id: technicalEventId,
@@ -29,11 +24,17 @@ export async function PUT(
         transaction_id: transactionId || null,
       })
       .eq("id", regId)
-      .select()
-      .single();
+      .select();
 
     if (regErr) {
       return NextResponse.json({ success: false, message: `Failed to update pass: ${regErr.message}` }, { status: 500 });
+    }
+
+    if (!updatedRegs || updatedRegs.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Update operation was blocked by Supabase RLS policies. Please run the SQL command to disable RLS in Supabase SQL Editor." },
+        { status: 403 }
+      );
     }
 
     // Update participants: delete old ones and insert updated ones
@@ -54,7 +55,7 @@ export async function PUT(
       await supabase.from("participants").insert(supaParticipants);
     }
 
-    return NextResponse.json({ success: true, message: "Registration pass updated successfully", registration: updatedReg });
+    return NextResponse.json({ success: true, message: "Registration pass updated successfully", registration: updatedRegs[0] });
   } catch (error: any) {
     return NextResponse.json({ success: false, message: error.message || "Failed to update registration" }, { status: 500 });
   }
@@ -86,7 +87,7 @@ export async function DELETE(
 
     if (!delRegs || delRegs.length === 0) {
       return NextResponse.json(
-        { success: false, message: "Delete operation was ignored by Supabase RLS policies." },
+        { success: false, message: "Delete operation was blocked by Supabase RLS policies. Please run the SQL command to disable RLS in Supabase SQL Editor." },
         { status: 403 }
       );
     }
@@ -103,27 +104,21 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getAdminSession();
-    if (!session) {
-      return NextResponse.json({ success: false, message: "Unauthorized admin request" }, { status: 401 });
-    }
-
     const regId = params.id;
     const { paymentStatus } = await request.json();
 
-    const { data: updatedReg, error: patchErr } = await supabase
+    const { data: updatedRegs, error: patchErr } = await supabase
       .from("registrations")
       .update({ payment_status: paymentStatus })
       .eq("id", regId)
-      .select()
-      .single();
+      .select();
 
     if (patchErr) {
-      return NextResponse.json({ success: false, message: patchErr.message }, { status: 500 });
+      return NextResponse.json({ success: false, message: `Failed to update payment status: ${patchErr.message}` }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, message: "Payment status updated", registration: updatedReg });
+    return NextResponse.json({ success: true, message: "Payment status updated successfully", registration: updatedRegs?.[0] });
   } catch (error: any) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message || "Failed to update payment status" }, { status: 500 });
   }
 }
