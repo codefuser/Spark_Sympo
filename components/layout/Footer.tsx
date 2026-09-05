@@ -2,7 +2,7 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import { Cpu, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
+import { Cpu, Mail, Phone, MapPin, ArrowRight, Zap } from "lucide-react";
 import { useRegistrationModal } from "@/components/registration/RegistrationModalContext";
 
 export function Footer() {
@@ -28,14 +28,28 @@ export function Footer() {
   return (
     <footer className="w-full border-t border-primary/15 bg-background text-secondary-foreground">
       {/* Top Banner */}
-      <div className="border-b border-primary/10 bg-card/40 py-8">
-        <div className="container mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-          <div className="space-y-1">
-            <h3 className="text-xl font-bold text-white font-mono tracking-tight">
-              Ready to electrify your engineering vision?
+      <div className="border-b border-primary/15 bg-gradient-to-r from-card/90 via-card/60 to-primary/5 py-8 relative overflow-hidden">
+        {/* Ambient background glow */}
+        <div className="absolute -left-16 top-1/2 -translate-y-1/2 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+          <div className="space-y-2.5 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-mono tracking-widest uppercase">
+              <Zap className="w-3.5 h-3.5 fill-primary text-primary animate-pulse" />
+              <span>SPARKTRON 2K26 • REGISTRATION LIVE</span>
+            </div>
+
+            <h3 className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight text-white">
+              Ignite Your Spark.{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-300 to-primary drop-shadow-[0_0_20px_rgba(0,240,255,0.35)]">
+                Electrify the Arena.
+              </span>
             </h3>
-            <p className="text-sm text-secondary-foreground">
-              Register now for CircuitRIX, PaperTronix, RoboCombat, and Workshops!
+
+            <p className="text-sm text-slate-400 font-sans flex flex-wrap items-center gap-x-2 gap-y-1 justify-center md:justify-start">
+              <span>Compete in CircuitRIX, PaperTronix, RoboCombat & Workshops</span>
+              <span className="hidden sm:inline text-primary/40">•</span>
+              <span className="text-amber-400 font-mono font-semibold">₹20,000+ Prize Pool</span>
             </p>
           </div>
           <button
