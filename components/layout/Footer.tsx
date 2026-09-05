@@ -2,7 +2,7 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import { Cpu, Mail, Phone, MapPin } from "lucide-react";
+import { Cpu, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
 import { useRegistrationModal } from "@/components/registration/RegistrationModalContext";
 
 export function Footer() {
@@ -40,9 +40,27 @@ export function Footer() {
           </div>
           <button
             onClick={() => openRegistrationModal()}
-            className="px-6 py-3 rounded-lg bg-primary text-background font-bold text-sm shadow-glow hover:bg-primary-dark transition-all transform hover:-translate-y-0.5"
+            className="relative group inline-flex items-center gap-3 px-6 py-3.5 rounded-xl font-mono text-sm font-bold tracking-wider uppercase text-primary bg-primary/[0.08] hover:bg-primary/[0.18] border border-primary/50 hover:border-primary shadow-[0_0_20px_rgba(0,240,255,0.18)] hover:shadow-[0_0_30px_rgba(0,240,255,0.45)] backdrop-blur-md transition-all duration-300 transform hover:-translate-y-0.5 overflow-hidden cursor-pointer"
           >
-            Register Now →
+            {/* Shimmer sweep effect */}
+            <span
+              className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-primary/25 to-transparent pointer-events-none"
+              aria-hidden="true"
+            />
+
+            {/* Glowing pulse indicator dot */}
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary shadow-[0_0_8px_#00F0FF]" />
+            </span>
+
+            {/* Button text */}
+            <span className="relative z-10 text-white group-hover:text-primary transition-colors duration-200">
+              Register Now
+            </span>
+
+            {/* Animated Arrow */}
+            <ArrowRight className="relative z-10 w-4 h-4 text-primary group-hover:translate-x-1.5 transition-transform duration-300" />
           </button>
         </div>
       </div>
