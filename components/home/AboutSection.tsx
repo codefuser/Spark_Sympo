@@ -573,23 +573,22 @@ export function AboutSection() {
         </div>
       </div>
 
-      {/* Symposium Legacy & Department Overview (Seamless Cascading Reveal) */}
+      {/* Symposium Legacy (Top Center) */}
       <div
         data-reveal
         className={cn(
-          "grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch transition-all duration-500 ease-out",
+          "transition-all duration-500 ease-out",
           inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
         )}
         style={{ transitionDelay: "800ms" }}
       >
-        {/* What is SPARKTRON 2K26? */}
         <Card
           glowOnHover
-          className="group relative space-y-4 flex flex-col justify-between border-primary/20 hover:border-primary/40 bg-card/90 p-6 sm:p-8"
+          className="group relative space-y-4 flex flex-col justify-between border-primary/20 hover:border-primary/40 bg-card/90 p-6 sm:p-8 max-w-4xl mx-auto text-center"
         >
           <HudCorners />
           <div>
-            <div className="flex items-center space-x-2 text-primary font-mono text-sm mb-2">
+            <div className="flex items-center justify-center space-x-2 text-primary font-mono text-sm mb-2">
               <Zap className="w-4 h-4" />
               <span>THE SYMPOSIUM LEGACY</span>
             </div>
@@ -614,7 +613,7 @@ export function AboutSection() {
               </span>
             </p>
           </div>
-          <div className="pt-4 border-t border-primary/10 flex items-center gap-4 text-xs font-mono text-slate-400">
+          <div className="pt-4 border-t border-primary/10 flex items-center justify-center gap-4 text-xs font-mono text-slate-400 mt-2">
             <span className="flex items-center gap-1">
               <ShieldCheck className="w-4 h-4 text-primary" /> ISO Certified
             </span>
@@ -624,7 +623,17 @@ export function AboutSection() {
             </span>
           </div>
         </Card>
+      </div>
 
+      {/* Department Overview: ECE & EEE */}
+      <div
+        data-reveal
+        className={cn(
+          "grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch transition-all duration-500 ease-out",
+          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+        )}
+        style={{ transitionDelay: "840ms" }}
+      >
         {/* Department of ECE */}
         <Card
           glowOnHover
@@ -648,7 +657,7 @@ export function AboutSection() {
               engineers.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center">
+          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
             <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-primary/50 transition-colors">
               <div className="text-xl sm:text-2xl font-bold text-primary">
                 12+
@@ -660,6 +669,40 @@ export function AboutSection() {
                 100%
               </div>
               <div className="text-slate-400 mt-1">Placement Record</div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Department of EEE */}
+        <Card
+          glowOnHover
+          className="group relative space-y-4 flex flex-col justify-between border-amber-500/20 hover:border-amber-500/40 bg-card/90 p-6 sm:p-8"
+        >
+          <HudCorners />
+          <div>
+            <div className="flex items-center space-x-2 text-amber-500 font-mono text-sm mb-2">
+              <Cpu className="w-4 h-4" />
+              <span>DEPARTMENT OVERVIEW</span>
+            </div>
+            <h3 className="text-2xl font-extrabold text-white mb-3">
+              Department of EEE
+            </h3>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              The program in Electrical &amp; Electronics Engineering is one of the premier undergraduate programs offered by the Thamirabharani Engineering College. The EEE department has a team of highly qualified and experienced faculty. With its excellent infrastructure, the department places emphasis on sound practical knowledge, while nurturing creativity in the students. With Anna University's curriculum, the Department places equal emphasis on theoretical and experimental electrical and electronics engineering.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
+            <div className="p-3.5 rounded-xl bg-background/85 border border-amber-500/20 hover:border-amber-500/50 transition-colors">
+              <div className="text-xl sm:text-2xl font-bold text-amber-500">
+                Premier
+              </div>
+              <div className="text-slate-400 mt-1">UG Program</div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-background/85 border border-amber-500/20 hover:border-emerald-400/50 transition-colors">
+              <div className="text-xl sm:text-2xl font-bold text-emerald-400">
+                Excellent
+              </div>
+              <div className="text-slate-400 mt-1">Infrastructure</div>
             </div>
           </div>
         </Card>
