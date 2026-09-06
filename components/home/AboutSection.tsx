@@ -251,28 +251,31 @@ export function AboutSection() {
       return;
     }
 
-    let startTime: number | null = null;
-    const duration = 1500; // 1.5 seconds
-    const target = 25;
     let animId: number;
+    const timeoutId = setTimeout(() => {
+      let startTime: number | null = null;
+      const duration = 1500; // 1.5 seconds
+      const target = 25;
 
-    const step = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      // Smooth cubic deceleration
-      const easedProgress = 1 - Math.pow(1 - progress, 3);
-      setAcresCount(Math.round(easedProgress * target));
+      const step = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        // Smooth cubic deceleration
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        setAcresCount(Math.round(easedProgress * target));
 
-      if (progress < 1) {
-        animId = requestAnimationFrame(step);
-      } else {
-        setAcresCount(target);
-      }
-    };
+        if (progress < 1) {
+          animId = requestAnimationFrame(step);
+        } else {
+          setAcresCount(target);
+        }
+      };
 
-    animId = requestAnimationFrame(step);
+      animId = requestAnimationFrame(step);
+    }, 480); // match the CSS transition delay of 480ms
     
     return () => {
+      clearTimeout(timeoutId);
       if (animId) {
         cancelAnimationFrame(animId);
       }
