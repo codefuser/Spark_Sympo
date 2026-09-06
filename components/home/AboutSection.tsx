@@ -292,12 +292,63 @@ export function AboutSection() {
           {/* HUD Corner Brackets */}
           <HudCorners />
 
-          {/* 2. Scanning Light: Thin glowing cyan light that slowly scans across the About card */}
+          {/* 2. Scanning Light: Outer border tracking pulses from top-left to bottom-right */}
           <div
-            className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden"
+            className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden z-20"
             aria-hidden="true"
           >
-            <div className="hud-card-scanline" />
+            <style>
+              {`
+                @keyframes pulse-horz {
+                  0% { left: -40%; }
+                  100% { left: 100%; }
+                }
+                @keyframes pulse-vert {
+                  0% { top: -40%; }
+                  100% { top: 100%; }
+                }
+                .animate-pulse-top {
+                  animation: pulse-horz 0.75s linear forwards;
+                  animation-delay: 300ms;
+                }
+                .animate-pulse-right {
+                  animation: pulse-vert 0.75s linear forwards;
+                  animation-delay: 1050ms;
+                }
+                .animate-pulse-bottom {
+                  animation: pulse-horz 0.75s linear forwards;
+                  animation-delay: 1050ms;
+                }
+                .animate-pulse-left {
+                  animation: pulse-vert 0.75s linear forwards;
+                  animation-delay: 300ms;
+                }
+              `}
+            </style>
+            {inView && (
+              <>
+                {/* Top Edge (moves L -> R) */}
+                <div 
+                  className="absolute top-0 h-[2px] w-[40%] bg-gradient-to-r from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-top" 
+                  style={{ left: '-40%' }}
+                />
+                {/* Right Edge (moves T -> B) */}
+                <div 
+                  className="absolute right-0 w-[2px] h-[40%] bg-gradient-to-b from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-right" 
+                  style={{ top: '-40%' }}
+                />
+                {/* Left Edge (moves T -> B) */}
+                <div 
+                  className="absolute left-0 w-[2px] h-[40%] bg-gradient-to-b from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-left" 
+                  style={{ top: '-40%' }}
+                />
+                {/* Bottom Edge (moves L -> R) */}
+                <div 
+                  className="absolute bottom-0 h-[2px] w-[40%] bg-gradient-to-r from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-bottom" 
+                  style={{ left: '-40%' }}
+                />
+              </>
+            )}
           </div>
 
           {/* 5. PCB Circuit Traces inside the About card (Cyan & Blue, decorative & subtle) */}
