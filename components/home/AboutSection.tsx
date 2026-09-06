@@ -200,6 +200,7 @@ export function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
   const [acresCount, setAcresCount] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     // Check if user prefers reduced motion
@@ -463,37 +464,47 @@ export function AboutSection() {
               )}
               style={{ transitionDelay: "420ms" }}
             >
-              <p>
-                Thamirabharani Engineering College which is in the Tirunelveli
-                Corporation limits is located at Thatchanallur, 5km away from
-                Palayamkottai and 40 km from Tuticorin airport. Unfolding its
-                grandeur over 25 acres of land, the college exhibits an attractive
-                panorama conducive to studies. Considering a holistic approach to
-                life and education, an ambient infrastructure is provided for the
-                students. They enjoy a natural sanctuary of birds, magnificent
-                scenery of evergreen trees and amazing mountains and a gorgeous
-                garden of multicolored flowers. Thamirabharani Engineering College
-                was founded with the noble vision to raise professionals and
-                leaders of high academic caliber and unblemished character,
-                nurtured with a strong motivation and commitment to serve humanity.
-                TEC aims at educating &amp; training its students to become not
-                only competent professionals but also excellent human beings to
-                influence the quality of life of people around.
-              </p>
-              <p>
-                Thamirabharani Engineering College was established with the goal
-                of producing outstanding students in Technical and Business fields
-                and preparing them to tackle the challenges of a dynamic and
-                rapidly changing world. The management implements an
-                interdisciplinary curriculum as an Autonomous Institution, making
-                sure that practical applications are combined with the classroom
-                material. All the programs offered by the institute are recognized
-                by statutory bodies like the All India Council of Technical
-                Education (AICTE), New Delhi. In a nutshell, Thamirabharani
-                Engineering College is an autonomous, co-educational, residential,
-                technological college imparting holistic education to develop the
-                technical and the character of the students.
-              </p>
+              <div className="space-y-4">
+                <p className={cn(!isExpanded && "line-clamp-4")}>
+                  Thamirabharani Engineering College which is in the Tirunelveli
+                  Corporation limits is located at Thatchanallur, 5km away from
+                  Palayamkottai and 40 km from Tuticorin airport. Unfolding its
+                  grandeur over 25 acres of land, the college exhibits an attractive
+                  panorama conducive to studies. Considering a holistic approach to
+                  life and education, an ambient infrastructure is provided for the
+                  students. They enjoy a natural sanctuary of birds, magnificent
+                  scenery of evergreen trees and amazing mountains and a gorgeous
+                  garden of multicolored flowers. Thamirabharani Engineering College
+                  was founded with the noble vision to raise professionals and
+                  leaders of high academic caliber and unblemished character,
+                  nurtured with a strong motivation and commitment to serve humanity.
+                  TEC aims at educating &amp; training its students to become not
+                  only competent professionals but also excellent human beings to
+                  influence the quality of life of people around.
+                </p>
+                {isExpanded && (
+                  <p>
+                    Thamirabharani Engineering College was established with the goal
+                    of producing outstanding students in Technical and Business fields
+                    and preparing them to tackle the challenges of a dynamic and
+                    rapidly changing world. The management implements an
+                    interdisciplinary curriculum as an Autonomous Institution, making
+                    sure that practical applications are combined with the classroom
+                    material. All the programs offered by the institute are recognized
+                    by statutory bodies like the All India Council of Technical
+                    Education (AICTE), New Delhi. In a nutshell, Thamirabharani
+                    Engineering College is an autonomous, co-educational, residential,
+                    technological college imparting holistic education to develop the
+                    technical and the character of the students.
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-primary hover:text-cyan transition-colors font-medium text-sm focus:outline-none flex items-center gap-1 mt-2"
+              >
+                {isExpanded ? "Read Less" : "Read More"}
+              </button>
             </div>
 
             {/* 4 & 6. Statistics Grid: Smooth scroll reveal, count-up, hover lift & glow */}
