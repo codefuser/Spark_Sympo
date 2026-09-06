@@ -26,7 +26,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="w-full border-t border-primary/15 bg-background text-secondary-foreground">
+    <footer id="contact" className="w-full border-t border-primary/15 bg-background text-secondary-foreground font-sans">
       {/* Top Banner */}
       <div className="border-b border-primary/15 bg-gradient-to-r from-card/90 via-card/60 to-primary/5 py-8 relative overflow-hidden">
         {/* Ambient background glow */}
@@ -34,12 +34,12 @@ export function Footer() {
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="space-y-2.5 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-mono tracking-widest uppercase">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-sans font-semibold tracking-wider uppercase">
               <Zap className="w-3.5 h-3.5 fill-primary text-primary animate-pulse" />
               <span>SPARKTRON 2K26 • REGISTRATION LIVE</span>
             </div>
 
-            <h3 className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight text-white">
+            <h3 className="text-2xl sm:text-3xl font-extrabold font-display tracking-tight text-white">
               Ignite Your Spark.{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-300 to-primary drop-shadow-[0_0_20px_rgba(0,240,255,0.35)]">
                 Electrify the Arena.
@@ -49,12 +49,12 @@ export function Footer() {
             <p className="text-sm text-slate-400 font-sans flex flex-wrap items-center gap-x-2 gap-y-1 justify-center md:justify-start">
               <span>Compete in CircuitRIX, PaperTronix, RoboCombat & Workshops</span>
               <span className="hidden sm:inline text-primary/40">•</span>
-              <span className="text-amber-400 font-mono font-semibold">₹20,000+ Prize Pool</span>
+              <span className="text-amber-400 font-sans font-semibold">₹20,000+ Prize Pool</span>
             </p>
           </div>
           <button
             onClick={() => openRegistrationModal()}
-            className="relative group inline-flex items-center gap-3 px-6 py-3.5 rounded-xl font-mono text-sm font-bold tracking-wider uppercase text-primary bg-primary/[0.08] hover:bg-primary/[0.18] border border-primary/50 hover:border-primary shadow-[0_0_20px_rgba(0,240,255,0.18)] hover:shadow-[0_0_30px_rgba(0,240,255,0.45)] backdrop-blur-md transition-all duration-300 transform hover:-translate-y-0.5 overflow-hidden cursor-pointer"
+            className="relative group inline-flex items-center gap-3 px-6 py-3.5 rounded-xl font-sans text-sm font-semibold tracking-wider uppercase text-primary bg-primary/[0.08] hover:bg-primary/[0.18] border border-primary/50 hover:border-primary shadow-[0_0_20px_rgba(0,240,255,0.18)] hover:shadow-[0_0_30px_rgba(0,240,255,0.45)] backdrop-blur-md transition-all duration-300 transform hover:-translate-y-0.5 overflow-hidden cursor-pointer"
           >
             {/* Shimmer sweep effect */}
             <span
@@ -84,112 +84,144 @@ export function Footer() {
         {/* Brand & Dept */}
         <div className="space-y-4">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/40 flex items-center justify-center text-primary shadow-glow">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/40 flex items-center justify-center text-primary shadow-glow">
               <Cpu className="w-5 h-5" />
             </div>
-            <span className="text-xl font-black font-mono tracking-wider text-white">
-              SPARK<span className="text-primary">TRON</span> 2K26
-            </span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-xl font-bold font-display tracking-wide text-white">
+                SPARK<span className="text-primary font-black">TRON</span>
+              </span>
+              <span className="text-[11px] font-semibold font-sans px-2 py-0.5 rounded-md bg-primary/10 border border-primary/30 text-primary tracking-wider">
+                2K26
+              </span>
+            </div>
           </div>
-          <p className="text-xs leading-relaxed text-slate-400">
+          <p className="text-sm leading-relaxed text-slate-400 font-sans">
             National Level Technical Symposium organized by the Department of Electronics and Communication Engineering (ECE). Empowering next-gen innovators.
           </p>
-          <div className="pt-2 text-xs font-mono text-primary flex items-center space-x-2">
-            <span>September 16, 2026</span>
-            <span>•</span>
-            <span>ECE Campus Auditorium</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card/80 border border-primary/20 text-xs font-sans text-primary">
+            <span className="font-semibold text-white">September 16, 2026</span>
+            <span className="text-primary/50">•</span>
+            <span className="text-slate-300">ECE Campus Auditorium</span>
           </div>
         </div>
 
         {/* Quick Links */}
-        <div className="space-y-3 font-mono">
-          <h4 className="text-xs font-bold text-white uppercase tracking-widest border-b border-primary/20 pb-2">
-            Navigation
+        <div className="space-y-4">
+          <h4 className="text-xs font-semibold font-display text-white uppercase tracking-widest flex items-center gap-2 pb-2.5 border-b border-primary/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span>Navigation</span>
           </h4>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <a href="#about" onClick={(e) => handleNavClick(e, "#about")} className="hover:text-primary transition-colors">
-                About Symposium
-              </a>
-            </li>
-            <li>
-              <a href="#symposium" onClick={(e) => handleNavClick(e, "#symposium")} className="hover:text-primary transition-colors">
-                Schedule & Guidelines
-              </a>
-            </li>
-            <li>
-              <a href="#events" onClick={(e) => handleNavClick(e, "#events")} className="hover:text-primary transition-colors">
-                Events Catalog
-              </a>
-            </li>
-            <li>
-              <a href="#coordinators" onClick={(e) => handleNavClick(e, "#coordinators")} className="hover:text-primary transition-colors">
-                Coordinators
-              </a>
-            </li>
-            <li>
-              <a href="#sponsors" onClick={(e) => handleNavClick(e, "#sponsors")} className="hover:text-primary transition-colors">
-                Sponsors & Partners
-              </a>
-            </li>
+          <ul className="space-y-2.5 text-sm font-sans">
+            {[
+              { label: "About Symposium", href: "#about" },
+              { label: "Schedule & Guidelines", href: "#symposium" },
+              { label: "Events Catalog", href: "#events" },
+              { label: "Coordinators", href: "#coordinators" },
+              { label: "Sponsors & Partners", href: "#sponsors" },
+            ].map((link) => (
+              <li key={link.label}>
+                <a
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className="group flex items-center gap-2.5 text-slate-300 hover:text-primary transition-all duration-200"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-600 group-hover:bg-primary group-hover:w-2.5 transition-all duration-200" />
+                  <span className="font-medium group-hover:translate-x-0.5 transition-transform duration-200">{link.label}</span>
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* Event Tracks */}
-        <div className="space-y-3 font-mono">
-          <h4 className="text-xs font-bold text-white uppercase tracking-widest border-b border-primary/20 pb-2">
-            Featured Tracks
+        <div className="space-y-4">
+          <h4 className="text-xs font-semibold font-display text-white uppercase tracking-widest flex items-center gap-2 pb-2.5 border-b border-primary/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+            <span>Featured Tracks</span>
           </h4>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <a href="#events" onClick={(e) => handleNavClick(e, "#events")} className="hover:text-primary transition-colors">
-                CircuitRIX Debugging
-              </a>
-            </li>
-            <li>
-              <a href="#events" onClick={(e) => handleNavClick(e, "#events")} className="hover:text-primary transition-colors">
-                PaperTronix Symposium
-              </a>
-            </li>
-            <li>
-              <a href="#events" onClick={(e) => handleNavClick(e, "#events")} className="hover:text-primary transition-colors">
-                RoboCombat 2.0 Arena
-              </a>
-            </li>
-            <li>
-              <a href="#events" onClick={(e) => handleNavClick(e, "#events")} className="hover:text-primary transition-colors">
-                IoT Edge Workshop
-              </a>
-            </li>
+          <ul className="space-y-2.5 text-sm font-sans">
+            {[
+              "CircuitRIX Debugging",
+              "PaperTronix Symposium",
+              "RoboCombat 2.0 Arena",
+              "IoT Edge Workshop",
+            ].map((track) => (
+              <li key={track}>
+                <a
+                  href="#events"
+                  onClick={(e) => handleNavClick(e, "#events")}
+                  className="group flex items-center justify-between text-slate-300 hover:text-primary transition-all duration-200"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-600 group-hover:bg-primary group-hover:w-2.5 transition-all duration-200" />
+                    <span className="font-medium group-hover:translate-x-0.5 transition-transform duration-200">{track}</span>
+                  </span>
+                  <span className="text-[10px] font-sans font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary/80 border border-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    Explore
+                  </span>
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* Contact Info */}
-        <div className="space-y-3">
-          <h4 className="text-xs font-mono font-bold text-white uppercase tracking-widest border-b border-primary/20 pb-2">
-            Contact Us
+        <div className="space-y-4">
+          <h4 className="text-xs font-semibold font-display text-white uppercase tracking-widest flex items-center gap-2 pb-2.5 border-b border-primary/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+            <span>Contact Us</span>
           </h4>
-          <div className="space-y-2.5 text-xs font-mono">
-            <div className="flex items-start space-x-2.5">
-              <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-              <span>ECE Department, Thamirabharani Engineering College, Thatchanallur, Tirunelveli - 627358</span>
+          <div className="space-y-3 text-sm font-sans">
+            <div className="flex items-start gap-3 group">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/25 flex items-center justify-center text-primary shrink-0 mt-0.5 group-hover:bg-primary/20 group-hover:border-primary/50 transition-colors">
+                <MapPin className="w-4 h-4" />
+              </div>
+              <div className="text-xs leading-relaxed text-slate-300">
+                <span className="text-white font-semibold block mb-0.5">ECE Department</span>
+                <span className="text-slate-400">Thamirabharani Engineering College, Thatchanallur, Tirunelveli - 627358</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-2.5">
-              <Mail className="w-4 h-4 text-primary shrink-0" />
-              <span>sparktron2026@college.edu</span>
-            </div>
-            <div className="flex items-center space-x-2.5">
-              <Phone className="w-4 h-4 text-primary shrink-0" />
-              <span>+91 98401 23456 / +91 98765 43210</span>
+
+            <a
+              href="mailto:sparktron2026@college.edu"
+              className="flex items-center gap-3 group text-slate-300 hover:text-white transition-colors"
+            >
+              <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/25 flex items-center justify-center text-primary shrink-0 group-hover:bg-primary/20 group-hover:border-primary/50 transition-colors">
+                <Mail className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-medium text-slate-300 group-hover:text-primary transition-colors">
+                sparktron2026@college.edu
+              </span>
+            </a>
+
+            <div className="flex items-center gap-3 group">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/25 flex items-center justify-center text-primary shrink-0 group-hover:bg-primary/20 group-hover:border-primary/50 transition-colors">
+                <Phone className="w-4 h-4" />
+              </div>
+              <div className="text-xs font-medium text-slate-300 flex items-center gap-1.5 flex-wrap">
+                <a href="tel:+919840123456" className="hover:text-primary transition-colors">
+                  +91 98401 23456
+                </a>
+                <span className="text-slate-600">/</span>
+                <a href="tel:+919876543210" className="hover:text-primary transition-colors">
+                  +91 98765 43210
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-primary/10 py-6 bg-background/50 text-xs">
+      <div className="border-t border-primary/10 py-6 bg-background/50 text-xs font-sans">
         <div className="container mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 SPARKTRON 2K26. Department of ECE. All rights reserved.</p>
+          <p className="text-slate-400 font-medium">© 2026 SPARKTRON 2K26. Department of ECE. All rights reserved.</p>
+          <div className="flex items-center gap-4 text-slate-500 text-xs">
+            <span className="hover:text-slate-400 transition-colors">Thamirabharani Engineering College</span>
+            <span>•</span>
+            <span className="text-primary/70">Empowering Innovators</span>
+          </div>
         </div>
       </div>
     </footer>
