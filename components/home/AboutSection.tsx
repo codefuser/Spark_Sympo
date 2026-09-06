@@ -14,12 +14,12 @@ import {
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 
-// 5. PCB Circuit Traces - Top Right (Cyan & Blue dual-trace bus lines, via pads)
+// 5. Minimal PCB Circuit Traces - Top Right
 function PcbTracesTopRight({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute select-none overflow-hidden opacity-25 circuit-pulse",
+        "pointer-events-none absolute select-none overflow-hidden opacity-30 transition-opacity duration-700",
         className
       )}
       aria-hidden="true"
@@ -30,57 +30,32 @@ function PcbTracesTopRight({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Cyan primary traces */}
         <path
-          d="M0 24 H70 L95 50 H160 L180 30 H220"
-          stroke="#00F0FF"
-          strokeWidth="1.2"
-          strokeDasharray="5 3"
-        />
-        <path
-          d="M35 8 H95 L120 34 H185"
+          d="M220 30 H140 L90 80 H60"
           stroke="#00F0FF"
           strokeWidth="1.2"
         />
+        <circle cx="60" cy="80" r="2.5" fill="#00F0FF" />
+        <circle cx="140" cy="30" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
+        
         <path
-          d="M95 50 V85 L115 105 H195"
-          stroke="#00F0FF"
-          strokeWidth="1"
-        />
-        {/* Blue secondary traces */}
-        <path
-          d="M15 42 H60 L85 68 H150 L170 88 H215"
+          d="M220 50 H160 L110 100 H80"
           stroke="#0072FF"
           strokeWidth="1.2"
         />
-        <path
-          d="M85 68 V98 L105 118 H165"
-          stroke="#0072FF"
-          strokeWidth="1"
-          strokeDasharray="4 2"
-        />
-        {/* Via pads (Cyan) */}
-        <circle cx="70" cy="24" r="2.5" fill="#00F0FF" />
-        <circle cx="160" cy="50" r="2" fill="#00F0FF" />
-        <circle cx="180" cy="30" r="2" fill="#00F0FF" />
-        <circle cx="195" cy="105" r="2.5" fill="#00F0FF" />
-        <circle cx="95" cy="8" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
-        {/* Via pads (Blue) */}
-        <circle cx="60" cy="42" r="2" fill="#0072FF" />
-        <circle cx="150" cy="68" r="2.5" fill="#0072FF" />
-        <circle cx="215" cy="88" r="2" fill="#0072FF" />
-        <circle cx="165" cy="118" r="2.5" stroke="#0072FF" strokeWidth="1" fill="none" />
+        <circle cx="80" cy="100" r="2.5" fill="#0072FF" />
+        <circle cx="160" cy="50" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
       </svg>
     </div>
   );
 }
 
-// 5. PCB Circuit Traces - Bottom Left (Cyan & Blue dual-trace bus lines, via pads)
+// 5. Minimal PCB Circuit Traces - Bottom Left
 function PcbTracesBottomLeft({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute select-none overflow-hidden opacity-25 circuit-pulse",
+        "pointer-events-none absolute select-none overflow-hidden opacity-30 transition-opacity duration-700",
         className
       )}
       aria-hidden="true"
@@ -91,82 +66,21 @@ function PcbTracesBottomLeft({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Blue primary traces */}
         <path
-          d="M220 96 H150 L125 70 H60 L40 90 H0"
-          stroke="#0072FF"
-          strokeWidth="1.2"
-          strokeDasharray="5 3"
-        />
-        <path
-          d="M185 112 H125 L100 86 H35"
+          d="M0 90 H80 L130 40 H160"
           stroke="#0072FF"
           strokeWidth="1.2"
         />
-        <path
-          d="M125 70 V35 L105 15 H25"
-          stroke="#0072FF"
-          strokeWidth="1"
-        />
-        {/* Cyan secondary traces */}
-        <path
-          d="M205 78 H160 L135 52 H70 L50 32 H5"
-          stroke="#00F0FF"
-          strokeWidth="1.2"
-        />
-        <path
-          d="M135 52 V22 L115 2 H55"
-          stroke="#00F0FF"
-          strokeWidth="1"
-          strokeDasharray="4 2"
-        />
-        {/* Via pads (Blue) */}
-        <circle cx="150" cy="96" r="2.5" fill="#0072FF" />
-        <circle cx="60" cy="70" r="2" fill="#0072FF" />
-        <circle cx="40" cy="90" r="2" fill="#0072FF" />
-        <circle cx="25" cy="15" r="2.5" fill="#0072FF" />
-        <circle cx="125" cy="112" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
-        {/* Via pads (Cyan) */}
-        <circle cx="160" cy="78" r="2" fill="#00F0FF" />
-        <circle cx="70" cy="52" r="2.5" fill="#00F0FF" />
-        <circle cx="5" cy="32" r="2" fill="#00F0FF" />
-        <circle cx="55" cy="2" r="2.5" stroke="#00F0FF" strokeWidth="1" fill="none" />
-      </svg>
-    </div>
-  );
-}
+        <circle cx="160" cy="40" r="2.5" fill="#0072FF" />
+        <circle cx="80" cy="90" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
 
-// 5. Subtle PCB Corner Framing Lines around the outer edges of the card
-function PcbCornerTraceBorder({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "pointer-events-none absolute select-none opacity-20 circuit-pulse",
-        className
-      )}
-      aria-hidden="true"
-    >
-      <svg
-        className="w-full h-full"
-        viewBox="0 0 80 80"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
         <path
-          d="M4 76 V24 L24 4 H76"
-          stroke="currentColor"
+          d="M0 70 H60 L110 20 H140"
+          stroke="#00F0FF"
           strokeWidth="1.2"
-          strokeDasharray="4 3"
         />
-        <path
-          d="M14 76 V30 L30 14 H76"
-          stroke="currentColor"
-          strokeWidth="1"
-        />
-        <circle cx="24" cy="4" r="2" fill="currentColor" />
-        <circle cx="76" cy="4" r="2" fill="currentColor" />
-        <circle cx="30" cy="14" r="1.5" fill="currentColor" />
-        <circle cx="4" cy="24" r="1.5" fill="currentColor" />
+        <circle cx="140" cy="20" r="2.5" fill="#00F0FF" />
+        <circle cx="60" cy="70" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
       </svg>
     </div>
   );
@@ -367,10 +281,6 @@ export function AboutSection() {
 
       {/* 6. Scroll Reveal: Institution Card Container */}
       <div className="relative">
-        {/* 5. PCB Circuit Traces around the card perimeter */}
-        <PcbCornerTraceBorder className="-top-2.5 -left-2.5 sm:-top-3.5 sm:-left-3.5 w-14 h-14 sm:w-20 sm:h-20 text-primary" />
-        <PcbCornerTraceBorder className="-bottom-2.5 -right-2.5 sm:-bottom-3.5 sm:-right-3.5 w-14 h-14 sm:w-20 sm:h-20 text-cyan rotate-180" />
-
         <div
           data-reveal
           className={cn(
