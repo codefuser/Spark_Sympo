@@ -83,3 +83,17 @@ html.dark,
 .dark {
   scrollbar-color: #1e293b #090d16;
 }
+
+/* Lightning glow text effect */
+@keyframes lightningGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(0, 240, 255, 0.55)) drop-shadow(0 0 12px rgba(0, 240, 255, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.95)) drop-shadow(0 0 22px rgba(0, 240, 255, 0.75)) drop-shadow(0 0 35px rgba(0, 180, 255, 0.45));
+  }
+}
+
+.lightning-text {
+  animation: lightningGlow 2.5s ease-in-out infinite;
+}

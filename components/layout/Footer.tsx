@@ -108,10 +108,15 @@ export function Footer() {
 
         {/* Quick Links */}
         <div className="space-y-4">
-          <h4 className="text-xs font-semibold font-display text-white uppercase tracking-widest flex items-center gap-2 pb-2.5 border-b border-primary/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            <span>Navigation</span>
-          </h4>
+          <div className="pb-2.5 border-b border-primary/25 relative group">
+            <h4 className="text-sm font-black font-display tracking-[0.16em] uppercase flex items-center gap-2.5 lightning-text">
+              <Zap className="w-4 h-4 text-primary fill-primary animate-pulse drop-shadow-[0_0_8px_#00F0FF] shrink-0" />
+              <span className="bg-gradient-to-r from-white via-cyan-200 to-primary bg-clip-text text-transparent font-black drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]">
+                NAVIGATION
+              </span>
+            </h4>
+            <div className="absolute -bottom-[1px] left-0 w-16 h-[2px] bg-gradient-to-r from-primary via-cyan-300 to-transparent shadow-[0_0_10px_#00F0FF]" />
+          </div>
           <ul className="space-y-2.5 text-sm font-sans">
             {[
               { label: "About Symposium", href: "#about" },
@@ -136,10 +141,15 @@ export function Footer() {
 
         {/* Event Tracks */}
         <div className="space-y-4">
-          <h4 className="text-xs font-semibold font-display text-white uppercase tracking-widest flex items-center gap-2 pb-2.5 border-b border-primary/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-            <span>Featured Tracks</span>
-          </h4>
+          <div className="pb-2.5 border-b border-primary/25 relative group">
+            <h4 className="text-sm font-black font-display tracking-[0.16em] uppercase flex items-center gap-2.5 lightning-text">
+              <Zap className="w-4 h-4 text-primary fill-primary animate-pulse drop-shadow-[0_0_8px_#00F0FF] shrink-0" />
+              <span className="bg-gradient-to-r from-white via-cyan-200 to-primary bg-clip-text text-transparent font-black drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]">
+                FEATURED TRACKS
+              </span>
+            </h4>
+            <div className="absolute -bottom-[1px] left-0 w-16 h-[2px] bg-gradient-to-r from-primary via-cyan-300 to-transparent shadow-[0_0_10px_#00F0FF]" />
+          </div>
           <ul className="space-y-2.5 text-sm font-sans">
             {[
               "CircuitRIX Debugging",
@@ -168,10 +178,15 @@ export function Footer() {
 
         {/* Contact Info */}
         <div className="space-y-4">
-          <h4 className="text-xs font-semibold font-display text-white uppercase tracking-widest flex items-center gap-2 pb-2.5 border-b border-primary/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-            <span>Contact Us</span>
-          </h4>
+          <div className="pb-2.5 border-b border-primary/25 relative group">
+            <h4 className="text-sm font-black font-display tracking-[0.16em] uppercase flex items-center gap-2.5 lightning-text">
+              <Zap className="w-4 h-4 text-primary fill-primary animate-pulse drop-shadow-[0_0_8px_#00F0FF] shrink-0" />
+              <span className="bg-gradient-to-r from-white via-cyan-200 to-primary bg-clip-text text-transparent font-black drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]">
+                CONTACT US
+              </span>
+            </h4>
+            <div className="absolute -bottom-[1px] left-0 w-16 h-[2px] bg-gradient-to-r from-primary via-cyan-300 to-transparent shadow-[0_0_10px_#00F0FF]" />
+          </div>
           <div className="space-y-3 text-sm font-sans">
             <div className="flex items-start gap-3 group">
               <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/25 flex items-center justify-center text-primary shrink-0 mt-0.5 group-hover:bg-primary/20 group-hover:border-primary/50 transition-colors">
