@@ -57,7 +57,7 @@ async function main() {
       rounds: "Prelims + Live Final Round",
       date: "September 16, 2026",
       time: "10:00 AM - 10:30 AM",
-      venue: "Digital Quiz Portal / Computer Center",
+      venue: "Digital Quiz Portal / Computer Lab",
       coordinatorName: "Dr. K. Ramprasath",
       coordinatorPhone: "+91 98401 23456",
       status: "OPEN",

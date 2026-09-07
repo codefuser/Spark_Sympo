@@ -155,7 +155,7 @@ export function Footer() {
               "CircuitRIX Debugging",
               "PaperTronix Symposium",
               "RoboCombat 2.0 Arena",
-              "IoT Edge Workshop",
+              "Rythemania & Gaming",
             ].map((track) => (
               <li key={track}>
                 <a
