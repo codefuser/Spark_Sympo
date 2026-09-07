@@ -6,8 +6,7 @@
  * 3. Resend Transactional Email API (https://resend.com)
  * 4. Fallback Mailto URL generation
  */
-
-import nodemailer from "nodemailer";
+export { generateMailtoLink } from "./templateEngine";
 
 export interface EmailConfig {
   isConfigured: boolean;
@@ -207,6 +206,8 @@ export async function sendEmail({
   // ==========================================
   if (config.driver === "gmail") {
     try {
+      const nodemailerModule = await import("nodemailer");
+      const nodemailer = nodemailerModule.default || nodemailerModule;
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -309,30 +310,4 @@ export async function sendEmail({
   }
 }
 
-/**
- * Fallback generator for native mailto: links when automated API is unavailable.
- */
-export function generateMailtoLink(
-  toOrParams: string | { to: string; subject: string; body: string },
-  subjectArg?: string,
-  bodyArg?: string
-): string {
-  let to = "";
-  let subject = "";
-  let body = "";
 
-  if (typeof toOrParams === "object") {
-    to = toOrParams.to || "";
-    subject = toOrParams.subject || "";
-    body = toOrParams.body || "";
-  } else {
-    to = toOrParams || "";
-    subject = subjectArg || "";
-    body = bodyArg || "";
-  }
-
-  const params = new URLSearchParams();
-  if (subject) params.set("subject", subject);
-  if (body) params.set("body", body);
-  return `mailto:${encodeURIComponent(to)}?${params.toString().replace(/\+/g, "%20")}`;
-}

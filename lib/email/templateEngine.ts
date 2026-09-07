@@ -627,3 +627,32 @@ export const EMAIL_AVAILABLE_VARIABLES = [
   { tag: "{{venue_address}}", description: "Campus Venue Address" },
   { tag: "{{map_link}}", description: "Clickable Google Maps URL" },
 ];
+
+/**
+ * Fallback generator for native mailto: links when automated API is unavailable.
+ * Safe for client-side usage.
+ */
+export function generateMailtoLink(
+  toOrParams: string | { to: string; subject: string; body: string },
+  subjectArg?: string,
+  bodyArg?: string
+): string {
+  let to = "";
+  let subject = "";
+  let body = "";
+
+  if (typeof toOrParams === "object") {
+    to = toOrParams.to || "";
+    subject = toOrParams.subject || "";
+    body = toOrParams.body || "";
+  } else {
+    to = toOrParams || "";
+    subject = subjectArg || "";
+    body = bodyArg || "";
+  }
+
+  const params = new URLSearchParams();
+  if (subject) params.set("subject", subject);
+  if (body) params.set("body", body);
+  return `mailto:${encodeURIComponent(to)}?${params.toString().replace(/\+/g, "%20")}`;
+}
