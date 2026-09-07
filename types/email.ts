@@ -1,12 +1,11 @@
-export type WhatsAppMessageStatus =
+export type EmailMessageStatus =
   | "Pending"
   | "Sending"
   | "Sent"
   | "Delivered"
-  | "Read"
   | "Failed";
 
-export type WhatsAppTemplateType =
+export type EmailTemplateType =
   | "CONFIRMATION"
   | "QUIZ"
   | "PPT"
@@ -14,27 +13,30 @@ export type WhatsAppTemplateType =
   | "REMINDER"
   | "PAYMENT_REMINDER"
   | "VENUE"
+  | "ANNOUNCEMENT"
   | "CUSTOM";
 
-export interface WhatsAppMessage {
+export interface EmailMessage {
   id: string;
   registration_id?: string | null;
   recipient_name: string;
-  recipient_phone: string;
-  message_type: string;
+  recipient_email: string;
+  subject: string;
   message_content: string;
-  status: WhatsAppMessageStatus;
+  template_name: string;
+  status: EmailMessageStatus;
   provider_message_id?: string | null;
   error_message?: string | null;
   created_at: string;
   sent_at?: string | null;
   delivered_at?: string | null;
-  read_at?: string | null;
 }
 
-export interface WhatsAppSettings {
+export interface EmailSettings {
   id?: string;
-  isEnabled: boolean;
+  senderName: string;
+  senderEmail: string;
+  replyToEmail: string;
   venueName: string;
   venueAddress: string;
   mapLink: string;
@@ -47,13 +49,13 @@ export interface WhatsAppSettings {
   updatedAt?: string;
 }
 
-export interface RecipientInfo {
+export interface EmailRecipientInfo {
   participantId?: string;
   registrationId: string;
   registrationCode: string;
   name: string;
-  phone: string;
   email: string;
+  phone?: string;
   college: string;
   department: string;
   teamName?: string | null;
@@ -65,12 +67,13 @@ export interface RecipientInfo {
   nonTechnicalEventSlug?: string;
 }
 
-export interface WhatsAppConfigStatus {
+export interface EmailConfigStatus {
   isConfigured: boolean;
   missingVars: string[];
-  phoneNumberId?: string;
-  businessAccountId?: string;
-  apiUrl?: string;
+  senderEmail: string;
+  senderName: string;
+  replyToEmail: string;
+  provider: string;
   totalMessages: number;
   totalSent: number;
   totalFailed: number;

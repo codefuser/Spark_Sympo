@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/auth/jwt";
-import { getWhatsAppConfig } from "@/lib/whatsapp/metaClient";
+import { getEmailConfig } from "@/lib/email/emailClient";
 import { supabase } from "@/lib/database/supabase";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
-    const config = getWhatsAppConfig();
+    const config = getEmailConfig();
 
     let totalSent = 0;
     let totalFailed = 0;
@@ -21,17 +21,17 @@ export async function GET() {
 
     try {
       const { data: messages, error } = await supabase
-        .from("whatsapp_messages")
+        .from("email_messages")
         .select("status");
 
       if (!error && messages) {
         totalMessages = messages.length;
-        totalSent = messages.filter((m) => m.status === "Sent" || m.status === "Delivered" || m.status === "Read").length;
+        totalSent = messages.filter((m) => m.status === "Sent" || m.status === "Delivered").length;
         totalFailed = messages.filter((m) => m.status === "Failed").length;
         totalPending = messages.filter((m) => m.status === "Pending" || m.status === "Sending").length;
       }
     } catch (dbErr) {
-      console.warn("Could not query whatsapp_messages counts:", dbErr);
+      console.warn("Could not query email_messages counts from database:", dbErr);
     }
 
     return NextResponse.json({
@@ -39,9 +39,10 @@ export async function GET() {
       config: {
         isConfigured: config.isConfigured,
         missingVars: config.missingVars,
-        phoneNumberId: config.phoneNumberId ? `...${config.phoneNumberId.slice(-4)}` : undefined,
-        businessAccountId: config.businessAccountId ? `...${config.businessAccountId.slice(-4)}` : undefined,
-        apiUrl: config.apiUrl,
+        senderEmail: config.senderEmail,
+        senderName: config.senderName,
+        replyToEmail: config.replyToEmail,
+        provider: config.provider,
         totalMessages,
         totalSent,
         totalFailed,
@@ -50,7 +51,7 @@ export async function GET() {
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, message: error.message || "Failed to fetch status" },
+      { success: false, message: error.message || "Failed to fetch email status" },
       { status: 500 }
     );
   }

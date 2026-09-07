@@ -3,41 +3,43 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
-import { RecipientInfo, WhatsAppSettings, WhatsAppTemplateType } from "@/types/whatsapp";
+import { EmailRecipientInfo, EmailSettings, EmailTemplateType } from "@/types/email";
 import {
-  TEMPLATE_DEFINITIONS,
-  AVAILABLE_VARIABLES,
+  EMAIL_TEMPLATE_DEFINITIONS,
+  EMAIL_AVAILABLE_VARIABLES,
   interpolateVariables,
-} from "@/lib/whatsapp/templateEngine";
-import { generateWaMeLink } from "@/lib/whatsapp/metaClient";
-import { WhatsAppPreviewCard } from "./WhatsAppPreviewCard";
-import { BulkSendConfirmModal } from "./BulkSendConfirmModal";
+  generateHtmlEmail,
+} from "@/lib/email/templateEngine";
+import { generateMailtoLink } from "@/lib/email/emailClient";
+import { EmailPreviewCard } from "./EmailPreviewCard";
+import { BulkEmailConfirmModal } from "./BulkEmailConfirmModal";
 import {
   Send,
   Eye,
   Edit3,
-  ExternalLink,
+  Mail,
   Sparkles,
-  Phone,
   Ticket,
   GraduationCap,
   Calendar,
   AlertCircle,
   CheckCircle2,
+  ExternalLink,
 } from "lucide-react";
 
-interface WhatsAppComposerModalProps {
+interface EmailComposerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  recipients: RecipientInfo[];
-  settings: WhatsAppSettings;
-  defaultTemplate?: WhatsAppTemplateType;
+  recipients: EmailRecipientInfo[];
+  settings: EmailSettings;
+  defaultTemplate?: EmailTemplateType;
   isLight?: boolean;
   onSentSuccess?: () => void;
 }
 
-export function WhatsAppComposerModal({
+export function EmailComposerModal({
   isOpen,
   onClose,
   recipients,
@@ -45,8 +47,9 @@ export function WhatsAppComposerModal({
   defaultTemplate = "CONFIRMATION",
   isLight = false,
   onSentSuccess,
-}: WhatsAppComposerModalProps) {
-  const [selectedTemplate, setSelectedTemplate] = useState<WhatsAppTemplateType>(defaultTemplate);
+}: EmailComposerModalProps) {
+  const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplateType>(defaultTemplate);
+  const [subject, setSubject] = useState("");
   const [messageText, setMessageText] = useState("");
   const [activeTab, setActiveTab] = useState<"compose" | "preview">("compose");
   const [isSubmittingSingle, setIsSubmittingSingle] = useState(false);
@@ -54,24 +57,40 @@ export function WhatsAppComposerModal({
   const [successStatus, setSuccessStatus] = useState<string | null>(null);
   const [showBulkModal, setShowBulkModal] = useState(false);
 
-  // Sync initial template content
   useEffect(() => {
-    const tmpl = TEMPLATE_DEFINITIONS.find((t) => t.id === selectedTemplate);
+    const tmpl = EMAIL_TEMPLATE_DEFINITIONS.find((t) => t.id === selectedTemplate);
     if (tmpl) {
-      setMessageText(tmpl.content);
+      setSubject(tmpl.defaultSubject);
+      setMessageText(tmpl.plainText);
     }
   }, [selectedTemplate]);
 
-  // Handle single recipient or first recipient for preview
-  const primaryRecipient: RecipientInfo | undefined = recipients[0];
+  const primaryRecipient: EmailRecipientInfo | undefined = recipients[0];
   const isMultiple = recipients.length > 1;
 
-  // Real-time personalized preview text
-  const personalizedPreview = primaryRecipient
-    ? interpolateVariables(messageText, primaryRecipient, settings)
-    : messageText;
+  const sampleRecipient = primaryRecipient || {
+    participantId: "sample",
+    registrationId: "sample-reg",
+    registrationCode: "SPK-2K26-PASS",
+    name: "Participant",
+    email: "participant@example.com",
+    college: "Engineering College",
+    department: "ECE",
+    paymentStatus: "PAID",
+    foodPreference: "Veg",
+    technicalEventTitle: "Technical Quiz",
+    nonTechnicalEventTitle: "Rythemania",
+  };
 
-  // Insert variable tag at cursor position
+  const personalizedSubject = interpolateVariables(subject, sampleRecipient, settings);
+  const personalizedText = interpolateVariables(messageText, sampleRecipient, settings);
+  const personalizedHtml = generateHtmlEmail({
+    recipient: sampleRecipient,
+    settings,
+    subject: personalizedSubject,
+    contentBodyText: personalizedText,
+  });
+
   const handleInsertVariable = (tag: string) => {
     setMessageText((prev) => `${prev} ${tag} `);
   };
@@ -80,7 +99,6 @@ export function WhatsAppComposerModal({
     setErrorStatus(null);
     setSuccessStatus(null);
 
-    // If multiple recipients, delegate to BulkSendConfirmModal for safety & progress tracking
     if (isMultiple) {
       setShowBulkModal(true);
       return;
@@ -94,41 +112,41 @@ export function WhatsAppComposerModal({
     setIsSubmittingSingle(true);
 
     try {
-      const res = await fetch("/api/admin/whatsapp/send", {
+      const res = await fetch("/api/admin/email/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           recipientsData: [primaryRecipient],
           templateType: selectedTemplate,
+          customSubject: subject,
           customMessage: messageText,
         }),
       });
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.message || "Failed to send WhatsApp message");
+        throw new Error(data.message || "Failed to dispatch email");
       }
 
       const result = data.results?.[0];
       if (result && result.status === "Sent") {
-        setSuccessStatus(`Message successfully sent to ${primaryRecipient.name} (${primaryRecipient.phone})!`);
+        setSuccessStatus(`Email successfully sent to ${primaryRecipient.name} (${primaryRecipient.email})!`);
         if (onSentSuccess) onSentSuccess();
         setTimeout(() => {
           onClose();
         }, 1400);
       } else {
-        setErrorStatus(result?.error || "Dispatch failed on WhatsApp provider. Message recorded as Failed.");
+        setErrorStatus(result?.error || "Dispatch failed on provider. Email logged as Failed.");
       }
     } catch (err: any) {
-      setErrorStatus(err.message || "Error sending WhatsApp message");
+      setErrorStatus(err.message || "Error dispatching email");
     } finally {
       setIsSubmittingSingle(false);
     }
   };
 
-  // Direct WhatsApp Web link for manual fallback
-  const directWaMeUrl = primaryRecipient
-    ? generateWaMeLink(primaryRecipient.phone, personalizedPreview)
+  const directMailtoUrl = primaryRecipient
+    ? generateMailtoLink(primaryRecipient.email, personalizedSubject, personalizedText)
     : "#";
 
   return (
@@ -138,13 +156,13 @@ export function WhatsAppComposerModal({
         onClose={onClose}
         title={
           isMultiple
-            ? `Compose WhatsApp Broadcast (${recipients.length} Participants)`
-            : `Send WhatsApp — ${primaryRecipient?.name || "Participant"}`
+            ? `Compose Email Broadcast (${recipients.length} Participants)`
+            : `Send Email — ${primaryRecipient?.name || "Participant"}`
         }
         description={
           isMultiple
-            ? "Messages are automatically personalized for every individual participant."
-            : "Review participant details, customize the template, and preview before sending."
+            ? "Emails are personalized with each recipient's registration code and event tracks."
+            : "Review recipient details, compose message, and preview HTML layout before sending."
         }
         maxWidth="2xl"
       >
@@ -175,9 +193,9 @@ export function WhatsAppComposerModal({
                   )}
                 </div>
 
-                <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-bold">
-                  <Phone className="w-3.5 h-3.5" />
-                  <span>{primaryRecipient.phone}</span>
+                <div className="flex items-center gap-1.5 text-xs text-cyan-400 font-bold">
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>{primaryRecipient.email}</span>
                 </div>
               </div>
 
@@ -192,7 +210,7 @@ export function WhatsAppComposerModal({
                   <span>{primaryRecipient.registrationCode}</span>
                 </div>
 
-                <div className="col-span-2 truncate flex items-center gap-1" title={`${primaryRecipient.technicalEventTitle} | ${primaryRecipient.nonTechnicalEventTitle}`}>
+                <div className="col-span-2 truncate flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   <span className="truncate">
                     {primaryRecipient.technicalEventTitle || "Tech"} • {primaryRecipient.nonTechnicalEventTitle || "Non-Tech"}
@@ -202,7 +220,7 @@ export function WhatsAppComposerModal({
             </div>
           )}
 
-          {/* Tab Switcher: Compose vs Preview */}
+          {/* Sub-Tabs: Compose vs Preview */}
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
             <div className="flex items-center gap-2">
               <button
@@ -217,7 +235,7 @@ export function WhatsAppComposerModal({
                 }`}
               >
                 <Edit3 className="w-3.5 h-3.5" />
-                Compose Message
+                Compose Email
               </button>
 
               <button
@@ -232,16 +250,15 @@ export function WhatsAppComposerModal({
                 }`}
               >
                 <Eye className="w-3.5 h-3.5" />
-                WhatsApp Live Preview
+                HTML Email Preview
               </button>
             </div>
 
-            {/* Template Selector Dropdown */}
             <div className="w-56">
               <Select
                 value={selectedTemplate}
-                onChange={(e) => setSelectedTemplate(e.target.value as WhatsAppTemplateType)}
-                options={TEMPLATE_DEFINITIONS.map((t) => ({
+                onChange={(e) => setSelectedTemplate(e.target.value as EmailTemplateType)}
+                options={EMAIL_TEMPLATE_DEFINITIONS.map((t) => ({
                   label: t.label,
                   value: t.id,
                 }))}
@@ -249,23 +266,33 @@ export function WhatsAppComposerModal({
             </div>
           </div>
 
-          {/* COMPOSE TAB */}
+          {/* COMPOSE VIEW */}
           {activeTab === "compose" && (
             <div className="space-y-3">
-              {/* Dynamic Variable Chips */}
+              {/* Subject Input */}
+              <Input
+                label="Email Subject"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                placeholder="e.g. SPARKTRON 2K26 Registration Confirmed - {{pass_code}}"
+                className="text-xs"
+                required
+              />
+
+              {/* Dynamic Variables Chips */}
               <div className="space-y-1.5">
                 <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
                   <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                  Click Variable to Insert Dynamic Token:
+                  Insert Dynamic Variables:
                 </p>
                 <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
-                  {AVAILABLE_VARIABLES.map((v) => (
+                  {EMAIL_AVAILABLE_VARIABLES.map((v) => (
                     <button
                       key={v.tag}
                       type="button"
                       onClick={() => handleInsertVariable(v.tag)}
                       title={v.description}
-                      className={`text-[10px] font-mono font-bold px-2 py-1 rounded-lg border transition-all ${
+                      className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border transition-all ${
                         isLight
                           ? "bg-white border-slate-300 text-blue-700 hover:bg-blue-50"
                           : "bg-slate-900 border-slate-700 text-cyan-300 hover:bg-cyan-950/40 hover:border-cyan-500/50"
@@ -280,14 +307,14 @@ export function WhatsAppComposerModal({
               {/* Message Textarea */}
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-slate-400">
-                  Message Content:
+                  Email Message Body:
                 </label>
                 <textarea
                   value={messageText}
                   onChange={(e) => setMessageText(e.target.value)}
-                  placeholder="Write your message here... use {{name}}, {{pass_code}}, {{events}}, etc."
+                  placeholder="Write your email body here... use {{name}}, {{pass_code}}, {{events}}, etc."
                   rows={8}
-                  className={`w-full p-3 rounded-xl border font-sans text-xs transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full p-3.5 rounded-xl border font-sans text-xs transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 ${
                     isLight
                       ? "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
                       : "bg-slate-950/80 border-slate-800 text-slate-100 placeholder:text-slate-600"
@@ -297,19 +324,22 @@ export function WhatsAppComposerModal({
             </div>
           )}
 
-          {/* PREVIEW TAB */}
+          {/* PREVIEW VIEW */}
           {activeTab === "preview" && (
             <div className="py-2">
-              <WhatsAppPreviewCard
-                recipientName={primaryRecipient?.name}
-                recipientPhone={primaryRecipient?.phone}
-                messageContent={personalizedPreview}
+              <EmailPreviewCard
+                senderName={settings.senderName}
+                senderEmail={settings.senderEmail}
+                recipientName={sampleRecipient.name}
+                recipientEmail={sampleRecipient.email}
+                subject={personalizedSubject}
+                htmlContent={personalizedHtml}
                 isLight={isLight}
               />
             </div>
           )}
 
-          {/* Status Alerts */}
+          {/* Alerts */}
           {errorStatus && (
             <div className="p-3 rounded-xl border border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-300 text-xs flex items-start gap-2">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -326,21 +356,20 @@ export function WhatsAppComposerModal({
 
           {/* Footer Actions */}
           <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
-            {/* Direct WhatsApp Web Fallback */}
             {primaryRecipient && (
               <a
-                href={directWaMeUrl}
+                href={directMailtoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-colors ${
                   isLight
-                    ? "border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
-                    : "border-emerald-800/80 text-emerald-300 bg-emerald-950/40 hover:bg-emerald-900/60"
+                    ? "border-slate-300 text-slate-700 bg-slate-50 hover:bg-slate-100"
+                    : "border-slate-700 text-slate-300 bg-slate-800 hover:bg-slate-700"
                 }`}
-                title="Opens standard WhatsApp web/app with pre-filled message"
+                title="Test sending using default desktop mail client"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
-                Open in WhatsApp Web
+                Open in Mail Client
               </a>
             )}
 
@@ -355,18 +384,18 @@ export function WhatsAppComposerModal({
                 onClick={handleSend}
                 isLoading={isSubmittingSingle}
                 leftIcon={<Send className="w-4 h-4" />}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
               >
-                {isMultiple ? `Send WhatsApp to ${recipients.length} Participants` : "Send WhatsApp"}
+                {isMultiple ? `Send Email to ${recipients.length} Participants` : "Send Email"}
               </Button>
             </div>
           </div>
         </div>
       </Modal>
 
-      {/* Safety Confirmation Modal for Bulk Sends */}
+      {/* Safety Bulk Confirmation Modal */}
       {showBulkModal && (
-        <BulkSendConfirmModal
+        <BulkEmailConfirmModal
           isOpen={showBulkModal}
           onClose={() => {
             setShowBulkModal(false);
@@ -374,8 +403,8 @@ export function WhatsAppComposerModal({
           }}
           recipients={recipients}
           templateType={selectedTemplate}
+          customSubject={subject}
           customMessage={messageText}
-          sampleMessageText={personalizedPreview}
           onComplete={() => {
             if (onSentSuccess) onSentSuccess();
           }}

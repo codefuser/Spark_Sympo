@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get("limit") || "100", 10);
 
     let dbQuery = supabase
-      .from("whatsapp_messages")
+      .from("email_messages")
       .select("*")
       .order("created_at", { ascending: false })
       .limit(limit);
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     if (query && query.trim()) {
       const q = query.trim();
       dbQuery = dbQuery.or(
-        `recipient_name.ilike.%${q}%,recipient_phone.ilike.%${q}%,message_content.ilike.%${q}%`
+        `recipient_name.ilike.%${q}%,recipient_email.ilike.%${q}%,subject.ilike.%${q}%,message_content.ilike.%${q}%`
       );
     }
 
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, message: error.message || "Failed to fetch messages" },
+      { success: false, message: error.message || "Failed to fetch email history" },
       { status: 500 }
     );
   }
@@ -64,7 +64,7 @@ export async function DELETE(request: Request) {
 
     if (clearFailed) {
       const { error } = await supabase
-        .from("whatsapp_messages")
+        .from("email_messages")
         .delete()
         .eq("status", "Failed");
 
@@ -72,15 +72,15 @@ export async function DELETE(request: Request) {
         return NextResponse.json({ success: false, message: error.message }, { status: 500 });
       }
 
-      return NextResponse.json({ success: true, message: "Failed message logs cleared successfully" });
+      return NextResponse.json({ success: true, message: "Failed email logs cleared successfully" });
     }
 
     if (!id) {
-      return NextResponse.json({ success: false, message: "Message ID is required" }, { status: 400 });
+      return NextResponse.json({ success: false, message: "Email ID is required" }, { status: 400 });
     }
 
     const { error } = await supabase
-      .from("whatsapp_messages")
+      .from("email_messages")
       .delete()
       .eq("id", id);
 
@@ -88,10 +88,10 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ success: false, message: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, message: "Message deleted successfully" });
+    return NextResponse.json({ success: true, message: "Email log deleted successfully" });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, message: error.message || "Failed to delete message" },
+      { success: false, message: error.message || "Failed to delete email" },
       { status: 500 }
     );
   }

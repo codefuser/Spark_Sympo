@@ -125,28 +125,30 @@ model Announcement {
   date      DateTime @default(now())
 }
 
-model WhatsappMessage {
+model EmailMessage {
   id                String    @id @default(uuid())
   registrationId    String?
   recipientName     String
-  recipientPhone    String
-  messageType       String    @default("CUSTOM")
+  recipientEmail    String
+  subject           String
   messageContent    String
-  status            String    @default("Pending") // Pending, Sending, Sent, Delivered, Read, Failed
+  templateName      String    @default("CUSTOM")
+  status            String    @default("Pending") // Pending, Sending, Sent, Delivered, Failed
   providerMessageId String?
   errorMessage      String?
   createdAt         DateTime  @default(now())
   sentAt            DateTime?
   deliveredAt       DateTime?
-  readAt            DateTime?
 }
 
-model WhatsappSetting {
+model EmailSetting {
   id               String   @id @default("default_settings")
-  isEnabled        Boolean  @default(true)
-  venueName        String   @default("St. Joseph's Institute of Technology")
-  venueAddress     String   @default("ECE Block Auditorium & Labs, College Campus, OMR, Chennai - 600119")
-  mapLink          String   @default("https://maps.google.com/?q=St.+Joseph's+Institute+of+Technology")
+  senderName       String   @default("SPARKTRON 2K26")
+  senderEmail      String   @default("onboarding@resend.dev")
+  replyToEmail     String   @default("sparktron2k26@gmail.com")
+  venueName        String   @default("Thamirabharani Engineering College")
+  venueAddress     String   @default("ECE Block Auditorium & Labs, College Campus, Tirunelveli")
+  mapLink          String   @default("https://maps.google.com/?q=Thamirabharani+Engineering+College")
   latitude         Float?
   longitude        Float?
   quizLink         String   @default("https://sparktron-quiz.vercel.app")
@@ -155,4 +157,5 @@ model WhatsappSetting {
   customEventLinks String   @default("{}")
   updatedAt        DateTime @default(now())
 }
+
 

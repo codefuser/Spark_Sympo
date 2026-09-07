@@ -1,22 +1,24 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/auth/jwt";
 import { supabase } from "@/lib/database/supabase";
-import { sendWhatsAppTextMessage } from "@/lib/whatsapp/metaClient";
-import { getWhatsAppSettings } from "@/lib/whatsapp/settings";
+import { sendEmail } from "@/lib/email/emailClient";
+import { getEmailSettings } from "@/lib/email/settings";
 import {
   interpolateVariables,
-  TEMPLATE_DEFINITIONS,
-} from "@/lib/whatsapp/templateEngine";
-import { RecipientInfo, WhatsAppTemplateType } from "@/types/whatsapp";
+  generateHtmlEmail,
+  EMAIL_TEMPLATE_DEFINITIONS,
+} from "@/lib/email/templateEngine";
+import { EmailRecipientInfo, EmailTemplateType } from "@/types/email";
 
 export const dynamic = "force-dynamic";
 
-interface SendRequestBody {
+interface SendEmailRequestBody {
   participantIds?: string[];
   registrationIds?: string[];
-  templateType?: WhatsAppTemplateType;
+  templateType?: EmailTemplateType;
+  customSubject?: string;
   customMessage?: string;
-  recipientsData?: RecipientInfo[]; // Direct recipient payload from client if already available
+  recipientsData?: EmailRecipientInfo[];
 }
 
 export async function POST(request: Request) {
@@ -26,33 +28,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
-    const body: SendRequestBody = await request.json();
+    const body: SendEmailRequestBody = await request.json();
     const {
       participantIds = [],
       registrationIds = [],
       templateType = "CONFIRMATION",
+      customSubject,
       customMessage,
       recipientsData = [],
     } = body;
 
-    // Load current WhatsApp & event link settings
-    const settings = await getWhatsAppSettings();
+    const settings = await getEmailSettings();
 
-    // Determine the template text to use
-    let baseTemplateText = customMessage || "";
-    if (!baseTemplateText) {
-      const foundTemplate = TEMPLATE_DEFINITIONS.find((t) => t.id === templateType);
-      baseTemplateText = foundTemplate ? foundTemplate.content : TEMPLATE_DEFINITIONS[0].content;
-    }
+    const templateDef =
+      EMAIL_TEMPLATE_DEFINITIONS.find((t) => t.id === templateType) ||
+      EMAIL_TEMPLATE_DEFINITIONS[0];
 
-    // 1. Gather all recipients
-    const recipientsToProcess: RecipientInfo[] = [];
+    const baseSubject = customSubject || templateDef.defaultSubject;
+    const baseTextBody = customMessage || templateDef.plainText;
 
-    // If client supplied prepared recipients, use them
+    // 1. Resolve recipients
+    const recipientsToProcess: EmailRecipientInfo[] = [];
+
     if (recipientsData && recipientsData.length > 0) {
       recipientsToProcess.push(...recipientsData);
     } else {
-      // Otherwise query Supabase by participantIds or registrationIds
       let queryRegIds = [...registrationIds];
 
       if (participantIds.length > 0) {
@@ -70,12 +70,11 @@ export async function POST(request: Request) {
 
       if (queryRegIds.length === 0) {
         return NextResponse.json(
-          { success: false, message: "No valid participants or registrations specified to send to." },
+          { success: false, message: "No valid participants or registrations specified." },
           { status: 400 }
         );
       }
 
-      // Fetch registrations and participants from Supabase
       const { data: regs } = await supabase
         .from("registrations")
         .select("*")
@@ -103,7 +102,6 @@ export async function POST(request: Request) {
         const nonTechEv = eventsMap.get(r.non_technical_event_id);
 
         regParts.forEach((p: any) => {
-          // If specific participantIds were requested, filter by them
           if (participantIds.length > 0 && !participantIds.includes(p.id)) {
             return;
           }
@@ -113,8 +111,8 @@ export async function POST(request: Request) {
             registrationId: r.id,
             registrationCode: r.registration_code || "SPK-2K26-PASS",
             name: p.full_name || "Participant",
-            phone: p.phone || "",
             email: p.email || "",
+            phone: p.phone || "",
             college: p.college || "",
             department: p.department || "ECE",
             teamName: r.team_name,
@@ -136,15 +134,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. Dispatch messages sequentially with safe delay to protect API limits
+    // 2. Dispatch emails with rate-limiting
     const results: Array<{
       recipientName: string;
-      recipientPhone: string;
+      recipientEmail: string;
       registrationCode: string;
       status: "Sent" | "Failed";
       messageId?: string;
       error?: string;
-      messageContent: string;
+      subject: string;
     }> = [];
 
     let sentCount = 0;
@@ -153,21 +151,29 @@ export async function POST(request: Request) {
     for (let i = 0; i < recipientsToProcess.length; i++) {
       const recipient = recipientsToProcess[i];
 
-      // Personalize message strictly for this participant
-      const personalizedMessage = interpolateVariables(baseTemplateText, recipient, settings);
+      const personalizedSubject = interpolateVariables(baseSubject, recipient, settings);
+      const personalizedText = interpolateVariables(baseTextBody, recipient, settings);
+      const personalizedHtml = generateHtmlEmail({
+        recipient,
+        settings,
+        subject: personalizedSubject,
+        contentBodyText: personalizedText,
+      });
 
       let dispatchResult;
       try {
-        dispatchResult = await sendWhatsAppTextMessage({
-          to: recipient.phone,
-          body: personalizedMessage,
+        dispatchResult = await sendEmail({
+          to: recipient.email,
+          subject: personalizedSubject,
+          html: personalizedHtml,
+          text: personalizedText,
         });
       } catch (sendErr: any) {
         dispatchResult = {
           success: false,
           configured: true,
           status: "Failed" as const,
-          error: sendErr.message || "Sending failed",
+          error: sendErr.message || "Failed to dispatch email",
         };
       }
 
@@ -178,34 +184,34 @@ export async function POST(request: Request) {
         failedCount++;
       }
 
-      // Record in Supabase whatsapp_messages table
+      // Record in Supabase email_messages
       try {
-        await supabase.from("whatsapp_messages").insert({
+        await supabase.from("email_messages").insert({
           registration_id: recipient.registrationId || null,
           recipient_name: recipient.name,
-          recipient_phone: recipient.phone,
-          message_type: templateType,
-          message_content: personalizedMessage,
+          recipient_email: recipient.email,
+          subject: personalizedSubject,
+          message_content: personalizedText,
+          template_name: templateType,
           status: status,
           provider_message_id: dispatchResult.messageId || null,
           error_message: dispatchResult.error || null,
           sent_at: dispatchResult.success ? new Date().toISOString() : null,
         });
       } catch (logErr) {
-        console.warn("Could not write to whatsapp_messages in Supabase:", logErr);
+        console.warn("Could not write to email_messages in Supabase:", logErr);
       }
 
       results.push({
         recipientName: recipient.name,
-        recipientPhone: recipient.phone,
+        recipientEmail: recipient.email,
         registrationCode: recipient.registrationCode,
         status: status,
         messageId: dispatchResult.messageId,
         error: dispatchResult.error,
-        messageContent: personalizedMessage,
+        subject: personalizedSubject,
       });
 
-      // Small delay between calls if multiple recipients (150ms)
       if (i < recipientsToProcess.length - 1) {
         await new Promise((resolve) => setTimeout(resolve, 150));
       }
@@ -219,9 +225,9 @@ export async function POST(request: Request) {
       results,
     });
   } catch (error: any) {
-    console.error("WhatsApp dispatch route error:", error);
+    console.error("Email send route error:", error);
     return NextResponse.json(
-      { success: false, message: error.message || "Failed to process WhatsApp request" },
+      { success: false, message: error.message || "Failed to process email request" },
       { status: 500 }
     );
   }

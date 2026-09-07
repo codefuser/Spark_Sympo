@@ -1,14 +1,16 @@
 import { supabase } from "@/lib/database/supabase";
-import { WhatsAppSettings } from "@/types/whatsapp";
+import { EmailSettings } from "@/types/email";
 
-export const DEFAULT_WHATSAPP_SETTINGS: WhatsAppSettings = {
+export const DEFAULT_EMAIL_SETTINGS: EmailSettings = {
   id: "default_settings",
-  isEnabled: true,
-  venueName: "St. Joseph's Institute of Technology",
-  venueAddress: "ECE Block Auditorium & Labs, College Campus, OMR, Chennai - 600119",
-  mapLink: "https://maps.google.com/?q=St.+Joseph%27s+Institute+of+Technology",
-  latitude: 12.8719,
-  longitude: 80.2184,
+  senderName: "SPARKTRON 2K26",
+  senderEmail: "onboarding@resend.dev",
+  replyToEmail: "sparktron2k26@gmail.com",
+  venueName: "Thamirabharani Engineering College",
+  venueAddress: "ECE Block Auditorium & Labs, College Campus, Tirunelveli",
+  mapLink: "https://maps.google.com/?q=Thamirabharani+Engineering+College",
+  latitude: 8.7139,
+  longitude: 77.7567,
   quizLink: "https://sparktron-quiz.vercel.app",
   pptUploadLink: "https://forms.gle/sparktron2k26ppt",
   projectLink: "https://forms.gle/sparktron2k26project",
@@ -20,57 +22,61 @@ export const DEFAULT_WHATSAPP_SETTINGS: WhatsAppSettings = {
 };
 
 /**
- * Fetches current WhatsApp and Venue/Event link settings from Supabase.
- * Gracefully falls back to default settings if the table doesn't exist or error occurs.
+ * Fetches current Email and Venue/Event link settings from Supabase.
+ * Gracefully falls back to default settings if table doesn't exist or query fails.
  */
-export async function getWhatsAppSettings(): Promise<WhatsAppSettings> {
+export async function getEmailSettings(): Promise<EmailSettings> {
   try {
     const { data, error } = await supabase
-      .from("whatsapp_settings")
+      .from("email_settings")
       .select("*")
       .eq("id", "default_settings")
       .maybeSingle();
 
     if (error || !data) {
-      return DEFAULT_WHATSAPP_SETTINGS;
+      return DEFAULT_EMAIL_SETTINGS;
     }
 
     return {
       id: data.id || "default_settings",
-      isEnabled: data.is_enabled ?? true,
-      venueName: data.venue_name || DEFAULT_WHATSAPP_SETTINGS.venueName,
-      venueAddress: data.venue_address || DEFAULT_WHATSAPP_SETTINGS.venueAddress,
-      mapLink: data.map_link || DEFAULT_WHATSAPP_SETTINGS.mapLink,
+      senderName: data.sender_name || DEFAULT_EMAIL_SETTINGS.senderName,
+      senderEmail: data.sender_email || DEFAULT_EMAIL_SETTINGS.senderEmail,
+      replyToEmail: data.reply_to_email || DEFAULT_EMAIL_SETTINGS.replyToEmail,
+      venueName: data.venue_name || DEFAULT_EMAIL_SETTINGS.venueName,
+      venueAddress: data.venue_address || DEFAULT_EMAIL_SETTINGS.venueAddress,
+      mapLink: data.map_link || DEFAULT_EMAIL_SETTINGS.mapLink,
       latitude: data.latitude,
       longitude: data.longitude,
-      quizLink: data.quiz_link || DEFAULT_WHATSAPP_SETTINGS.quizLink,
-      pptUploadLink: data.ppt_upload_link || DEFAULT_WHATSAPP_SETTINGS.pptUploadLink,
-      projectLink: data.project_link || DEFAULT_WHATSAPP_SETTINGS.projectLink,
+      quizLink: data.quiz_link || DEFAULT_EMAIL_SETTINGS.quizLink,
+      pptUploadLink: data.ppt_upload_link || DEFAULT_EMAIL_SETTINGS.pptUploadLink,
+      projectLink: data.project_link || DEFAULT_EMAIL_SETTINGS.projectLink,
       customEventLinks:
         typeof data.custom_event_links === "object" && data.custom_event_links !== null
           ? data.custom_event_links
-          : DEFAULT_WHATSAPP_SETTINGS.customEventLinks,
+          : DEFAULT_EMAIL_SETTINGS.customEventLinks,
       updatedAt: data.updated_at,
     };
   } catch (err) {
-    console.warn("Could not fetch whatsapp_settings from database, using defaults:", err);
-    return DEFAULT_WHATSAPP_SETTINGS;
+    console.warn("Could not fetch email_settings from database, using defaults:", err);
+    return DEFAULT_EMAIL_SETTINGS;
   }
 }
 
 /**
- * Updates WhatsApp and Venue/Event link settings in Supabase.
+ * Updates Email and Venue/Event link settings in Supabase.
  */
-export async function saveWhatsAppSettings(
-  settings: Partial<WhatsAppSettings>
-): Promise<{ success: boolean; data?: WhatsAppSettings; error?: string }> {
+export async function saveEmailSettings(
+  settings: Partial<EmailSettings>
+): Promise<{ success: boolean; data?: EmailSettings; error?: string }> {
   try {
-    const current = await getWhatsAppSettings();
+    const current = await getEmailSettings();
     const merged = { ...current, ...settings };
 
     const payload = {
       id: "default_settings",
-      is_enabled: merged.isEnabled,
+      sender_name: merged.senderName,
+      sender_email: merged.senderEmail,
+      reply_to_email: merged.replyToEmail,
       venue_name: merged.venueName,
       venue_address: merged.venueAddress,
       map_link: merged.mapLink,
@@ -84,7 +90,7 @@ export async function saveWhatsAppSettings(
     };
 
     const { data, error } = await supabase
-      .from("whatsapp_settings")
+      .from("email_settings")
       .upsert(payload, { onConflict: "id" })
       .select()
       .maybeSingle();
@@ -97,7 +103,9 @@ export async function saveWhatsAppSettings(
       success: true,
       data: {
         id: data?.id || "default_settings",
-        isEnabled: data?.is_enabled ?? true,
+        senderName: data?.sender_name,
+        senderEmail: data?.sender_email,
+        replyToEmail: data?.reply_to_email,
         venueName: data?.venue_name,
         venueAddress: data?.venue_address,
         mapLink: data?.map_link,

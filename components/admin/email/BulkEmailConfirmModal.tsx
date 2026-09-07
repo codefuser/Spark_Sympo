@@ -3,43 +3,43 @@
 import React, { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
-import { RecipientInfo, WhatsAppTemplateType } from "@/types/whatsapp";
+import { EmailRecipientInfo, EmailTemplateType } from "@/types/email";
 import {
-  AlertTriangle,
+  ShieldAlert,
+  Send,
+  Users,
   CheckCircle2,
   XCircle,
   Clock,
   RotateCcw,
-  Send,
-  Users,
-  ShieldAlert,
+  AlertTriangle,
 } from "lucide-react";
 
-interface BulkSendConfirmModalProps {
+interface BulkEmailConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
-  recipients: RecipientInfo[];
-  templateType: WhatsAppTemplateType;
+  recipients: EmailRecipientInfo[];
+  templateType: EmailTemplateType;
+  customSubject?: string;
   customMessage?: string;
-  sampleMessageText: string;
   onComplete?: (result: { sent: number; failed: number }) => void;
 }
 
-export function BulkSendConfirmModal({
+export function BulkEmailConfirmModal({
   isOpen,
   onClose,
   recipients,
   templateType,
+  customSubject,
   customMessage,
-  sampleMessageText,
   onComplete,
-}: BulkSendConfirmModalProps) {
+}: BulkEmailConfirmModalProps) {
   const [isSending, setIsSending] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [sentCount, setSentCount] = useState(0);
   const [failedCount, setFailedCount] = useState(0);
-  const [failedList, setFailedList] = useState<Array<{ name: string; phone: string; error?: string }>>([]);
+  const [failedList, setFailedList] = useState<Array<{ name: string; email: string; error?: string }>>([]);
   const [isRetrying, setIsRetrying] = useState(false);
 
   const total = recipients.length;
@@ -51,24 +51,23 @@ export function BulkSendConfirmModal({
     setFailedCount(0);
     setFailedList([]);
 
-    // Call server send endpoint in controlled batches
-    try {
-      // We can send in chunks of 5 to show smooth real-time progress while keeping rate-limits safe
-      const chunkSize = 5;
-      let localSent = 0;
-      let localFailed = 0;
-      const localFailedItems: Array<{ name: string; phone: string; error?: string }> = [];
+    const chunkSize = 5;
+    let localSent = 0;
+    let localFailed = 0;
+    const localFailedItems: Array<{ name: string; email: string; error?: string }> = [];
 
+    try {
       for (let i = 0; i < recipients.length; i += chunkSize) {
         const chunk = recipients.slice(i, i + chunkSize);
         setCurrentIndex(Math.min(i + chunk.length, total));
 
-        const res = await fetch("/api/admin/whatsapp/send", {
+        const res = await fetch("/api/admin/email/send", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             recipientsData: chunk,
             templateType,
+            customSubject,
             customMessage,
           }),
         });
@@ -82,7 +81,7 @@ export function BulkSendConfirmModal({
               localFailed++;
               localFailedItems.push({
                 name: r.recipientName,
-                phone: r.recipientPhone,
+                email: r.recipientEmail,
                 error: r.error || "Sending failed",
               });
             }
@@ -92,8 +91,8 @@ export function BulkSendConfirmModal({
           chunk.forEach((c) => {
             localFailedItems.push({
               name: c.name,
-              phone: c.phone,
-              error: data.message || "Failed to reach WhatsApp service",
+              email: c.email,
+              error: data.message || "Failed to reach email service",
             });
           });
         }
@@ -102,7 +101,6 @@ export function BulkSendConfirmModal({
         setFailedCount(localFailed);
         setFailedList([...localFailedItems]);
 
-        // Rate-limit pause between chunks
         if (i + chunkSize < recipients.length) {
           await new Promise((r) => setTimeout(r, 200));
         }
@@ -112,8 +110,8 @@ export function BulkSendConfirmModal({
       if (onComplete) {
         onComplete({ sent: localSent, failed: localFailed });
       }
-    } catch (err: any) {
-      console.error("Bulk sending failed:", err);
+    } catch (err) {
+      console.error("Bulk email error:", err);
       setCompleted(true);
     } finally {
       setIsSending(false);
@@ -125,16 +123,17 @@ export function BulkSendConfirmModal({
     setIsRetrying(true);
 
     const retryRecipients = recipients.filter((r) =>
-      failedList.some((f) => f.phone === r.phone)
+      failedList.some((f) => f.email === r.email)
     );
 
     try {
-      const res = await fetch("/api/admin/whatsapp/send", {
+      const res = await fetch("/api/admin/email/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           recipientsData: retryRecipients,
           templateType,
+          customSubject,
           customMessage,
         }),
       });
@@ -143,10 +142,9 @@ export function BulkSendConfirmModal({
       if (data.success) {
         setSentCount((prev) => prev + (data.sentCount || 0));
         setFailedCount((prev) => Math.max(0, prev - (data.sentCount || 0)));
-        // Remove successfully retried from failedList
         const remainingFailed = (data.results || [])
           .filter((r: any) => r.status !== "Sent")
-          .map((r: any) => ({ name: r.recipientName, phone: r.recipientPhone, error: r.error }));
+          .map((r: any) => ({ name: r.recipientName, email: r.recipientEmail, error: r.error }));
         setFailedList(remainingFailed);
       }
     } catch (err) {
@@ -164,11 +162,11 @@ export function BulkSendConfirmModal({
       onClose={() => {
         if (!isSending) onClose();
       }}
-      title={completed ? "Bulk Message Dispatch Summary" : "Confirm Bulk WhatsApp Dispatch"}
+      title={completed ? "Bulk Email Dispatch Report" : "Confirm Bulk Email Broadcast"}
       description={
         completed
-          ? "The messaging process has finished. Review results below."
-          : "Safety confirmation before sending mass WhatsApp messages."
+          ? "The email broadcast has completed. See breakdown below."
+          : "Safety confirmation before sending mass emails."
       }
       maxWidth="md"
     >
@@ -176,14 +174,14 @@ export function BulkSendConfirmModal({
         {!completed && !isSending && (
           <>
             {/* Warning Callout */}
-            <div className="p-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200 flex items-start gap-3">
-              <ShieldAlert className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl border border-blue-500/30 bg-blue-500/10 text-blue-900 dark:text-blue-200 flex items-start gap-3">
+              <ShieldAlert className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold text-sm">
-                  You are about to send this message to {total} participant{total === 1 ? "" : "s"}.
+                  You are about to send this email to {total} participant{total === 1 ? "" : "s"}.
                 </p>
-                <p className="text-[11px] text-amber-700 dark:text-amber-300/80 mt-1 leading-relaxed">
-                  Each participant will automatically receive their own personalized message addressed to their name, phone, registered events, and registration code.
+                <p className="text-[11px] text-blue-700 dark:text-blue-300/80 mt-1 leading-relaxed">
+                  Each participant will receive their own personalized email addressed to their email, pass code, and registered event tracks.
                 </p>
               </div>
             </div>
@@ -199,8 +197,8 @@ export function BulkSendConfirmModal({
                   <span className="font-bold text-slate-800 dark:text-slate-200 truncate max-w-[180px]">
                     {r.name}
                   </span>
-                  <span className="text-slate-500 font-mono">
-                    {r.phone} • {r.registrationCode}
+                  <span className="text-slate-500 font-mono truncate max-w-[180px]">
+                    {r.email}
                   </span>
                 </div>
               ))}
@@ -211,7 +209,6 @@ export function BulkSendConfirmModal({
               )}
             </div>
 
-            {/* Action Buttons */}
             <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
@@ -221,7 +218,7 @@ export function BulkSendConfirmModal({
                 variant="primary"
                 onClick={handleStartSend}
                 leftIcon={<Send className="w-4 h-4" />}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
               >
                 Confirm & Send ({total})
               </Button>
@@ -231,23 +228,22 @@ export function BulkSendConfirmModal({
 
         {isSending && (
           <div className="py-6 space-y-5 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-500 flex items-center justify-center mx-auto animate-pulse">
+            <div className="w-14 h-14 rounded-2xl bg-blue-500/15 border border-blue-500/40 text-blue-500 flex items-center justify-center mx-auto animate-pulse">
               <Send className="w-7 h-7" />
             </div>
 
             <div className="space-y-1">
               <h4 className="text-base font-bold text-slate-900 dark:text-white">
-                Sending WhatsApp Messages...
+                Sending Transactional Emails...
               </h4>
               <p className="text-xs text-slate-500">
-                Sending {currentIndex} / {total} messages via safe rate-limited queue
+                Sending {currentIndex} / {total} emails via safe rate-limited queue
               </p>
             </div>
 
-            {/* Progress Bar */}
             <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
               <div
-                className="bg-emerald-500 h-2.5 rounded-full transition-all duration-300"
+                className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
@@ -268,7 +264,6 @@ export function BulkSendConfirmModal({
 
         {completed && (
           <div className="space-y-4">
-            {/* Completion Result Cards */}
             <div className="grid grid-cols-3 gap-3 text-center">
               <div className="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
                 <CheckCircle2 className="w-5 h-5 mx-auto mb-1 text-emerald-500" />
@@ -294,7 +289,7 @@ export function BulkSendConfirmModal({
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-rose-800 dark:text-rose-300 text-xs flex items-center gap-1.5">
                     <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />
-                    Failed Messages ({failedList.length})
+                    Failed Emails ({failedList.length})
                   </span>
                   <Button
                     type="button"
@@ -303,7 +298,7 @@ export function BulkSendConfirmModal({
                     onClick={handleRetryFailed}
                     isLoading={isRetrying}
                     leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
-                    className="text-xs h-7 border-rose-300 text-rose-700 hover:bg-rose-100 dark:hover:bg-rose-900/50"
+                    className="text-xs h-7 border-rose-300 text-rose-700 hover:bg-rose-100"
                   >
                     Retry Failed
                   </Button>
@@ -311,7 +306,7 @@ export function BulkSendConfirmModal({
 
                 {failedList.map((item, idx) => (
                   <div key={idx} className="text-[11px] text-rose-700 dark:text-rose-300/90 border-t border-rose-100 dark:border-rose-900/40 pt-1 flex justify-between gap-2">
-                    <span className="font-bold truncate">{item.name} ({item.phone})</span>
+                    <span className="font-bold truncate">{item.name} ({item.email})</span>
                     <span className="text-[10px] text-rose-500 truncate max-w-[160px]" title={item.error}>
                       {item.error}
                     </span>

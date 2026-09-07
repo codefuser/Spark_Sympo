@@ -177,6 +177,16 @@ export async function POST(request: Request) {
       console.warn("Prisma backup skipped (Vercel/SQLite unavailable):", (prismaErr as any)?.message);
     }
 
+    // 9. Automatically dispatch personalized confirmation email
+    try {
+      const { sendAutomaticRegistrationConfirmation } = await import("@/lib/email/registrationNotification");
+      sendAutomaticRegistrationConfirmation(supaReg.id).catch((err) => {
+        console.warn("[Auto-Email] Async confirmation dispatch warning:", err);
+      });
+    } catch (emailErr) {
+      console.warn("[Auto-Email] Confirmation trigger warning:", emailErr);
+    }
+
     return NextResponse.json(
       {
         success: true,

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/auth/jwt";
-import { getWhatsAppSettings, saveWhatsAppSettings } from "@/lib/whatsapp/settings";
+import { getEmailSettings, saveEmailSettings } from "@/lib/email/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
-    const settings = await getWhatsAppSettings();
+    const settings = await getEmailSettings();
     return NextResponse.json({ success: true, settings });
   } catch (error: any) {
     return NextResponse.json(
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const result = await saveWhatsAppSettings(body);
+    const result = await saveEmailSettings(body);
 
     if (!result.success) {
       return NextResponse.json({ success: false, message: result.error }, { status: 500 });
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "WhatsApp & Venue settings updated successfully",
+      message: "Email and Venue settings updated successfully",
       settings: result.data,
     });
   } catch (error: any) {

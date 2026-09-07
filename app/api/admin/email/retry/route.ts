@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/auth/jwt";
 import { supabase } from "@/lib/database/supabase";
-import { sendWhatsAppTextMessage } from "@/lib/whatsapp/metaClient";
+import { sendEmail } from "@/lib/email/emailClient";
+import { getEmailSettings } from "@/lib/email/settings";
+import { generateHtmlEmail } from "@/lib/email/templateEngine";
 
 export const dynamic = "force-dynamic";
 
@@ -16,17 +18,19 @@ export async function POST(request: Request) {
     const { messageIds = [] } = body;
 
     if (!messageIds || messageIds.length === 0) {
-      return NextResponse.json({ success: false, message: "No message IDs specified to retry" }, { status: 400 });
+      return NextResponse.json({ success: false, message: "No email message IDs specified" }, { status: 400 });
     }
 
     const { data: messages, error } = await supabase
-      .from("whatsapp_messages")
+      .from("email_messages")
       .select("*")
       .in("id", messageIds);
 
     if (error || !messages || messages.length === 0) {
-      return NextResponse.json({ success: false, message: "No matching messages found to retry" }, { status: 404 });
+      return NextResponse.json({ success: false, message: "No matching emails found to retry" }, { status: 404 });
     }
+
+    const settings = await getEmailSettings();
 
     let retriedSuccess = 0;
     let retriedFailed = 0;
@@ -35,9 +39,27 @@ export async function POST(request: Request) {
     for (let i = 0; i < messages.length; i++) {
       const msg = messages[i];
 
-      const res = await sendWhatsAppTextMessage({
-        to: msg.recipient_phone,
-        body: msg.message_content,
+      const htmlBody = generateHtmlEmail({
+        recipient: {
+          registrationId: msg.registration_id || "",
+          registrationCode: "SPK-2K26-PASS",
+          name: msg.recipient_name,
+          email: msg.recipient_email,
+          college: "Engineering College",
+          department: "ECE",
+          paymentStatus: "CONFIRMED",
+          foodPreference: "Veg",
+        },
+        settings,
+        subject: msg.subject,
+        contentBodyText: msg.message_content,
+      });
+
+      const res = await sendEmail({
+        to: msg.recipient_email,
+        subject: msg.subject,
+        html: htmlBody,
+        text: msg.message_content,
       });
 
       const newStatus = res.success ? "Sent" : "Failed";
@@ -48,7 +70,7 @@ export async function POST(request: Request) {
       }
 
       await supabase
-        .from("whatsapp_messages")
+        .from("email_messages")
         .update({
           status: newStatus,
           provider_message_id: res.messageId || msg.provider_message_id,
@@ -77,7 +99,7 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, message: error.message || "Failed to retry messages" },
+      { success: false, message: error.message || "Failed to retry emails" },
       { status: 500 }
     );
   }

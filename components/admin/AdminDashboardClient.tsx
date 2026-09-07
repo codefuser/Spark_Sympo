@@ -49,10 +49,10 @@ import {
   Check,
 } from "lucide-react";
 import { exportToJSON, exportToCSV, exportToExcel, exportToPDF } from "@/lib/utils/exportUtils";
-import { WhatsAppDashboard } from "@/components/admin/whatsapp/WhatsAppDashboard";
-import { WhatsAppComposerModal } from "@/components/admin/whatsapp/WhatsAppComposerModal";
-import { DEFAULT_WHATSAPP_SETTINGS, getWhatsAppSettings } from "@/lib/whatsapp/settings";
-import { RecipientInfo, WhatsAppSettings, WhatsAppTemplateType } from "@/types/whatsapp";
+import { EmailDashboard } from "@/components/admin/email/EmailDashboard";
+import { EmailComposerModal } from "@/components/admin/email/EmailComposerModal";
+import { DEFAULT_EMAIL_SETTINGS, getEmailSettings } from "@/lib/email/settings";
+import { EmailRecipientInfo, EmailSettings, EmailTemplateType } from "@/types/email";
 
 const POPULAR_COLLEGES = [
   "St. Joseph's Institute of Technology",
@@ -145,7 +145,7 @@ function HighlightText({ text, query, isLight }: { text?: string; query?: string
   );
 }
 
-function mapToRecipientInfo(r: any, p: any): RecipientInfo {
+function mapToRecipientInfo(r: any, p: any): EmailRecipientInfo {
   return {
     participantId: p?.id,
     registrationId: r?.id,
@@ -234,20 +234,20 @@ export function AdminDashboardClient({
   const isLight = theme === "light";
 
   // Admin Dashboard Tabs & Contact Messages Notifications State
-  const [activeAdminTab, setActiveAdminTab] = useState<"registrations" | "notifications" | "whatsapp">("registrations");
+  const [activeAdminTab, setActiveAdminTab] = useState<"registrations" | "notifications" | "email">("registrations");
   const [messagesList, setMessagesList] = useState<any[]>([]);
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
   const [selectedMessageDetail, setSelectedMessageDetail] = useState<any | null>(null);
 
-  // WhatsApp Multi-Select & Composer State
+  // Email Multi-Select & Composer State
   const [selectedRegIds, setSelectedRegIds] = useState<string[]>([]);
-  const [whatsAppComposerTarget, setWhatsAppComposerTarget] = useState<RecipientInfo[] | null>(null);
-  const [composerDefaultTemplate, setComposerDefaultTemplate] = useState<WhatsAppTemplateType>("CONFIRMATION");
-  const [whatsAppSettings, setWhatsAppSettings] = useState<WhatsAppSettings>(DEFAULT_WHATSAPP_SETTINGS);
+  const [emailComposerTarget, setEmailComposerTarget] = useState<EmailRecipientInfo[] | null>(null);
+  const [composerDefaultTemplate, setComposerDefaultTemplate] = useState<EmailTemplateType>("CONFIRMATION");
+  const [emailSettings, setEmailSettings] = useState<EmailSettings>(DEFAULT_EMAIL_SETTINGS);
 
   useEffect(() => {
-    getWhatsAppSettings().then((s) => {
-      if (s) setWhatsAppSettings(s);
+    getEmailSettings().then((s) => {
+      if (s) setEmailSettings(s);
     });
   }, []);
 
@@ -1378,19 +1378,19 @@ export function AdminDashboardClient({
         </button>
 
         <button
-          onClick={() => setActiveAdminTab("whatsapp")}
+          onClick={() => setActiveAdminTab("email")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all relative ${
-            activeAdminTab === "whatsapp"
+            activeAdminTab === "email"
               ? isLight
-                ? "bg-emerald-600 text-white shadow-xs"
-                : "bg-emerald-500 text-slate-950 font-extrabold shadow-xs"
+                ? "bg-cyan-600 text-white shadow-xs"
+                : "bg-cyan-500 text-slate-950 font-extrabold shadow-xs"
               : isLight
               ? "bg-white text-slate-700 hover:bg-slate-200/70 border border-slate-300"
               : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800"
           }`}
         >
-          <MessageSquare className="w-4 h-4 text-emerald-400" />
-          WhatsApp Messages
+          <Mail className="w-4 h-4 text-cyan-400" />
+          Email Messages
         </button>
       </div>
 
@@ -1518,8 +1518,8 @@ export function AdminDashboardClient({
             </div>
           )}
         </div>
-      ) : activeAdminTab === "whatsapp" ? (
-        <WhatsAppDashboard
+      ) : activeAdminTab === "email" ? (
+        <EmailDashboard
           initialRegistrations={registrationsList}
           events={events}
           isLight={isLight}
@@ -1815,12 +1815,12 @@ export function AdminDashboardClient({
                   .filter((r) => selectedRegIds.includes(r.id))
                   .flatMap((r) => (r.participants || []).map((p: any) => mapToRecipientInfo(r, p)));
                 setComposerDefaultTemplate("CONFIRMATION");
-                setWhatsAppComposerTarget(recipients);
+                setEmailComposerTarget(recipients);
               }}
-              leftIcon={<MessageSquare className="w-4 h-4 text-emerald-300" />}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-8 text-xs"
+              leftIcon={<Mail className="w-4 h-4 text-cyan-300" />}
+              className="bg-cyan-600 hover:bg-cyan-700 text-white font-bold h-8 text-xs"
             >
-              Send WhatsApp to Selected
+              Send Email to Selected
             </Button>
 
             <Button
@@ -1869,7 +1869,7 @@ export function AdminDashboardClient({
                 <th className="py-3 px-2.5">Registered Events</th>
                 <th className="py-3 px-2 text-center whitespace-nowrap">Payment</th>
                 <th className="py-3 px-2 text-center whitespace-nowrap">Food</th>
-                <th className="py-3 px-2.5 text-center whitespace-nowrap min-w-[120px]">Actions / WhatsApp</th>
+                <th className="py-3 px-2.5 text-center whitespace-nowrap min-w-[120px]">Actions / Email</th>
               </tr>
             </thead>
             <tbody className={`font-sans text-xs ${isLight ? "text-slate-900" : "text-slate-100"}`}>
@@ -2145,7 +2145,7 @@ export function AdminDashboardClient({
                         )}
                       </td>
 
-                      {/* Actions / WhatsApp Button */}
+                      {/* Actions / Email Button */}
                       <td className="py-3 px-2.5 align-top text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                         <div className="flex flex-col items-center gap-1.5">
                           <Button
@@ -2155,13 +2155,13 @@ export function AdminDashboardClient({
                             onClick={() => {
                               const recipients = (r.participants || []).map((p: any) => mapToRecipientInfo(r, p));
                               setComposerDefaultTemplate("CONFIRMATION");
-                              setWhatsAppComposerTarget(recipients);
+                              setEmailComposerTarget(recipients);
                             }}
-                            leftIcon={<MessageSquare className="w-3.5 h-3.5 text-emerald-500" />}
-                            className="h-7 px-2.5 text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50"
-                            title="Open WhatsApp message composer"
+                            leftIcon={<Mail className="w-3.5 h-3.5 text-cyan-500" />}
+                            className="h-7 px-2.5 text-[11px] font-mono font-bold text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-800 hover:bg-cyan-50 dark:hover:bg-cyan-950/50"
+                            title="Open email message composer"
                           >
-                            📱 WhatsApp
+                            📧 Send Email
                           </Button>
                         </div>
                       </td>
@@ -2224,14 +2224,14 @@ export function AdminDashboardClient({
                 </div>
               </div>
 
-              {/* WhatsApp Quick Actions Panel for Pass */}
+              {/* Email Quick Actions Panel for Pass */}
               <div className={`p-3.5 rounded-2xl border flex flex-wrap items-center justify-between gap-3 ${
-                isLight ? "bg-emerald-50/70 border-emerald-200" : "bg-emerald-950/30 border-emerald-800/60"
+                isLight ? "bg-cyan-50/70 border-cyan-200" : "bg-cyan-950/30 border-cyan-800/60"
               }`}>
                 <div className="flex items-center gap-2 text-xs">
-                  <MessageSquare className="w-4 h-4 text-emerald-500" />
+                  <Mail className="w-4 h-4 text-cyan-500" />
                   <span className="font-bold text-slate-800 dark:text-slate-200">
-                    Send WhatsApp:
+                    Send Email:
                   </span>
                 </div>
 
@@ -2244,9 +2244,9 @@ export function AdminDashboardClient({
                         mapToRecipientInfo(selectedRegistration, p)
                       );
                       setComposerDefaultTemplate("CONFIRMATION");
-                      setWhatsAppComposerTarget(recipients);
+                      setEmailComposerTarget(recipients);
                     }}
-                    className="text-xs h-7 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+                    className="text-xs h-7 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-800"
                   >
                     Confirmation
                   </Button>
@@ -2258,9 +2258,9 @@ export function AdminDashboardClient({
                         mapToRecipientInfo(selectedRegistration, p)
                       );
                       setComposerDefaultTemplate("QUIZ");
-                      setWhatsAppComposerTarget(recipients);
+                      setEmailComposerTarget(recipients);
                     }}
-                    className="text-xs h-7 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+                    className="text-xs h-7 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-800"
                   >
                     Quiz Link
                   </Button>
@@ -2272,9 +2272,9 @@ export function AdminDashboardClient({
                         mapToRecipientInfo(selectedRegistration, p)
                       );
                       setComposerDefaultTemplate("VENUE");
-                      setWhatsAppComposerTarget(recipients);
+                      setEmailComposerTarget(recipients);
                     }}
-                    className="text-xs h-7 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+                    className="text-xs h-7 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-800"
                   >
                     Venue Location
                   </Button>
@@ -2286,9 +2286,9 @@ export function AdminDashboardClient({
                         mapToRecipientInfo(selectedRegistration, p)
                       );
                       setComposerDefaultTemplate("CUSTOM");
-                      setWhatsAppComposerTarget(recipients);
+                      setEmailComposerTarget(recipients);
                     }}
-                    className="text-xs h-7 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                    className="text-xs h-7 bg-cyan-600 hover:bg-cyan-700 text-white font-bold"
                   >
                     Open Composer
                   </Button>
@@ -2865,17 +2865,17 @@ export function AdminDashboardClient({
         </Modal>
       )}
 
-      {/* WhatsApp Composer Modal */}
-      {whatsAppComposerTarget && (
-        <WhatsAppComposerModal
-          isOpen={!!whatsAppComposerTarget}
-          onClose={() => setWhatsAppComposerTarget(null)}
-          recipients={whatsAppComposerTarget}
-          settings={whatsAppSettings}
+      {/* Email Composer Modal */}
+      {emailComposerTarget && (
+        <EmailComposerModal
+          isOpen={!!emailComposerTarget}
+          onClose={() => setEmailComposerTarget(null)}
+          recipients={emailComposerTarget}
+          settings={emailSettings}
           defaultTemplate={composerDefaultTemplate}
           isLight={isLight}
           onSentSuccess={() => {
-            showToast("WhatsApp dispatch completed successfully!", "success");
+            showToast("Email dispatch completed successfully!", "success");
           }}
         />
       )}
