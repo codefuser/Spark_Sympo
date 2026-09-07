@@ -28,6 +28,8 @@ import {
   UserCheck,
   ExternalLink,
   Send,
+  Gamepad2,
+  Music,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardTitle, CardDescription } from "@/components/ui/Card";
@@ -52,6 +54,78 @@ interface HomePageClientProps {
   symposiumDate: string;
   collegeName: string;
   venue: string;
+}
+
+function getEventTheme(slug: string, category: string) {
+  if (slug === "paper-presentation") {
+    return {
+      icon: FileText,
+      iconColor: "text-cyan-400",
+      iconBoxStyle: "bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(0,240,255,0.15)]",
+      cardBorder: "border-cyan-500/25 hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(0,240,255,0.2)]",
+      topGradient: "linear-gradient(90deg, transparent, #00f0ff, transparent)",
+      badgeStyle: "bg-cyan-500/10 text-cyan-300 border-cyan-500/30",
+      dotColor: "bg-cyan-400",
+      cornerColor: "border-cyan-400/30 group-hover:border-cyan-400",
+      glowColor: "#00f0ff",
+      buttonStyle: "bg-cyan-500/10 hover:bg-cyan-500/25 text-cyan-300 border-cyan-500/30 hover:border-cyan-400 hover:text-white hover:shadow-[0_0_20px_rgba(0,240,255,0.3)]",
+    };
+  }
+  if (slug === "technical-quiz") {
+    return {
+      icon: Zap,
+      iconColor: "text-sky-400",
+      iconBoxStyle: "bg-sky-500/10 border-sky-500/30 text-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.15)]",
+      cardBorder: "border-sky-500/25 hover:border-sky-400 hover:shadow-[0_0_30px_rgba(56,189,248,0.2)]",
+      topGradient: "linear-gradient(90deg, transparent, #38bdf8, transparent)",
+      badgeStyle: "bg-sky-500/10 text-sky-300 border-sky-500/30",
+      dotColor: "bg-sky-400",
+      cornerColor: "border-sky-400/30 group-hover:border-sky-400",
+      glowColor: "#38bdf8",
+      buttonStyle: "bg-sky-500/10 hover:bg-sky-500/25 text-sky-300 border-sky-500/30 hover:border-sky-400 hover:text-white hover:shadow-[0_0_20px_rgba(56,189,248,0.3)]",
+    };
+  }
+  if (slug === "circuit-debugging") {
+    return {
+      icon: Cpu,
+      iconColor: "text-emerald-400",
+      iconBoxStyle: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.15)]",
+      cardBorder: "border-emerald-500/25 hover:border-emerald-400 hover:shadow-[0_0_30px_rgba(52,211,153,0.2)]",
+      topGradient: "linear-gradient(90deg, transparent, #34d399, transparent)",
+      badgeStyle: "bg-emerald-500/10 text-emerald-300 border-emerald-500/30",
+      dotColor: "bg-emerald-400",
+      cornerColor: "border-emerald-400/30 group-hover:border-emerald-400",
+      glowColor: "#34d399",
+      buttonStyle: "bg-emerald-500/10 hover:bg-emerald-500/25 text-emerald-300 border-emerald-500/30 hover:border-emerald-400 hover:text-white hover:shadow-[0_0_20px_rgba(52,211,153,0.3)]",
+    };
+  }
+  if (slug === "rythemania") {
+    return {
+      icon: Music,
+      iconColor: "text-pink-400",
+      iconBoxStyle: "bg-pink-500/10 border-pink-500/30 text-pink-400 shadow-[0_0_15px_rgba(244,63,94,0.15)]",
+      cardBorder: "border-pink-500/25 hover:border-pink-400 hover:shadow-[0_0_30px_rgba(244,63,94,0.2)]",
+      topGradient: "linear-gradient(90deg, transparent, #f43f5e, transparent)",
+      badgeStyle: "bg-pink-500/10 text-pink-300 border-pink-500/30",
+      dotColor: "bg-pink-400",
+      cornerColor: "border-pink-400/30 group-hover:border-pink-400",
+      glowColor: "#f43f5e",
+      buttonStyle: "bg-pink-500/10 hover:bg-pink-500/25 text-pink-300 border-pink-500/30 hover:border-pink-400 hover:text-white hover:shadow-[0_0_20px_rgba(244,63,94,0.3)]",
+    };
+  }
+  // e-sports
+  return {
+    icon: Gamepad2,
+    iconColor: "text-purple-400",
+    iconBoxStyle: "bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.15)]",
+    cardBorder: "border-purple-500/25 hover:border-purple-400 hover:shadow-[0_0_30px_rgba(168,85,247,0.2)]",
+    topGradient: "linear-gradient(90deg, transparent, #a855f7, transparent)",
+    badgeStyle: "bg-purple-500/10 text-purple-300 border-purple-500/30",
+    dotColor: "bg-purple-400",
+    cornerColor: "border-purple-400/30 group-hover:border-purple-400",
+    glowColor: "#a855f7",
+    buttonStyle: "bg-purple-500/10 hover:bg-purple-500/25 text-purple-300 border-purple-500/30 hover:border-purple-400 hover:text-white hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]",
+  };
 }
 
 export function HomePageClient({
@@ -81,9 +155,14 @@ export function HomePageClient({
   const [submittingContact, setSubmittingContact] = useState(false);
   const [contactSuccess, setContactSuccess] = useState(false);
 
+  // Filter out any workshop events so only the 5 featured symposium events exist
+  const validEvents = events.filter(
+    (e) => e.category !== "WORKSHOP" && e.slug !== "iot-workshop"
+  );
+
   const filteredEvents = activeCategory === "ALL"
-    ? events
-    : events.filter((e) => e.category === activeCategory);
+    ? validEvents
+    : validEvents.filter((e) => e.category === activeCategory);
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -253,24 +332,23 @@ export function HomePageClient({
         <SectionHeading
           badge="COMPETITIONS & TRACKS"
           title="SPARKTRON 2K26 Events Catalog"
-          description="Click any event card to view full rules or register your team directly."
+          description="Click any event card to view full rules, guidelines, and round specifications."
         />
 
         {/* Category Filters */}
-        <div className="flex flex-wrap items-center justify-center gap-2 max-w-2xl mx-auto font-mono">
+        <div className="flex flex-wrap items-center justify-center gap-3 max-w-2xl mx-auto font-mono">
           {[
-            { label: "ALL TRACKS", value: "ALL" },
-            { label: "TECHNICAL", value: "TECHNICAL" },
-            { label: "WORKSHOPS", value: "WORKSHOP" },
-            { label: "NON-TECHNICAL", value: "NON_TECHNICAL" },
+            { label: "ALL TRACKS (5)", value: "ALL" },
+            { label: "TECHNICAL (3)", value: "TECHNICAL" },
+            { label: "NON-TECHNICAL (2)", value: "NON_TECHNICAL" },
           ].map((cat) => (
             <button
               key={cat.value}
               onClick={() => setActiveCategory(cat.value)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                 activeCategory === cat.value
-                  ? "bg-primary text-background border-primary shadow-glow"
-                  : "bg-card/60 text-secondary-foreground border-primary/20 hover:border-primary/50 hover:text-white"
+                  ? "bg-primary text-background border-primary shadow-[0_0_20px_rgba(0,240,255,0.4)]"
+                  : "bg-card/70 text-slate-300 border-white/10 hover:border-primary/50 hover:text-white hover:bg-card"
               }`}
             >
               {cat.label}
@@ -278,49 +356,123 @@ export function HomePageClient({
           ))}
         </div>
 
-        {/* Events Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.map((event) => (
-            <Card key={event.id} glowOnHover className="flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Badge variant={event.category === "TECHNICAL" ? "primary" : "cyan"}>
-                    {event.category}
-                  </Badge>
-                  <span className="text-xs font-mono text-slate-400">{event.teamSize}</span>
-                </div>
+        {/* Events Grid - Centered 5-box alignment */}
+        <div className="flex flex-wrap justify-center gap-6 sm:gap-8 max-w-7xl mx-auto">
+          {filteredEvents.map((event) => {
+            const theme = getEventTheme(event.slug, event.category);
+            const IconComponent = theme.icon;
 
-                <div>
-                  <CardTitle className="text-xl">{event.title}</CardTitle>
-                  <CardDescription className="mt-2 line-clamp-3 leading-relaxed">
-                    {event.shortDesc}
-                  </CardDescription>
-                </div>
-
-                <div className="space-y-2 text-xs font-mono text-slate-300 pt-2 border-t border-primary/10">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Rounds:</span>
-                    <span className="text-white font-bold">{event.rounds}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Venue:</span>
-                    <span className="text-primary truncate max-w-[180px]">{event.venue}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-6 mt-6 border-t border-primary/10">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => setSelectedEventDetail(event)}
+            return (
+              <div
+                key={event.id}
+                className="w-full md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] max-w-md flex"
+              >
+                <div
+                  className={`w-full relative group rounded-2xl p-6 sm:p-7 flex flex-col justify-between border bg-gradient-to-b from-[#0e1626]/95 via-[#0b1120]/95 to-[#070c18]/98 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 overflow-hidden shadow-xl ${theme.cardBorder}`}
                 >
-                  Rules
-                </Button>
+                  {/* Top Glowing Laser Ribbon */}
+                  <div
+                    className="absolute top-0 left-0 right-0 h-[2px] opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{ background: theme.topGradient }}
+                  />
+
+                  {/* Corner Cyber Brackets */}
+                  <span
+                    className={`absolute top-2.5 left-2.5 w-2.5 h-2.5 border-t-2 border-l-2 transition-colors duration-300 pointer-events-none ${theme.cornerColor}`}
+                  />
+                  <span
+                    className={`absolute bottom-2.5 right-2.5 w-2.5 h-2.5 border-b-2 border-r-2 transition-colors duration-300 pointer-events-none ${theme.cornerColor}`}
+                  />
+
+                  {/* Radial Ambient Glow */}
+                  <div
+                    className="absolute -top-12 -right-12 w-36 h-36 rounded-full blur-3xl opacity-15 group-hover:opacity-35 transition-opacity duration-500 pointer-events-none"
+                    style={{ backgroundColor: theme.glowColor }}
+                  />
+
+                  {/* Main Content Area */}
+                  <div className="space-y-4 relative z-10">
+                    {/* Header Row: Category Badge + Team Size */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[11px] font-mono font-bold tracking-wider uppercase transition-all duration-200 ${theme.badgeStyle}`}
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${theme.dotColor}`} />
+                        <span>{event.category === "NON_TECHNICAL" ? "NON-TECHNICAL" : event.category}</span>
+                      </div>
+
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-xs font-mono text-slate-300">
+                        <Users className="w-3.5 h-3.5 text-slate-400" />
+                        <span>{event.teamSize}</span>
+                      </div>
+                    </div>
+
+                    {/* Icon + Title */}
+                    <div className="flex items-start gap-3.5 pt-2">
+                      <div
+                        className={`p-3 rounded-xl border shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-md ${theme.iconBoxStyle}`}
+                      >
+                        <IconComponent className={`w-6 h-6 ${theme.iconColor}`} />
+                      </div>
+                      <div className="space-y-0.5">
+                        <h3 className="text-xl sm:text-2xl font-bold font-sans text-white tracking-tight group-hover:text-cyan-300 transition-colors duration-200">
+                          {event.title}
+                        </h3>
+                        <p className="text-[11px] font-mono text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                          <span className={`w-1 h-1 rounded-full ${theme.dotColor}`} />
+                          <span>SPARKTRON OFFICIAL</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-sm text-slate-300/85 leading-relaxed line-clamp-3 min-h-[48px] font-sans pt-1">
+                      {event.shortDesc}
+                    </p>
+
+                    {/* High-Tech Spec Strips (Rounds & Venue) */}
+                    <div className="space-y-2 pt-3 border-t border-white/10 text-xs font-mono">
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
+                        <span className="flex items-center gap-2 text-slate-400">
+                          <Target className="w-3.5 h-3.5 text-primary" />
+                          <span>Rounds:</span>
+                        </span>
+                        <span className="text-white font-semibold font-sans truncate max-w-[190px] text-right">
+                          {event.rounds}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
+                        <span className="flex items-center gap-2 text-slate-400">
+                          <MapPin className="w-3.5 h-3.5 text-cyan" />
+                          <span>Venue:</span>
+                        </span>
+                        <span
+                          className="text-primary font-semibold font-sans truncate max-w-[190px] text-right"
+                          title={event.venue}
+                        >
+                          {event.venue}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card Action Footer */}
+                  <div className="pt-5 mt-5 border-t border-white/10 relative z-10">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedEventDetail(event)}
+                      className={`w-full py-2.5 px-4 rounded-xl font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border cursor-pointer ${theme.buttonStyle}`}
+                    >
+                      <BookOpen className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
+                      <span>Rules & Guidelines</span>
+                      <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                    </button>
+                  </div>
+                </div>
               </div>
-            </Card>
-          ))}
+            );
+          })}
         </div>
       </section>
 
