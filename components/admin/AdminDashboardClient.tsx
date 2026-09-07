@@ -49,6 +49,10 @@ import {
   Check,
 } from "lucide-react";
 import { exportToJSON, exportToCSV, exportToExcel, exportToPDF } from "@/lib/utils/exportUtils";
+import { WhatsAppDashboard } from "@/components/admin/whatsapp/WhatsAppDashboard";
+import { WhatsAppComposerModal } from "@/components/admin/whatsapp/WhatsAppComposerModal";
+import { DEFAULT_WHATSAPP_SETTINGS, getWhatsAppSettings } from "@/lib/whatsapp/settings";
+import { RecipientInfo, WhatsAppSettings, WhatsAppTemplateType } from "@/types/whatsapp";
 
 const POPULAR_COLLEGES = [
   "St. Joseph's Institute of Technology",
@@ -141,6 +145,26 @@ function HighlightText({ text, query, isLight }: { text?: string; query?: string
   );
 }
 
+function mapToRecipientInfo(r: any, p: any): RecipientInfo {
+  return {
+    participantId: p?.id,
+    registrationId: r?.id,
+    registrationCode: r?.registrationCode || "SPK-2K26-PASS",
+    name: p?.fullName || "Participant",
+    phone: p?.phone || "",
+    email: p?.email || "",
+    college: p?.college || "",
+    department: p?.department || "ECE",
+    teamName: r?.teamName,
+    paymentStatus: p?.paymentStatus || r?.paymentStatus || (r?.registrationType === "offline" ? "PAID" : "UNPAID"),
+    foodPreference: p?.foodPreference || "Veg",
+    technicalEventTitle: r?.technicalEvent?.title,
+    nonTechnicalEventTitle: r?.nonTechnicalEvent?.title,
+    technicalEventSlug: r?.technicalEvent?.slug,
+    nonTechnicalEventSlug: r?.nonTechnicalEvent?.slug,
+  };
+}
+
 export function AdminDashboardClient({
   initialRegistrations,
   events,
@@ -210,10 +234,22 @@ export function AdminDashboardClient({
   const isLight = theme === "light";
 
   // Admin Dashboard Tabs & Contact Messages Notifications State
-  const [activeAdminTab, setActiveAdminTab] = useState<"registrations" | "notifications">("registrations");
+  const [activeAdminTab, setActiveAdminTab] = useState<"registrations" | "notifications" | "whatsapp">("registrations");
   const [messagesList, setMessagesList] = useState<any[]>([]);
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
   const [selectedMessageDetail, setSelectedMessageDetail] = useState<any | null>(null);
+
+  // WhatsApp Multi-Select & Composer State
+  const [selectedRegIds, setSelectedRegIds] = useState<string[]>([]);
+  const [whatsAppComposerTarget, setWhatsAppComposerTarget] = useState<RecipientInfo[] | null>(null);
+  const [composerDefaultTemplate, setComposerDefaultTemplate] = useState<WhatsAppTemplateType>("CONFIRMATION");
+  const [whatsAppSettings, setWhatsAppSettings] = useState<WhatsAppSettings>(DEFAULT_WHATSAPP_SETTINGS);
+
+  useEffect(() => {
+    getWhatsAppSettings().then((s) => {
+      if (s) setWhatsAppSettings(s);
+    });
+  }, []);
 
   const fetchContactMessages = useCallback(async (silent = false) => {
     if (!silent) setLoadingMessages(true);
@@ -1340,6 +1376,22 @@ export function AdminDashboardClient({
             </span>
           )}
         </button>
+
+        <button
+          onClick={() => setActiveAdminTab("whatsapp")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all relative ${
+            activeAdminTab === "whatsapp"
+              ? isLight
+                ? "bg-emerald-600 text-white shadow-xs"
+                : "bg-emerald-500 text-slate-950 font-extrabold shadow-xs"
+              : isLight
+              ? "bg-white text-slate-700 hover:bg-slate-200/70 border border-slate-300"
+              : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800"
+          }`}
+        >
+          <MessageSquare className="w-4 h-4 text-emerald-400" />
+          WhatsApp Messages
+        </button>
       </div>
 
       {activeAdminTab === "notifications" ? (
@@ -1466,6 +1518,12 @@ export function AdminDashboardClient({
             </div>
           )}
         </div>
+      ) : activeAdminTab === "whatsapp" ? (
+        <WhatsAppDashboard
+          initialRegistrations={registrationsList}
+          events={events}
+          isLight={isLight}
+        />
       ) : (
         <>
           {/* Executive Registration Metric Cards */}
@@ -1733,12 +1791,75 @@ export function AdminDashboardClient({
         </div>
       </div>
 
+      {/* Sticky Bulk Selection Bar */}
+      {selectedRegIds.length > 0 && (
+        <div className="sticky top-4 z-20 p-3.5 rounded-2xl border border-emerald-500/50 bg-emerald-950/95 text-white shadow-xl backdrop-blur-md flex flex-wrap items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 font-mono">
+          <div className="flex items-center gap-3">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs font-bold">
+              {selectedRegIds.length} registration{selectedRegIds.length === 1 ? "" : "s"} selected (
+              {filteredRegistrations
+                .filter((r) => selectedRegIds.includes(r.id))
+                .reduce((sum, r) => sum + (r.participants?.length || 0), 0)}{" "}
+              participants)
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="primary"
+              onClick={() => {
+                const recipients = filteredRegistrations
+                  .filter((r) => selectedRegIds.includes(r.id))
+                  .flatMap((r) => (r.participants || []).map((p: any) => mapToRecipientInfo(r, p)));
+                setComposerDefaultTemplate("CONFIRMATION");
+                setWhatsAppComposerTarget(recipients);
+              }}
+              leftIcon={<MessageSquare className="w-4 h-4 text-emerald-300" />}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-8 text-xs"
+            >
+              Send WhatsApp to Selected
+            </Button>
+
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => setSelectedRegIds([])}
+              className="h-8 text-xs border-emerald-700 text-emerald-200 hover:bg-emerald-900/60"
+            >
+              Clear Selection
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Registered Passes Table */}
       <div className={`rounded-2xl border overflow-hidden shadow-xs transition-all duration-200 ${isLight ? "bg-white border-slate-300" : "bg-slate-900/60 border-slate-800"}`}>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm border-collapse">
             <thead className={`border-b-2 text-xs font-mono uppercase tracking-wider transition-colors duration-200 ${isLight ? "bg-slate-100 border-slate-300 text-slate-800 font-extrabold" : "bg-slate-900 border-slate-800 text-slate-300"}`}>
               <tr>
+                <th className="py-3 px-2 text-center w-10">
+                  <input
+                    type="checkbox"
+                    title="Select All"
+                    checked={
+                      filteredRegistrations.length > 0 &&
+                      filteredRegistrations.every((r) => selectedRegIds.includes(r.id))
+                    }
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedRegIds(filteredRegistrations.map((r) => r.id));
+                      } else {
+                        setSelectedRegIds([]);
+                      }
+                    }}
+                    className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
+                  />
+                </th>
                 <th className="py-3 px-2 text-center w-10">#</th>
                 <th className="py-3 px-2.5 whitespace-nowrap min-w-[130px]">Pass Code</th>
                 <th className="py-3 px-2 text-center w-16">Type</th>
@@ -1748,12 +1869,13 @@ export function AdminDashboardClient({
                 <th className="py-3 px-2.5">Registered Events</th>
                 <th className="py-3 px-2 text-center whitespace-nowrap">Payment</th>
                 <th className="py-3 px-2 text-center whitespace-nowrap">Food</th>
+                <th className="py-3 px-2.5 text-center whitespace-nowrap min-w-[120px]">Actions / WhatsApp</th>
               </tr>
             </thead>
             <tbody className={`font-sans text-xs ${isLight ? "text-slate-900" : "text-slate-100"}`}>
               {filteredRegistrations.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className={`py-12 text-center font-mono text-sm ${isLight ? "text-slate-500" : "text-slate-400"}`}>
+                  <td colSpan={11} className={`py-12 text-center font-mono text-sm ${isLight ? "text-slate-500" : "text-slate-400"}`}>
                     No registrations found matching your filter query.
                   </td>
                 </tr>
@@ -1774,6 +1896,20 @@ export function AdminDashboardClient({
                           : "border-slate-800/80 hover:bg-slate-800/60 text-slate-100 even:bg-slate-900/30"
                       }`}
                     >
+                      {/* Checkbox */}
+                      <td className="py-3.5 px-2 text-center align-top" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={selectedRegIds.includes(r.id)}
+                          onChange={() => {
+                            setSelectedRegIds((prev) =>
+                              prev.includes(r.id) ? prev.filter((id) => id !== r.id) : [...prev, r.id]
+                            );
+                          }}
+                          className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-500 mt-0.5"
+                        />
+                      </td>
+
                       {/* S.No */}
                       <td className="py-3.5 px-2 text-center align-top font-mono font-semibold text-slate-500 text-xs">
                         {index + 1}
@@ -2008,6 +2144,27 @@ export function AdminDashboardClient({
                           </div>
                         )}
                       </td>
+
+                      {/* Actions / WhatsApp Button */}
+                      <td className="py-3 px-2.5 align-top text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex flex-col items-center gap-1.5">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              const recipients = (r.participants || []).map((p: any) => mapToRecipientInfo(r, p));
+                              setComposerDefaultTemplate("CONFIRMATION");
+                              setWhatsAppComposerTarget(recipients);
+                            }}
+                            leftIcon={<MessageSquare className="w-3.5 h-3.5 text-emerald-500" />}
+                            className="h-7 px-2.5 text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50"
+                            title="Open WhatsApp message composer"
+                          >
+                            📱 WhatsApp
+                          </Button>
+                        </div>
+                      </td>
                     </tr>
                   );
                 })
@@ -2064,6 +2221,77 @@ export function AdminDashboardClient({
                       Mark as Paid
                     </Button>
                   )}
+                </div>
+              </div>
+
+              {/* WhatsApp Quick Actions Panel for Pass */}
+              <div className={`p-3.5 rounded-2xl border flex flex-wrap items-center justify-between gap-3 ${
+                isLight ? "bg-emerald-50/70 border-emerald-200" : "bg-emerald-950/30 border-emerald-800/60"
+              }`}>
+                <div className="flex items-center gap-2 text-xs">
+                  <MessageSquare className="w-4 h-4 text-emerald-500" />
+                  <span className="font-bold text-slate-800 dark:text-slate-200">
+                    Send WhatsApp:
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const recipients = (selectedRegistration.participants || []).map((p: any) =>
+                        mapToRecipientInfo(selectedRegistration, p)
+                      );
+                      setComposerDefaultTemplate("CONFIRMATION");
+                      setWhatsAppComposerTarget(recipients);
+                    }}
+                    className="text-xs h-7 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+                  >
+                    Confirmation
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const recipients = (selectedRegistration.participants || []).map((p: any) =>
+                        mapToRecipientInfo(selectedRegistration, p)
+                      );
+                      setComposerDefaultTemplate("QUIZ");
+                      setWhatsAppComposerTarget(recipients);
+                    }}
+                    className="text-xs h-7 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+                  >
+                    Quiz Link
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const recipients = (selectedRegistration.participants || []).map((p: any) =>
+                        mapToRecipientInfo(selectedRegistration, p)
+                      );
+                      setComposerDefaultTemplate("VENUE");
+                      setWhatsAppComposerTarget(recipients);
+                    }}
+                    className="text-xs h-7 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+                  >
+                    Venue Location
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="primary"
+                    onClick={() => {
+                      const recipients = (selectedRegistration.participants || []).map((p: any) =>
+                        mapToRecipientInfo(selectedRegistration, p)
+                      );
+                      setComposerDefaultTemplate("CUSTOM");
+                      setWhatsAppComposerTarget(recipients);
+                    }}
+                    className="text-xs h-7 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                  >
+                    Open Composer
+                  </Button>
                 </div>
               </div>
 
@@ -2635,6 +2863,21 @@ export function AdminDashboardClient({
             </div>
           </div>
         </Modal>
+      )}
+
+      {/* WhatsApp Composer Modal */}
+      {whatsAppComposerTarget && (
+        <WhatsAppComposerModal
+          isOpen={!!whatsAppComposerTarget}
+          onClose={() => setWhatsAppComposerTarget(null)}
+          recipients={whatsAppComposerTarget}
+          settings={whatsAppSettings}
+          defaultTemplate={composerDefaultTemplate}
+          isLight={isLight}
+          onSentSuccess={() => {
+            showToast("WhatsApp dispatch completed successfully!", "success");
+          }}
+        />
       )}
     </div>
   );
