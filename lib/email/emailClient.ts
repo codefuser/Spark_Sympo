@@ -1,8 +1,13 @@
 /**
  * Server-Side Transactional Email Client
- * Communicates with Resend / Transactional Email HTTP API securely on the server.
- * Never leaks API keys or secrets to the browser.
+ * Supports:
+ * 1. Brevo (Sendinblue) API (300 free emails/day to ANY student email without custom domain!)
+ * 2. Gmail SMTP (Nodemailer)
+ * 3. Resend Transactional Email API (https://resend.com)
+ * 4. Fallback Mailto URL generation
  */
+
+import nodemailer from "nodemailer";
 
 export interface EmailConfig {
   isConfigured: boolean;
@@ -12,39 +17,71 @@ export interface EmailConfig {
   senderName: string;
   replyToEmail: string;
   provider: string;
+  driver: "brevo" | "gmail" | "resend" | "none";
 }
 
 export function getEmailConfig(): EmailConfig {
-  const apiKey =
-    process.env.RESEND_API_KEY ||
-    process.env.EMAIL_API_KEY ||
-    "";
+  const brevoApiKey = process.env.BREVO_API_KEY || "";
+  const gmailPassword = process.env.GMAIL_APP_PASSWORD || process.env.SMTP_PASSWORD || "";
+  const gmailUser = process.env.EMAIL_USER || process.env.GMAIL_USER || "hello.sparktron@gmail.com";
+  const resendApiKey = process.env.RESEND_API_KEY || process.env.EMAIL_API_KEY || "";
 
-  const senderEmail =
-    process.env.EMAIL_FROM ||
-    "onboarding@resend.dev";
+  const senderName = process.env.EMAIL_FROM_NAME || "SPARKTRON 2K26";
+  const replyToEmail = process.env.EMAIL_REPLY_TO || "hello.sparktron@gmail.com";
 
-  const senderName =
-    process.env.EMAIL_FROM_NAME ||
-    "SPARKTRON 2K26";
+  // 1. Brevo Priority (Sends to all students without custom domain requirement)
+  if (brevoApiKey) {
+    const senderEmail = process.env.EMAIL_FROM || "hello.sparktron@gmail.com";
+    return {
+      isConfigured: true,
+      missingVars: [],
+      apiKey: brevoApiKey,
+      senderEmail,
+      senderName,
+      replyToEmail,
+      provider: "Brevo Transactional API (Sends to All)",
+      driver: "brevo",
+    };
+  }
 
-  const replyToEmail =
-    process.env.EMAIL_REPLY_TO ||
-    "sparktron2k26@gmail.com";
+  // 2. Gmail SMTP
+  if (gmailPassword) {
+    return {
+      isConfigured: true,
+      missingVars: [],
+      apiKey: gmailPassword,
+      senderEmail: gmailUser,
+      senderName,
+      replyToEmail,
+      provider: "Gmail SMTP Direct",
+      driver: "gmail",
+    };
+  }
 
-  const missingVars: string[] = [];
-  if (!apiKey) {
-    missingVars.push("RESEND_API_KEY (or EMAIL_API_KEY)");
+  // 3. Resend
+  if (resendApiKey) {
+    const senderEmail = process.env.EMAIL_FROM || "onboarding@resend.dev";
+    return {
+      isConfigured: true,
+      missingVars: [],
+      apiKey: resendApiKey,
+      senderEmail,
+      senderName,
+      replyToEmail,
+      provider: "Resend Transactional API",
+      driver: "resend",
+    };
   }
 
   return {
-    isConfigured: missingVars.length === 0,
-    missingVars,
-    apiKey,
-    senderEmail,
+    isConfigured: false,
+    missingVars: ["BREVO_API_KEY or RESEND_API_KEY"],
+    apiKey: "",
+    senderEmail: "hello.sparktron@gmail.com",
     senderName,
     replyToEmail,
-    provider: "Resend Transactional Email API",
+    provider: "Unconfigured",
+    driver: "none",
   };
 }
 
@@ -66,8 +103,7 @@ export interface SendEmailResponse {
 }
 
 /**
- * Dispatches an email via the transactional email API.
- * Accurately reports success or error without falsifying delivery.
+ * Dispatches an email via Brevo, Gmail SMTP, or Resend API.
  */
 export async function sendEmail({
   to,
@@ -97,10 +133,120 @@ export async function sendEmail({
       success: false,
       configured: false,
       status: "Failed",
-      error: `Email service is not configured on server. Missing: ${config.missingVars.join(", ")}. Please set RESEND_API_KEY in .env.`,
+      error: `Email service is not configured. Missing: ${config.missingVars.join(", ")}.`,
     };
   }
 
+  // ==========================================
+  // DRIVER 1: Brevo (Sendinblue) API
+  // Sends to ANY student address without custom domain!
+  // ==========================================
+  if (config.driver === "brevo") {
+    try {
+      const cleanSenderEmail = config.senderEmail.includes("<")
+        ? config.senderEmail.replace(/.*<([^>]+)>.*/, "$1").trim()
+        : config.senderEmail.trim();
+
+      const payload = {
+        sender: {
+          name: config.senderName,
+          email: cleanSenderEmail,
+        },
+        to: validRecipients.map((email) => ({ email })),
+        subject: subject,
+        htmlContent: html,
+        textContent: text || html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
+        replyTo: {
+          email: replyTo || config.replyToEmail || "hello.sparktron@gmail.com",
+          name: config.senderName,
+        },
+      };
+
+      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "api-key": config.apiKey,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const resData = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        return {
+          success: false,
+          configured: true,
+          status: "Failed",
+          error: resData.message || `Brevo Error: HTTP ${res.status}`,
+          raw: resData,
+        };
+      }
+
+      return {
+        success: true,
+        configured: true,
+        status: "Sent",
+        messageId: resData.messageId || resData.messageIds?.[0],
+        raw: resData,
+      };
+    } catch (brevoErr: any) {
+      console.error("[Brevo Error]:", brevoErr);
+      return {
+        success: false,
+        configured: true,
+        status: "Failed",
+        error: brevoErr.message || "Failed to communicate with Brevo Email API.",
+      };
+    }
+  }
+
+  // ==========================================
+  // DRIVER 2: Gmail SMTP (Nodemailer)
+  // ==========================================
+  if (config.driver === "gmail") {
+    try {
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: config.senderEmail,
+          pass: config.apiKey,
+        },
+      });
+
+      const formattedFrom = `"${config.senderName}" <${config.senderEmail}>`;
+
+      const info = await transporter.sendMail({
+        from: formattedFrom,
+        to: validRecipients,
+        subject,
+        html,
+        text: text || html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
+        replyTo: replyTo || config.replyToEmail,
+      });
+
+      return {
+        success: true,
+        configured: true,
+        status: "Sent",
+        messageId: info.messageId,
+        raw: info,
+      };
+    } catch (smtpErr: any) {
+      console.error("[Gmail SMTP Error]:", smtpErr);
+      return {
+        success: false,
+        configured: true,
+        status: "Failed",
+        error: smtpErr.message || "Failed to send email via Gmail SMTP.",
+      };
+    }
+  }
+
+  // ==========================================
+  // DRIVER 3: Resend HTTP API
+  // ==========================================
   try {
     const formattedFrom = config.senderEmail.includes("<")
       ? config.senderEmail
@@ -127,12 +273,16 @@ export async function sendEmail({
     const resData = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      const errorMsg =
+      let errorMsg =
         resData.message ||
         resData.error?.message ||
-        `HTTP Error ${res.status}: ${res.statusText}`;
+        `Resend API error (HTTP ${res.status}): ${res.statusText}`;
 
-      console.error("[Email Dispatch Error]:", resData);
+      // User-friendly diagnostic for Resend sandbox domain restriction
+      if (res.status === 403 && errorMsg.includes("own email address")) {
+        errorMsg = `Resend Sandbox Mode: Only allows sending to your account email (${config.replyToEmail}). To send to all students, add a custom domain at resend.com/domains or use Brevo (BREVO_API_KEY).`;
+      }
+
       return {
         success: false,
         configured: true,
@@ -142,32 +292,47 @@ export async function sendEmail({
       };
     }
 
-    const messageId = resData.id || `msg_${Date.now()}`;
-
     return {
       success: true,
       configured: true,
       status: "Sent",
-      messageId,
+      messageId: resData.id,
       raw: resData,
     };
   } catch (err: any) {
-    console.error("[Email Network/Fetch Error]:", err);
     return {
       success: false,
       configured: true,
       status: "Failed",
-      error: err.message || "Failed to reach email provider endpoint.",
+      error: err?.message || "Network error communicating with Email API.",
     };
   }
 }
 
 /**
- * Generates an instant mailto link for direct desktop client fallback testing.
+ * Fallback generator for native mailto: links when automated API is unavailable.
  */
-export function generateMailtoLink(to: string, subject: string, bodyText: string): string {
-  const cleanTo = encodeURIComponent(to || "");
-  const cleanSubj = encodeURIComponent(subject || "");
-  const cleanBody = encodeURIComponent(bodyText || "");
-  return `mailto:${cleanTo}?subject=${cleanSubj}&body=${cleanBody}`;
+export function generateMailtoLink(
+  toOrParams: string | { to: string; subject: string; body: string },
+  subjectArg?: string,
+  bodyArg?: string
+): string {
+  let to = "";
+  let subject = "";
+  let body = "";
+
+  if (typeof toOrParams === "object") {
+    to = toOrParams.to || "";
+    subject = toOrParams.subject || "";
+    body = toOrParams.body || "";
+  } else {
+    to = toOrParams || "";
+    subject = subjectArg || "";
+    body = bodyArg || "";
+  }
+
+  const params = new URLSearchParams();
+  if (subject) params.set("subject", subject);
+  if (body) params.set("body", body);
+  return `mailto:${encodeURIComponent(to)}?${params.toString().replace(/\+/g, "%20")}`;
 }
