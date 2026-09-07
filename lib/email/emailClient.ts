@@ -102,7 +102,9 @@ export async function sendEmail({
   }
 
   try {
-    const formattedFrom = `${config.senderName} <${config.senderEmail}>`;
+    const formattedFrom = config.senderEmail.includes("<")
+      ? config.senderEmail
+      : `${config.senderName || "SPARKTRON 2K26"} <${config.senderEmail || "onboarding@resend.dev"}>`;
 
     const payload = {
       from: formattedFrom,
@@ -110,7 +112,7 @@ export async function sendEmail({
       subject: subject,
       html: html,
       text: text || html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
-      reply_to: replyTo || config.replyToEmail,
+      reply_to: replyTo || config.replyToEmail || "hello.sparktron@gmail.com",
     };
 
     const res = await fetch("https://api.resend.com/emails", {

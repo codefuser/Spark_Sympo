@@ -5,7 +5,7 @@ export const DEFAULT_EMAIL_SETTINGS: EmailSettings = {
   id: "default_settings",
   senderName: "SPARKTRON 2K26",
   senderEmail: "onboarding@resend.dev",
-  replyToEmail: "sparktron2k26@gmail.com",
+  replyToEmail: "hello.sparktron@gmail.com",
   venueName: "Thamirabharani Engineering College",
   venueAddress: "ECE Block Auditorium & Labs, College Campus, Tirunelveli",
   mapLink: "https://maps.google.com/?q=Thamirabharani+Engineering+College",
