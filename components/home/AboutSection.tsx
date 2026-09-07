@@ -387,23 +387,17 @@ export function AboutSection() {
               style={{ transitionDelay: "360ms" }}
             >
               <div className="flex items-center space-x-4">
-                {/* 3. Animated College / Institution Icon: Smooth fade, scale & glow effect */}
+                {/* 3. Animated College / Institution Icon: 68px round circle with breathing cyan glow */}
                 <div
                   className={cn(
-                    "relative p-3 rounded-xl bg-primary/10 text-primary border border-primary/25 shrink-0 group-hover:border-primary/50 transition-colors",
-                    inView && "college-badge-animated"
+                    "relative flex items-center justify-center shrink-0 w-[68px] h-[68px] rounded-full bg-cyan/10 text-cyan border border-cyan transition-colors",
+                    inView && "slow-breathing-cyan-glow"
                   )}
                 >
-                  {inView && (
-                    <span
-                      className="pointer-events-none absolute inset-0 rounded-xl border border-primary/40 animate-icon-echo"
-                      aria-hidden="true"
-                    />
-                  )}
                   <Building2
                     className={cn(
-                      "w-6 h-6 sm:w-7 sm:h-7 transition-all duration-500 ease-out",
-                      inView ? "college-icon-animated" : "scale-75 opacity-0"
+                      "w-7 h-7 transition-all duration-500 ease-out",
+                      inView ? "opacity-100 scale-100" : "scale-75 opacity-0"
                     )}
                   />
                 </div>
@@ -419,13 +413,12 @@ export function AboutSection() {
                 </div>
               </div>
 
-              {/* Accreditation Badges */}
               <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
                 <span className="px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary font-semibold flex items-center gap-1.5 shadow-[0_0_6px_rgba(0,240,255,0.06)]">
-                  <ShieldCheck className="w-4 h-4 text-primary" /> AICTE Approved, New Delhi
+                  <ShieldCheck className="w-4 h-4 text-primary" /> AICTE Approved
                 </span>
                 <span className="px-3 py-1.5 rounded-full bg-cyan/10 border border-cyan/30 text-cyan font-semibold flex items-center gap-1.5 shadow-[0_0_6px_rgba(0,114,255,0.06)]">
-                  <Award className="w-4 h-4 text-cyan" /> Autonomous Institution
+                  <Award className="w-4 h-4 text-cyan" /> Autonomous
                 </span>
               </div>
             </div>

@@ -338,3 +338,18 @@ html.dark,
   }
 }
 
+@keyframes slowBreathingCyanGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 240, 255, 0.15);
+    border-color: rgba(0, 240, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.5);
+    border-color: rgba(0, 240, 255, 0.8);
+  }
+}
+
+.slow-breathing-cyan-glow {
+  animation: slowBreathingCyanGlow 4s ease-in-out infinite;
+}
+
