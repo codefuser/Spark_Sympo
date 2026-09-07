@@ -65,7 +65,7 @@ export function EmailPreviewCard({
           <button
             type="button"
             onClick={() => setDeviceView("desktop")}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg transition-colors ${
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition-colors font-semibold ${
               deviceView === "desktop"
                 ? "bg-cyan-600 text-white font-bold shadow-xs"
                 : isLight
@@ -73,13 +73,13 @@ export function EmailPreviewCard({
                 : "text-slate-400 hover:text-white"
             }`}
           >
-            <Monitor className="w-3 h-3" />
+            <Monitor className="w-3.5 h-3.5" />
             Desktop
           </button>
           <button
             type="button"
             onClick={() => setDeviceView("mobile")}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg transition-colors ${
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition-colors font-semibold ${
               deviceView === "mobile"
                 ? "bg-cyan-600 text-white font-bold shadow-xs"
                 : isLight
@@ -87,8 +87,8 @@ export function EmailPreviewCard({
                 : "text-slate-400 hover:text-white"
             }`}
           >
-            <Smartphone className="w-3 h-3" />
-            Mobile
+            <Smartphone className="w-3.5 h-3.5" />
+            Mobile Frame
           </button>
         </div>
       </div>
@@ -140,33 +140,47 @@ export function EmailPreviewCard({
         </div>
       </div>
 
-      {/* Responsive Preview Canvas */}
+      {/* Responsive Preview Canvas (Generous, matching tall layout) */}
       <div
-        className={`p-4 overflow-y-auto max-h-[520px] flex justify-center ${
-          isLight ? "bg-slate-100/70" : "bg-slate-950/70"
+        className={`p-4 md:p-6 overflow-y-auto min-h-[750px] max-h-[860px] flex justify-center items-start ${
+          isLight ? "bg-slate-100/80" : "bg-slate-950/80"
         }`}
-        style={{
-          transition: "max-width 0.3s ease",
-        }}
       >
-        <div
-          className={`w-full transition-all duration-300 ${
-            deviceView === "mobile"
-              ? isLight
-                ? "max-w-[360px] border-4 border-slate-300 rounded-3xl p-2 bg-white shadow-md overflow-hidden"
-                : "max-w-[360px] border-4 border-slate-700 rounded-3xl p-2 bg-black shadow-2xl overflow-hidden"
-              : "max-w-[620px]"
-          }`}
-        >
-          {deviceView === "mobile" && (
-            <div className="w-16 h-1 bg-slate-300 dark:bg-slate-600 rounded-full mx-auto mb-2" />
-          )}
-
+        {deviceView === "mobile" ? (
+          /* High-Fidelity Smartphone Mockup */
           <div
-            className="w-full bg-white rounded-xl shadow-xs overflow-hidden"
-            dangerouslySetInnerHTML={{ __html: htmlContent }}
-          />
-        </div>
+            className={`w-full max-w-[390px] border-[8px] rounded-[48px] p-2.5 shadow-2xl flex flex-col transition-all duration-300 ${
+              isLight
+                ? "bg-slate-800 border-slate-700 ring-1 ring-slate-900/10 shadow-xl"
+                : "bg-slate-900 border-slate-700/80 ring-1 ring-white/10 shadow-2xl"
+            }`}
+          >
+            {/* Dynamic Island / Speaker Pill */}
+            <div className="w-24 h-4 bg-slate-950 rounded-full mx-auto mb-2 flex items-center justify-center gap-1.5 shrink-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-700 inline-block" />
+              <span className="w-8 h-1 bg-slate-700 rounded-full inline-block" />
+            </div>
+
+            {/* Inner Mobile Screen (Tall & Scrollable) */}
+            <div className="w-full h-[680px] overflow-y-auto rounded-[36px] bg-white border border-slate-200/70 shadow-inner scrollbar-thin">
+              <div
+                className="w-full bg-white"
+                dangerouslySetInnerHTML={{ __html: htmlContent }}
+              />
+            </div>
+
+            {/* Phone Home Bar Indicator */}
+            <div className="w-28 h-1 bg-slate-500/80 rounded-full mx-auto mt-2.5 shrink-0" />
+          </div>
+        ) : (
+          /* Desktop Browser Email Layout */
+          <div className="w-full max-w-[620px] transition-all duration-300">
+            <div
+              className="w-full bg-white rounded-2xl shadow-md border border-slate-200/80 overflow-hidden"
+              dangerouslySetInnerHTML={{ __html: htmlContent }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

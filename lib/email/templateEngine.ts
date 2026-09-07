@@ -480,9 +480,13 @@ export function generateHtmlEmail({
           <!-- Body Content Area -->
           <tr>
             <td style="padding: 28px 24px;">
-              <h2 style="margin: 0 0 14px 0; color: #0f172a; font-size: 18px; font-weight: 700;">
-                Hello ${recipient.name},
-              </h2>
+              ${
+                !contentBodyText.trim().toLowerCase().startsWith("hello") &&
+                !contentBodyText.trim().toLowerCase().startsWith("hi") &&
+                !contentBodyText.trim().toLowerCase().startsWith("dear")
+                  ? `<h2 style="margin: 0 0 14px 0; color: #0f172a; font-size: 18px; font-weight: 700;">Hello ${recipient.name},</h2>`
+                  : ""
+              }
 
               <!-- Custom Body Paragraphs -->
               <div style="font-size: 14px; color: #374151;">

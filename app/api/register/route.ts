@@ -180,9 +180,7 @@ export async function POST(request: Request) {
     // 9. Automatically dispatch personalized confirmation email
     try {
       const { sendAutomaticRegistrationConfirmation } = await import("@/lib/email/registrationNotification");
-      sendAutomaticRegistrationConfirmation(supaReg.id).catch((err) => {
-        console.warn("[Auto-Email] Async confirmation dispatch warning:", err);
-      });
+      await sendAutomaticRegistrationConfirmation(supaReg.id);
     } catch (emailErr) {
       console.warn("[Auto-Email] Confirmation trigger warning:", emailErr);
     }
