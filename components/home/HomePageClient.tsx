@@ -309,22 +309,14 @@ export function HomePageClient({
                 </div>
               </div>
 
-              <div className="pt-6 mt-6 border-t border-primary/10 flex items-center justify-between gap-3">
+              <div className="pt-6 mt-6 border-t border-primary/10">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-1/2"
+                  className="w-full"
                   onClick={() => setSelectedEventDetail(event)}
                 >
                   Rules
-                </Button>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  className="w-1/2"
-                  onClick={() => openRegistrationModal(event.id)}
-                >
-                  Register →
                 </Button>
               </div>
             </Card>
