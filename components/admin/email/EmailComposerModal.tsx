@@ -11,8 +11,8 @@ import {
   EMAIL_AVAILABLE_VARIABLES,
   interpolateVariables,
   generateHtmlEmail,
+  generateMailtoLink,
 } from "@/lib/email/templateEngine";
-import { generateMailtoLink } from "@/lib/email/emailClient";
 import { EmailPreviewCard } from "./EmailPreviewCard";
 import { BulkEmailConfirmModal } from "./BulkEmailConfirmModal";
 import {
