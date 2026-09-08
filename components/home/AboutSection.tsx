@@ -374,7 +374,7 @@ export function AboutSection() {
                 {/* 3. Animated College / Institution Icon: 68px round circle with breathing cyan glow */}
                 <div
                   className={cn(
-                    "relative flex items-center justify-center shrink-0 w-[68px] h-[68px] rounded-full bg-cyan/10 text-cyan border border-cyan transition-colors overflow-hidden",
+                    "relative flex items-center justify-center shrink-0 w-[68px] h-[68px] rounded-full bg-transparent text-cyan border border-cyan transition-colors overflow-hidden",
                     inView && "slow-breathing-cyan-glow"
                   )}
                 >
