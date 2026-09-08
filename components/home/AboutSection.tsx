@@ -180,9 +180,104 @@ function HudCorners() {
   );
 }
 
+function ScanningText({ text, isVisible }: { text: string; isVisible: boolean }) {
+  const [isScanning, setIsScanning] = useState(false);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    
+    if (isVisible) {
+      timeout = setTimeout(() => {
+        setIsScanning(true);
+      }, 1000);
+    } else {
+      setIsScanning(false);
+    }
+    
+    return () => clearTimeout(timeout);
+  }, [isVisible]);
+
+  return (
+    <span className="relative inline-grid">
+      <span className="col-start-1 row-start-1">{text}</span>
+      {isScanning && (
+        <span 
+          aria-hidden="true"
+          className="col-start-1 row-start-1 bg-clip-text text-transparent pointer-events-none"
+          style={{
+            backgroundImage: "linear-gradient(90deg, transparent 0%, transparent 40%, rgba(0, 240, 255, 0.8) 50%, transparent 60%, transparent 100%)",
+            backgroundSize: "300% 100%",
+            backgroundRepeat: "no-repeat",
+            animation: "scanTextAnim 5.5s linear infinite",
+          }}
+        >
+          {text}
+        </span>
+      )}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes scanTextAnim {
+          0% { background-position: 100% 0; }
+          27.27% { background-position: 0% 0; }
+          100% { background-position: 0% 0; }
+        }
+      `}} />
+    </span>
+  );
+}
+
+function NeonScanText({ text }: { text: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <span ref={ref} className="relative inline-grid">
+      <span className="col-start-1 row-start-1">{text}</span>
+      {isVisible && (
+        <span 
+          aria-hidden="true"
+          className="col-start-1 row-start-1 bg-clip-text text-transparent pointer-events-none"
+          style={{
+            backgroundImage: "linear-gradient(90deg, transparent 0%, transparent 40%, rgba(0, 240, 255, 0.8) 50%, transparent 60%, transparent 100%)",
+            backgroundSize: "300% 100%",
+            backgroundRepeat: "no-repeat",
+            animation: "neonScanAnim 3s linear infinite",
+          }}
+        >
+          {text}
+        </span>
+      )}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes neonScanAnim {
+          0% { background-position: 100% 0; }
+          50% { background-position: 0% 0; }
+          100% { background-position: 0% 0; }
+        }
+      `}} />
+    </span>
+  );
+}
+
 export function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
+  const [isCurrentlyVisible, setIsCurrentlyVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isClamped, setIsClamped] = useState(true);
 
@@ -222,12 +317,22 @@ export function AboutSection() {
       }
     );
 
+    const continuousObserver = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        setIsCurrentlyVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
+      continuousObserver.observe(sectionRef.current);
     }
 
     return () => {
       observer.disconnect();
+      continuousObserver.disconnect();
     };
   }, []);
 
@@ -399,7 +504,7 @@ export function AboutSection() {
                     <span>INSTITUTION PROFILE</span>
                   </div>
                   <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mt-1">
-                    About Thamirabharani Engineering College
+                    About <ScanningText text="Thamirabharani Engineering College" isVisible={isCurrentlyVisible} />
                   </h3>
                 </div>
               </div>
@@ -542,7 +647,7 @@ export function AboutSection() {
               <span>DEPARTMENT OVERVIEW</span>
             </div>
             <h3 className="text-2xl font-extrabold text-white mb-3 transition-colors duration-300 group-hover:text-cyan">
-              Department of ECE
+              <NeonScanText text="Department of ECE" />
             </h3>
             <p className="text-sm text-slate-300 leading-relaxed">
               The Department of Electronics and Communication Engineering is
@@ -581,7 +686,7 @@ export function AboutSection() {
               <span>DEPARTMENT OVERVIEW</span>
             </div>
             <h3 className="text-2xl font-extrabold text-white mb-3 transition-colors duration-300 group-hover:text-cyan">
-              Department of EEE
+              <NeonScanText text="Department of EEE" />
             </h3>
             <p className="text-sm text-slate-300 leading-relaxed">
               The program in Electrical &amp; Electronics Engineering is one of the premier undergraduate programs offered by the Thamirabharani Engineering College. The EEE department has a team of highly qualified and experienced faculty. With its excellent infrastructure, the department places emphasis on sound practical knowledge, while nurturing creativity in the students. With Anna University's curriculum, the Department places equal emphasis on theoretical and experimental electrical and electronics engineering.
@@ -628,7 +733,7 @@ export function AboutSection() {
               <span>THE SYMPOSIUM LEGACY</span>
             </div>
             <h3 className="text-2xl font-extrabold text-white mb-3">
-              What is SPARKTRON 2K26?
+              <NeonScanText text="What is SPARKTRON 2K26?" />
             </h3>
             <p className="text-sm text-slate-300 leading-relaxed space-y-3">
               <span>
@@ -675,7 +780,7 @@ export function AboutSection() {
             <div className="p-2 rounded-lg bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)]">
               <Target className="w-6 h-6" />
             </div>
-            <h4 className="text-xl font-bold text-white transition-colors duration-300 group-hover:text-primary">Our Vision</h4>
+            <h4 className="text-xl font-bold text-white transition-colors duration-300 group-hover:text-primary"><NeonScanText text="Our Vision" /></h4>
           </div>
           <p className="text-sm text-slate-300 leading-relaxed">
             To evolve into a center of excellence in Electronics and
@@ -690,7 +795,7 @@ export function AboutSection() {
             <div className="p-2 rounded-lg bg-cyan/10 text-cyan transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)]">
               <Compass className="w-6 h-6" />
             </div>
-            <h4 className="text-xl font-bold text-white transition-colors duration-300 group-hover:text-cyan">Our Mission</h4>
+            <h4 className="text-xl font-bold text-white transition-colors duration-300 group-hover:text-cyan"><NeonScanText text="Our Mission" /></h4>
           </div>
           <ul className="text-sm text-slate-300 leading-relaxed space-y-2 list-disc list-inside">
             <li>
