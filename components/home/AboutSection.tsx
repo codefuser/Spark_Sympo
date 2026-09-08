@@ -65,7 +65,7 @@ function PcbTracesTopRight({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute select-none overflow-hidden opacity-30 transition-opacity duration-700",
+        "pointer-events-none absolute select-none overflow-hidden opacity-60 transition-opacity duration-700",
         className
       )}
       aria-hidden="true"
@@ -76,21 +76,33 @@ function PcbTracesTopRight({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d="M220 30 H140 L90 80 H60"
-          stroke="#00F0FF"
-          strokeWidth="1.2"
-        />
-        <circle cx="60" cy="80" r="2.5" fill="#00F0FF" />
-        <circle cx="140" cy="30" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
+        <g opacity="0.5">
+          <path d="M220 30 H140 L90 80 H60" stroke="#00F0FF" strokeWidth="1.2" />
+          <circle cx="60" cy="80" r="2.5" fill="#00F0FF" />
+          <circle cx="140" cy="30" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
+        </g>
         
-        <path
-          d="M220 50 H160 L110 100 H80"
-          stroke="#0072FF"
-          strokeWidth="1.2"
-        />
-        <circle cx="80" cy="100" r="2.5" fill="#0072FF" />
-        <circle cx="160" cy="50" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
+        {/* Animated glowing dot 1 */}
+        <circle r="3.5" fill="#00F0FF" opacity="0.6">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M220 30 H140 L90 80 H60" />
+        </circle>
+        <circle r="1.5" fill="#fff">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M220 30 H140 L90 80 H60" />
+        </circle>
+        
+        <g opacity="0.5">
+          <path d="M220 50 H160 L110 100 H80" stroke="#0072FF" strokeWidth="1.2" />
+          <circle cx="80" cy="100" r="2.5" fill="#0072FF" />
+          <circle cx="160" cy="50" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
+        </g>
+
+        {/* Animated glowing dot 2 */}
+        <circle r="3.5" fill="#0072FF" opacity="0.6">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M220 50 H160 L110 100 H80" />
+        </circle>
+        <circle r="1.5" fill="#fff">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M220 50 H160 L110 100 H80" />
+        </circle>
       </svg>
     </div>
   );
@@ -101,7 +113,7 @@ function PcbTracesBottomLeft({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute select-none overflow-hidden opacity-30 transition-opacity duration-700",
+        "pointer-events-none absolute select-none overflow-hidden opacity-60 transition-opacity duration-700",
         className
       )}
       aria-hidden="true"
@@ -112,21 +124,33 @@ function PcbTracesBottomLeft({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d="M0 90 H80 L130 40 H160"
-          stroke="#0072FF"
-          strokeWidth="1.2"
-        />
-        <circle cx="160" cy="40" r="2.5" fill="#0072FF" />
-        <circle cx="80" cy="90" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
+        <g opacity="0.5">
+          <path d="M0 90 H80 L130 40 H160" stroke="#0072FF" strokeWidth="1.2" />
+          <circle cx="160" cy="40" r="2.5" fill="#0072FF" />
+          <circle cx="80" cy="90" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
+        </g>
 
-        <path
-          d="M0 70 H60 L110 20 H140"
-          stroke="#00F0FF"
-          strokeWidth="1.2"
-        />
-        <circle cx="140" cy="20" r="2.5" fill="#00F0FF" />
-        <circle cx="60" cy="70" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
+        {/* Animated glowing dot 1 */}
+        <circle r="3.5" fill="#0072FF" opacity="0.6">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M0 90 H80 L130 40 H160" />
+        </circle>
+        <circle r="1.5" fill="#fff">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M0 90 H80 L130 40 H160" />
+        </circle>
+
+        <g opacity="0.5">
+          <path d="M0 70 H60 L110 20 H140" stroke="#00F0FF" strokeWidth="1.2" />
+          <circle cx="140" cy="20" r="2.5" fill="#00F0FF" />
+          <circle cx="60" cy="70" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
+        </g>
+
+        {/* Animated glowing dot 2 */}
+        <circle r="3.5" fill="#00F0FF" opacity="0.6">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M0 70 H60 L110 20 H140" />
+        </circle>
+        <circle r="1.5" fill="#fff">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M0 70 H60 L110 20 H140" />
+        </circle>
       </svg>
     </div>
   );
@@ -321,60 +345,6 @@ export function AboutSection() {
           {/* HUD Corner Brackets */}
           <HudCorners />
 
-          {/* 2. Scanning Light: Outer border tracking pulses from top-left to bottom-right */}
-          <div
-            className="pointer-events-none absolute inset-0 rounded-[24px] overflow-hidden z-20"
-            aria-hidden="true"
-          >
-            <style>
-              {`
-                @keyframes pulse-horz {
-                  0% { transform: translateX(-100%); }
-                  100% { transform: translateX(250%); }
-                }
-                @keyframes pulse-vert {
-                  0% { transform: translateY(-100%); }
-                  100% { transform: translateY(250%); }
-                }
-                .animate-pulse-top {
-                  animation: pulse-horz 2s linear forwards;
-                  animation-delay: 300ms;
-                }
-                .animate-pulse-right {
-                  animation: pulse-vert 2s linear forwards;
-                  animation-delay: 2300ms;
-                }
-                .animate-pulse-bottom {
-                  animation: pulse-horz 2s linear forwards;
-                  animation-delay: 2300ms;
-                }
-                .animate-pulse-left {
-                  animation: pulse-vert 2s linear forwards;
-                  animation-delay: 300ms;
-                }
-              `}
-            </style>
-            {inView && (
-              <>
-                {/* Top Edge (moves L -> R) */}
-                <div 
-                  className="absolute top-0 left-0 h-[2px] w-[40%] bg-gradient-to-r from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-top" 
-                />
-                {/* Right Edge (moves T -> B) */}
-                <div 
-                  className="absolute right-0 top-0 w-[2px] h-[40%] bg-gradient-to-b from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-right" 
-                />
-                {/* Left Edge (moves T -> B) */}
-                <div 
-                  className="absolute left-0 top-0 w-[2px] h-[40%] bg-gradient-to-b from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-left" 
-                />
-                {/* Bottom Edge (moves L -> R) */}
-                <div 
-                  className="absolute bottom-0 left-0 h-[2px] w-[40%] bg-gradient-to-r from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-bottom" 
-                />
-              </>
-            )}
-          </div>
 
           {/* 5. PCB Circuit Traces inside the About card (Cyan & Blue, decorative & subtle) */}
           <PcbTracesTopRight className="top-1 right-2 sm:top-2 sm:right-5 w-36 h-20 sm:w-56 sm:h-28" />
@@ -417,7 +387,7 @@ export function AboutSection() {
                 </div>
 
                 <div>
-                  <div className="flex items-center space-x-2 text-primary font-mono text-xs tracking-wider uppercase font-semibold">
+                  <div className="flex items-center space-x-2 text-primary font-mono text-xs tracking-[0.25em] uppercase font-semibold">
                     <GraduationCap className="w-4 h-4" />
                     <span>INSTITUTION PROFILE</span>
                   </div>
