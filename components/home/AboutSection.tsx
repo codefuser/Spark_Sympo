@@ -378,11 +378,19 @@ export function AboutSection() {
                     inView && "slow-breathing-cyan-glow"
                   )}
                 >
-                  <Building2 
+                  <svg width="0" height="0" className="absolute pointer-events-none">
+                    <filter id="remove-white">
+                      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -1 -1 -1 0 3" />
+                    </filter>
+                  </svg>
+                  <img 
+                    src="/eagle.png"
+                    alt="Eagle Logo"
                     className={cn(
-                      "w-8 h-8 transition-all duration-500 ease-out",
+                      "w-[85%] h-[85%] object-contain transition-all duration-500 ease-out",
                       inView ? "opacity-100 scale-100" : "scale-75 opacity-0"
                     )}
+                    style={{ filter: "url(#remove-white)" }}
                   />
                 </div>
 
@@ -565,7 +573,7 @@ export function AboutSection() {
         >
           <HudCorners />
           <div>
-            <div className="flex items-center space-x-2 text-amber-500 font-mono text-sm mb-2">
+            <div className="flex items-center space-x-2 text-cyan font-mono text-sm mb-2">
               <Cpu className="w-4 h-4" />
               <span>DEPARTMENT OVERVIEW</span>
             </div>
@@ -577,14 +585,14 @@ export function AboutSection() {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
-            <div className="p-3.5 rounded-xl bg-background/85 border border-amber-500/20 hover:border-amber-500/50 transition-colors">
-              <div className="text-xl sm:text-2xl font-bold text-amber-500">
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-primary/50 transition-colors">
+              <div className="text-xl sm:text-2xl font-bold text-primary">
                 Premier
               </div>
               <div className="text-slate-400 mt-1">UG Program</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-background/85 border border-amber-500/20 hover:border-emerald-400/50 transition-colors">
-              <div className="text-xl sm:text-2xl font-bold text-emerald-400">
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-cyan/50 transition-colors">
+              <div className="text-xl sm:text-2xl font-bold text-cyan">
                 Excellent
               </div>
               <div className="text-slate-400 mt-1">Infrastructure</div>
