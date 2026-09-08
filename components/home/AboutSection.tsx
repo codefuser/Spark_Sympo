@@ -490,12 +490,14 @@ export function AboutSection() {
               <div
                 data-reveal
                 className={cn(
-                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-primary/60 hover:shadow-[0_0_20px_rgba(0,240,255,0.22)] cursor-default flex flex-col items-center justify-center min-h-[80px]",
+                  "group/stat relative overflow-hidden p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-300 ease-out hover:-translate-y-[2px] hover:border-primary/80 hover:shadow-[0_0_15px_rgba(0,240,255,0.15)] cursor-default flex flex-col items-center justify-center min-h-[80px]",
                   inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 )}
                 style={{ transitionDelay: "1000ms" }}
               >
-                <div className="text-base sm:text-xl md:text-2xl font-bold text-primary tracking-tight">
+                <div className="absolute top-0 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-0 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                <div className="text-base sm:text-xl md:text-2xl font-bold text-primary tracking-tight transition-transform duration-300 group-hover/stat:scale-[1.03]">
                   <AnimatedCounter inView={inView} target={25} delay={480} /> Acres
                 </div>
               </div>
@@ -504,12 +506,14 @@ export function AboutSection() {
               <div
                 data-reveal
                 className={cn(
-                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-emerald-400/60 hover:shadow-[0_0_20px_rgba(52,211,153,0.25)] cursor-default flex flex-col items-center justify-center min-h-[80px]",
+                  "group/stat relative overflow-hidden p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-300 ease-out hover:-translate-y-[2px] hover:border-emerald-400/80 hover:shadow-[0_0_15px_rgba(52,211,153,0.15)] cursor-default flex flex-col items-center justify-center min-h-[80px]",
                   inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 )}
                 style={{ transitionDelay: "1160ms" }}
               >
-                <div className="text-base sm:text-xl md:text-2xl font-bold text-emerald-400 tracking-tight">
+                <div className="absolute top-0 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-0 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                <div className="text-base sm:text-xl md:text-2xl font-bold text-emerald-400 tracking-tight transition-transform duration-300 group-hover/stat:scale-[1.03]">
                   Autonomous
                 </div>
               </div>
@@ -522,15 +526,15 @@ export function AboutSection() {
       <div
         data-reveal
         className={cn(
-          "grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch transition-all duration-500 ease-out",
-          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          "grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch transition-all duration-700 ease-out",
+          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
         )}
         style={{ transitionDelay: "1320ms" }}
       >
         {/* Department of ECE */}
         <Card
           glowOnHover
-          className="group relative space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8"
+          className="group relative overflow-hidden space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 transition-all duration-500 hover:-translate-y-1"
         >
           <HudCorners />
           <div>
@@ -538,7 +542,7 @@ export function AboutSection() {
               <Cpu className="w-4 h-4" />
               <span>DEPARTMENT OVERVIEW</span>
             </div>
-            <h3 className="text-2xl font-extrabold text-white mb-3">
+            <h3 className="text-2xl font-extrabold text-white mb-3 transition-colors duration-300 group-hover:text-cyan">
               Department of ECE
             </h3>
             <p className="text-sm text-slate-300 leading-relaxed">
@@ -551,13 +555,13 @@ export function AboutSection() {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
-            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-primary/50 transition-colors">
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-primary/50 transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_15px_rgba(0,240,255,0.15)]">
               <div className="text-xl sm:text-2xl font-bold text-primary">
                 12+
               </div>
               <div className="text-slate-400 mt-1">Advanced Labs</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-cyan/50 transition-colors">
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-cyan/50 transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_15px_rgba(0,240,255,0.15)]">
               <div className="text-xl sm:text-2xl font-bold text-cyan">
                 100%
               </div>
@@ -569,7 +573,7 @@ export function AboutSection() {
         {/* Department of EEE */}
         <Card
           glowOnHover
-          className="group relative space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8"
+          className="group relative overflow-hidden space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 transition-all duration-500 hover:-translate-y-1"
         >
           <HudCorners />
           <div>
@@ -577,7 +581,7 @@ export function AboutSection() {
               <Cpu className="w-4 h-4" />
               <span>DEPARTMENT OVERVIEW</span>
             </div>
-            <h3 className="text-2xl font-extrabold text-white mb-3">
+            <h3 className="text-2xl font-extrabold text-white mb-3 transition-colors duration-300 group-hover:text-cyan">
               Department of EEE
             </h3>
             <p className="text-sm text-slate-300 leading-relaxed">
@@ -585,13 +589,13 @@ export function AboutSection() {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
-            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-primary/50 transition-colors">
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-primary/50 transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_15px_rgba(0,240,255,0.15)]">
               <div className="text-xl sm:text-2xl font-bold text-primary">
                 Premier
               </div>
               <div className="text-slate-400 mt-1">UG Program</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-cyan/50 transition-colors">
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-cyan/50 transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_15px_rgba(0,240,255,0.15)]">
               <div className="text-xl sm:text-2xl font-bold text-cyan">
                 Excellent
               </div>
@@ -605,15 +609,19 @@ export function AboutSection() {
       <div
         data-reveal
         className={cn(
-          "transition-all duration-500 ease-out",
-          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          "transition-all duration-700 ease-out",
+          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
         )}
-        style={{ transitionDelay: "1360ms" }}
+        style={{ transitionDelay: "1420ms" }}
       >
         <Card
           glowOnHover
-          className="group relative space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 max-w-4xl mx-auto text-center"
+          className="group relative overflow-hidden space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 max-w-4xl mx-auto text-center"
         >
+          {/* Animated circuit lines */}
+          <div className="absolute top-0 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 animate-[pulse_3s_ease-in-out_infinite] transition-opacity duration-700" />
+          <div className="absolute bottom-0 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 animate-[pulse_3s_ease-in-out_infinite] transition-opacity duration-700" />
+          
           <HudCorners />
           <div>
             <div className="flex items-center justify-center space-x-2 text-primary font-mono text-sm mb-2">
@@ -657,18 +665,18 @@ export function AboutSection() {
       <div
         data-reveal
         className={cn(
-          "grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-500 ease-out",
-          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          "grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-700 ease-out",
+          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
         )}
-        style={{ transitionDelay: "1400ms" }}
+        style={{ transitionDelay: "1520ms" }}
       >
-        <Card className="group relative border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8">
+        <Card className="group relative overflow-hidden border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 transition-all duration-500 hover:-translate-y-1">
           <HudCorners />
           <div className="flex items-center space-x-3 mb-3">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)]">
               <Target className="w-6 h-6" />
             </div>
-            <h4 className="text-xl font-bold text-white">Our Vision</h4>
+            <h4 className="text-xl font-bold text-white transition-colors duration-300 group-hover:text-primary">Our Vision</h4>
           </div>
           <p className="text-sm text-slate-300 leading-relaxed">
             To evolve into a center of excellence in Electronics and
@@ -677,13 +685,13 @@ export function AboutSection() {
           </p>
         </Card>
 
-        <Card className="group relative border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8">
+        <Card className="group relative overflow-hidden border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 transition-all duration-500 hover:-translate-y-1">
           <HudCorners />
           <div className="flex items-center space-x-3 mb-3">
-            <div className="p-2 rounded-lg bg-cyan/10 text-cyan">
+            <div className="p-2 rounded-lg bg-cyan/10 text-cyan transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)]">
               <Compass className="w-6 h-6" />
             </div>
-            <h4 className="text-xl font-bold text-white">Our Mission</h4>
+            <h4 className="text-xl font-bold text-white transition-colors duration-300 group-hover:text-cyan">Our Mission</h4>
           </div>
           <ul className="text-sm text-slate-300 leading-relaxed space-y-2 list-disc list-inside">
             <li>

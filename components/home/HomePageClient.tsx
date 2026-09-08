@@ -200,28 +200,33 @@ export function HomePageClient({
       <AboutSection />
 
       {/* SECTION 3: SYMPOSIUM HUB */}
-      <section id="symposium" className="container mx-auto px-4 sm:px-6 space-y-16">
+      <section id="symposium" className="container mx-auto px-4 sm:px-6 space-y-16 relative">
         <SectionHeading
           badge="SCHEDULE & GUIDELINES"
           title="Symposium Master Schedule"
           description="Everything you need to know about timings, venue rules, and announcements."
+          className="animate-[fade-in-up_0.8s_ease-out_both] [&>div:last-child]:animate-[scale-x_0.8s_ease-out_0.4s_both] [&>div:last-child]:origin-center"
         />
 
         {/* Master Schedule */}
-        <div className="max-w-3xl mx-auto space-y-3 font-mono">
+        <div className="max-w-3xl mx-auto space-y-3 font-mono relative">
+          {/* Subtle Vertical Timeline */}
+          <div className="absolute left-0 sm:-left-6 top-8 bottom-8 w-[1px] bg-gradient-to-b from-transparent via-cyan/30 to-transparent hidden sm:block animate-[fade-in-up_1s_ease-out_both_0.4s]" />
+
           {schedule.map((item, idx) => (
             <div
               key={idx}
-              className="p-4 rounded-xl bg-card border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-primary/40 transition-colors"
+              className="group relative p-4 rounded-xl bg-card border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all duration-300 ease-out hover:-translate-y-[2px] hover:border-cyan/60 hover:shadow-[0_0_15px_rgba(0,240,255,0.15)] hover:bg-[#0b1018] animate-[fade-in-up_0.6s_ease-out_both]"
+              style={{ animationDelay: `${idx * 100 + 100}ms` }}
             >
-              <div className="flex items-center space-x-3 text-primary text-sm font-bold shrink-0">
-                <Clock className="w-4 h-4 text-cyan" />
+              <div className="flex items-center space-x-3 text-primary text-sm font-bold shrink-0 transition-colors duration-300 group-hover:text-cyan-glow">
+                <Clock className="w-4 h-4 text-cyan transition-colors duration-300 group-hover:text-white" />
                 <span>{item.time}</span>
               </div>
               <div className="flex-1">
                 <h4 className="font-bold text-white text-sm font-sans">{item.title}</h4>
               </div>
-              <div className="text-xs text-slate-400 bg-background px-3 py-1 rounded-lg border border-primary/10 shrink-0">
+              <div className="text-xs text-slate-400 bg-background px-3 py-1 rounded-lg border border-primary/10 shrink-0 transition-all duration-300 group-hover:border-cyan/40 group-hover:text-cyan group-hover:shadow-[0_0_10px_rgba(0,240,255,0.1)]">
                 {item.venue}
               </div>
             </div>
