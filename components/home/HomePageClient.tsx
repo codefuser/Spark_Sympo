@@ -41,7 +41,7 @@ import { useRegistrationModal } from "@/components/registration/RegistrationModa
 import { SymposiumEvent, CoordinatorType, SponsorType } from "@/types";
 import { AboutSection } from "@/components/home/AboutSection";
 
-function ScheduleRow({ item, idx }: { item: { time: string; title: string; venue: string }; idx: number }) {
+function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: string; title: string; venue: string }; idx: number; isVisible: boolean; isReducedMotion: boolean }) {
   const rowRef = React.useRef<HTMLDivElement>(null);
   const [rotation, setRotation] = React.useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = React.useState(false);
@@ -70,23 +70,29 @@ function ScheduleRow({ item, idx }: { item: { time: string; title: string; venue
 
   return (
     <div
-      ref={rowRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className="group/row relative p-4 rounded-xl bg-card border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-[fade-in-up_0.6s_ease-out_both] group-hover/schedule:opacity-40 hover:!opacity-100"
       style={{
-        animationDelay: `${idx * 100 + 100}ms`,
-        transition: isHovered 
-          ? 'transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, z-index 0s' 
-          : 'transform 0.5s ease-out, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, z-index 0.5s',
-        transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) ${isHovered ? 'translateZ(10px) translateY(-6px)' : 'translateZ(0px) translateY(0px)'}`,
-        transformStyle: 'preserve-3d',
-        borderColor: isHovered ? 'rgba(0, 240, 255, 0.6)' : '',
-        boxShadow: isHovered ? '0 20px 40px -10px rgba(0,240,255,0.2), 0 0 15px rgba(0,240,255,0.1)' : '',
-        zIndex: isHovered ? 10 : 1,
+        opacity: isVisible || isReducedMotion ? 1 : 0,
+        transform: isVisible || isReducedMotion ? "translateY(0)" : "translateY(20px)",
+        transition: isReducedMotion ? "none" : `opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) ${idx * 0.8}s, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) ${idx * 0.8}s`
       }}
     >
+      <div
+        ref={rowRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="group/row relative p-4 rounded-xl bg-card border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group-hover/schedule:opacity-40 hover:!opacity-100"
+        style={{
+          transition: isHovered 
+            ? 'transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, z-index 0s' 
+            : 'transform 0.5s ease-out, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, z-index 0.5s',
+          transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) ${isHovered ? 'translateZ(10px) translateY(-6px)' : 'translateZ(0px) translateY(0px)'}`,
+          transformStyle: 'preserve-3d',
+          borderColor: isHovered ? 'rgba(0, 240, 255, 0.6)' : '',
+          boxShadow: isHovered ? '0 20px 40px -10px rgba(0,240,255,0.2), 0 0 15px rgba(0,240,255,0.1)' : '',
+          zIndex: isHovered ? 10 : 1,
+        }}
+      >
       {/* Surface Gradient */}
       <div 
         className="absolute inset-0 rounded-xl bg-gradient-to-br from-black/60 to-transparent pointer-events-none transition-opacity duration-300"
@@ -116,6 +122,7 @@ function ScheduleRow({ item, idx }: { item: { time: string; title: string; venue
         }}
       >
         {item.venue}
+      </div>
       </div>
     </div>
   );
@@ -151,6 +158,35 @@ export function HomePageClient({
 
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
   const [selectedEventDetail, setSelectedEventDetail] = useState<SymposiumEvent | null>(null);
+
+  const scheduleRef = React.useRef<HTMLDivElement>(null);
+  const [isScheduleVisible, setIsScheduleVisible] = useState(false);
+  const [isReducedMotion, setIsReducedMotion] = useState(false);
+
+  React.useEffect(() => {
+    const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setIsReducedMotion(prefersReducedMotion);
+
+    if (prefersReducedMotion) {
+      setIsScheduleVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsScheduleVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    if (scheduleRef.current) {
+      observer.observe(scheduleRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
 
   // Contact Form state
   const [contactName, setContactName] = useState("");
@@ -289,12 +325,12 @@ export function HomePageClient({
         />
 
         {/* Master Schedule */}
-        <div className="group/schedule max-w-3xl mx-auto space-y-3 font-mono relative">
+        <div ref={scheduleRef} className="group/schedule max-w-3xl mx-auto space-y-3 font-mono relative">
           {/* Subtle Vertical Timeline */}
           <div className="absolute left-0 sm:-left-6 top-8 bottom-8 w-[1px] bg-gradient-to-b from-transparent via-cyan/30 to-transparent hidden sm:block animate-[fade-in-up_1s_ease-out_both_0.4s]" />
 
           {schedule.map((item, idx) => (
-            <ScheduleRow key={idx} item={item} idx={idx} />
+            <ScheduleRow key={idx} item={item} idx={idx} isVisible={isScheduleVisible} isReducedMotion={isReducedMotion} />
           ))}
         </div>
 
