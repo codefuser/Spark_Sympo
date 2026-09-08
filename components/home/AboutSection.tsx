@@ -14,6 +14,52 @@ import {
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 
+function AnimatedCounter({ inView, target, duration = 4000, delay = 480 }: { inView: boolean, target: number, duration?: number, delay?: number }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion) {
+      setCount(target);
+      return;
+    }
+
+    let animId: number;
+    const timeoutId = setTimeout(() => {
+      let startTime: number | null = null;
+
+      const step = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        setCount(Math.round(easedProgress * target));
+
+        if (progress < 1) {
+          animId = requestAnimationFrame(step);
+        } else {
+          setCount(target);
+        }
+      };
+
+      animId = requestAnimationFrame(step);
+    }, delay);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      if (animId) {
+        cancelAnimationFrame(animId);
+      }
+    };
+  }, [inView, target, duration, delay]);
+
+  return <>{count}</>;
+}
+
 // 5. Minimal PCB Circuit Traces - Top Right
 function PcbTracesTopRight({ className }: { className?: string }) {
   return (
@@ -113,7 +159,6 @@ function HudCorners() {
 export function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
-  const [acresCount, setAcresCount] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isClamped, setIsClamped] = useState(true);
 
@@ -163,50 +208,6 @@ export function AboutSection() {
     };
   }, []);
 
-  // 4. Statistics Animation: Snappy count-up from 0 to 25 when in view (~1.5s)
-  useEffect(() => {
-    if (!inView) return;
-
-    const prefersReducedMotion =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (prefersReducedMotion) {
-      setAcresCount(25);
-      return;
-    }
-
-    let animId: number;
-    const timeoutId = setTimeout(() => {
-      let startTime: number | null = null;
-      const duration = 4000; // 4 seconds
-      const target = 25;
-
-      const step = (timestamp: number) => {
-        if (!startTime) startTime = timestamp;
-        const progress = Math.min((timestamp - startTime) / duration, 1);
-        // Smooth cubic deceleration
-        const easedProgress = 1 - Math.pow(1 - progress, 3);
-        setAcresCount(Math.round(easedProgress * target));
-
-        if (progress < 1) {
-          animId = requestAnimationFrame(step);
-        } else {
-          setAcresCount(target);
-        }
-      };
-
-      animId = requestAnimationFrame(step);
-    }, 480); // match the CSS transition delay of 480ms
-    
-    return () => {
-      clearTimeout(timeoutId);
-      if (animId) {
-        cancelAnimationFrame(animId);
-      }
-    };
-  }, [inView]);
-
   return (
     <section
       ref={sectionRef}
@@ -221,11 +222,11 @@ export function AboutSection() {
 
       {/* 1. Slow Ambient Cyan/Blue Radial Lighting (Low Intensity) */}
       <div
-        className="pointer-events-none absolute top-12 left-1/4 -z-10 w-[420px] h-[320px] rounded-full bg-primary/[0.05] blur-[110px] hud-ambient-primary"
+        className="pointer-events-none absolute top-12 left-1/4 -z-10 w-[420px] h-[320px] rounded-full bg-primary/[0.05] blur-[110px] hud-ambient-primary transform-gpu"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute bottom-16 right-1/4 -z-10 w-[460px] h-[360px] rounded-full bg-cyan/[0.05] blur-[130px] hud-ambient-cyan"
+        className="pointer-events-none absolute bottom-16 right-1/4 -z-10 w-[460px] h-[360px] rounded-full bg-cyan/[0.05] blur-[130px] hud-ambient-cyan transform-gpu"
         aria-hidden="true"
       />
 
@@ -256,16 +257,33 @@ export function AboutSection() {
         {/* Heading with Scroll Reveal */}
         <h2
           data-reveal
-          className={cn(
-            "text-3xl md:text-4xl lg:text-[2.65rem] font-extrabold tracking-tight uppercase leading-tight sm:leading-snug transition-all duration-500 ease-out",
-            inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          )}
-          style={{ transitionDelay: "140ms" }}
+          className="text-3xl md:text-4xl lg:text-[2.65rem] font-extrabold tracking-tight uppercase leading-tight sm:leading-snug"
         >
-          <span className="text-white block font-bold">
-            About Thamirabharani Engineering College
+          <span 
+            className={cn(
+              "text-white block font-bold transition-all duration-500 ease-out",
+              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            )}
+            style={{ transitionDelay: "140ms" }}
+          >
+            About Thamirabharani
           </span>
-          <span className="mt-1.5 inline-flex flex-wrap items-center justify-center gap-2 text-slate-300 font-extrabold text-2xl md:text-3xl lg:text-4xl">
+          <span 
+            className={cn(
+              "text-white block font-bold transition-all duration-500 ease-out",
+              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            )}
+            style={{ transitionDelay: "340ms" }}
+          >
+            Engineering College
+          </span>
+          <span 
+            className={cn(
+              "mt-1.5 flex flex-wrap items-center justify-center gap-2 text-slate-300 font-extrabold text-2xl md:text-3xl lg:text-4xl transition-all duration-500 ease-out",
+              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            )}
+            style={{ transitionDelay: "540ms" }}
+          >
             <span className="text-primary/60 font-light">&amp;</span>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-glow to-cyan drop-shadow-[0_0_10px_rgba(0,240,255,0.2)]">
               SPARKTRON 2K26
@@ -280,7 +298,7 @@ export function AboutSection() {
             "space-y-2 transition-all duration-500 ease-out",
             inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           )}
-          style={{ transitionDelay: "220ms" }}
+          style={{ transitionDelay: "740ms" }}
         >
           <div className="h-0.5 w-16 bg-gradient-to-r from-primary to-cyan rounded-full mx-auto my-2 opacity-80" />
           <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
@@ -295,28 +313,28 @@ export function AboutSection() {
         <div
           data-reveal
           className={cn(
-            "group relative rounded-2xl bg-card/90 border border-primary/20 p-6 sm:p-8 md:p-10 backdrop-blur-md shadow-2xl transition-all duration-600 ease-out shadow-[0_4px_30px_-5px_rgba(0,240,255,0.05)] hover:border-primary/35",
+            "group relative rounded-[24px] bg-card/90 border border-cyan p-6 sm:p-8 md:p-10 backdrop-blur-md shadow-2xl transition-all duration-600 ease-out shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80",
             inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           )}
-          style={{ transitionDelay: "300ms" }}
+          style={{ transitionDelay: "820ms" }}
         >
           {/* HUD Corner Brackets */}
           <HudCorners />
 
           {/* 2. Scanning Light: Outer border tracking pulses from top-left to bottom-right */}
           <div
-            className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden z-20"
+            className="pointer-events-none absolute inset-0 rounded-[24px] overflow-hidden z-20"
             aria-hidden="true"
           >
             <style>
               {`
                 @keyframes pulse-horz {
-                  0% { left: -40%; }
-                  100% { left: 100%; }
+                  0% { transform: translateX(-100%); }
+                  100% { transform: translateX(250%); }
                 }
                 @keyframes pulse-vert {
-                  0% { top: -40%; }
-                  100% { top: 100%; }
+                  0% { transform: translateY(-100%); }
+                  100% { transform: translateY(250%); }
                 }
                 .animate-pulse-top {
                   animation: pulse-horz 2s linear forwards;
@@ -340,23 +358,19 @@ export function AboutSection() {
               <>
                 {/* Top Edge (moves L -> R) */}
                 <div 
-                  className="absolute top-0 h-[2px] w-[40%] bg-gradient-to-r from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-top" 
-                  style={{ left: '-40%' }}
+                  className="absolute top-0 left-0 h-[2px] w-[40%] bg-gradient-to-r from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-top" 
                 />
                 {/* Right Edge (moves T -> B) */}
                 <div 
-                  className="absolute right-0 w-[2px] h-[40%] bg-gradient-to-b from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-right" 
-                  style={{ top: '-40%' }}
+                  className="absolute right-0 top-0 w-[2px] h-[40%] bg-gradient-to-b from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-right" 
                 />
                 {/* Left Edge (moves T -> B) */}
                 <div 
-                  className="absolute left-0 w-[2px] h-[40%] bg-gradient-to-b from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-left" 
-                  style={{ top: '-40%' }}
+                  className="absolute left-0 top-0 w-[2px] h-[40%] bg-gradient-to-b from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-left" 
                 />
                 {/* Bottom Edge (moves L -> R) */}
                 <div 
-                  className="absolute bottom-0 h-[2px] w-[40%] bg-gradient-to-r from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-bottom" 
-                  style={{ left: '-40%' }}
+                  className="absolute bottom-0 left-0 h-[2px] w-[40%] bg-gradient-to-r from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-bottom" 
                 />
               </>
             )}
@@ -368,11 +382,11 @@ export function AboutSection() {
 
           {/* Subtle interior radial corner glow */}
           <div
-            className="pointer-events-none absolute -top-16 -right-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl"
+            className="pointer-events-none absolute -top-16 -right-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl transform-gpu"
             aria-hidden="true"
           />
           <div
-            className="pointer-events-none absolute -bottom-16 -left-16 w-64 h-64 bg-cyan/10 rounded-full blur-3xl"
+            className="pointer-events-none absolute -bottom-16 -left-16 w-64 h-64 bg-cyan/10 rounded-full blur-3xl transform-gpu"
             aria-hidden="true"
           />
 
@@ -384,7 +398,7 @@ export function AboutSection() {
                 "flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-primary/15 pb-5 transition-all duration-500 ease-out",
                 inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               )}
-              style={{ transitionDelay: "360ms" }}
+              style={{ transitionDelay: "880ms" }}
             >
               <div className="flex items-center space-x-4">
                 {/* 3. Animated College / Institution Icon: 68px round circle with breathing cyan glow */}
@@ -394,11 +408,9 @@ export function AboutSection() {
                     inView && "slow-breathing-cyan-glow"
                   )}
                 >
-                  <img
-                    src="/logo.png"
-                    alt="College Logo"
+                  <Building2 
                     className={cn(
-                      "w-full h-full object-cover transition-all duration-500 ease-out bg-white",
+                      "w-8 h-8 transition-all duration-500 ease-out",
                       inView ? "opacity-100 scale-100" : "scale-75 opacity-0"
                     )}
                   />
@@ -432,7 +444,7 @@ export function AboutSection() {
                 "text-sm sm:text-base text-slate-300 font-normal leading-relaxed space-y-4 transition-all duration-500 ease-out",
                 inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               )}
-              style={{ transitionDelay: "420ms" }}
+              style={{ transitionDelay: "940ms" }}
             >
               <div className="space-y-0">
                 {/* First paragraph container - animates max-height so it doesn't snap instantly */}
@@ -500,16 +512,13 @@ export function AboutSection() {
               <div
                 data-reveal
                 className={cn(
-                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-primary/60 hover:shadow-[0_0_20px_rgba(0,240,255,0.22)] cursor-default",
+                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-primary/60 hover:shadow-[0_0_20px_rgba(0,240,255,0.22)] cursor-default flex flex-col items-center justify-center min-h-[80px]",
                   inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 )}
-                style={{ transitionDelay: "480ms" }}
+                style={{ transitionDelay: "1000ms" }}
               >
                 <div className="text-base sm:text-xl md:text-2xl font-bold text-primary tracking-tight">
-                  {acresCount} Acres
-                </div>
-                <div className="text-slate-400 mt-1 text-[11px] sm:text-xs">
-                  Lush Green Campus
+                  <AnimatedCounter inView={inView} target={25} delay={480} /> Acres
                 </div>
               </div>
 
@@ -517,16 +526,13 @@ export function AboutSection() {
               <div
                 data-reveal
                 className={cn(
-                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-emerald-400/60 hover:shadow-[0_0_20px_rgba(52,211,153,0.25)] cursor-default",
+                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-emerald-400/60 hover:shadow-[0_0_20px_rgba(52,211,153,0.25)] cursor-default flex flex-col items-center justify-center min-h-[80px]",
                   inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 )}
-                style={{ transitionDelay: "640ms" }}
+                style={{ transitionDelay: "1160ms" }}
               >
                 <div className="text-base sm:text-xl md:text-2xl font-bold text-emerald-400 tracking-tight">
                   Autonomous
-                </div>
-                <div className="text-slate-400 mt-1 text-[11px] sm:text-xs">
-                  AICTE Approved &amp; Autonomous
                 </div>
               </div>
             </div>
@@ -541,7 +547,7 @@ export function AboutSection() {
           "transition-all duration-500 ease-out",
           inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
         )}
-        style={{ transitionDelay: "800ms" }}
+        style={{ transitionDelay: "1320ms" }}
       >
         <Card
           glowOnHover
@@ -593,7 +599,7 @@ export function AboutSection() {
           "grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch transition-all duration-500 ease-out",
           inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
         )}
-        style={{ transitionDelay: "840ms" }}
+        style={{ transitionDelay: "1360ms" }}
       >
         {/* Department of ECE */}
         <Card
@@ -676,7 +682,7 @@ export function AboutSection() {
           "grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-500 ease-out",
           inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
         )}
-        style={{ transitionDelay: "880ms" }}
+        style={{ transitionDelay: "1400ms" }}
       >
         <Card className="group relative border-l-4 border-l-primary border-primary/20 bg-card/90 p-6 sm:p-8">
           <HudCorners />
