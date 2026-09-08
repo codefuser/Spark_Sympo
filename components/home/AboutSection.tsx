@@ -390,13 +390,15 @@ export function AboutSection() {
                 {/* 3. Animated College / Institution Icon: 68px round circle with breathing cyan glow */}
                 <div
                   className={cn(
-                    "relative flex items-center justify-center shrink-0 w-[68px] h-[68px] rounded-full bg-cyan/10 text-cyan border border-cyan transition-colors",
+                    "relative flex items-center justify-center shrink-0 w-[68px] h-[68px] rounded-full bg-cyan/10 text-cyan border border-cyan transition-colors overflow-hidden",
                     inView && "slow-breathing-cyan-glow"
                   )}
                 >
-                  <Building2
+                  <img
+                    src="/logo.png"
+                    alt="College Logo"
                     className={cn(
-                      "w-7 h-7 transition-all duration-500 ease-out",
+                      "w-full h-full object-cover transition-all duration-500 ease-out bg-white",
                       inView ? "opacity-100 scale-100" : "scale-75 opacity-0"
                     )}
                   />
@@ -493,7 +495,7 @@ export function AboutSection() {
             </div>
 
             {/* 4 & 6. Statistics Grid: Smooth scroll reveal, count-up, hover lift & glow */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-2 font-mono text-xs">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-2 font-mono text-xs">
               {/* 25 Acres with Count-up */}
               <div
                 data-reveal
@@ -511,23 +513,6 @@ export function AboutSection() {
                 </div>
               </div>
 
-              {/* Tirunelveli */}
-              <div
-                data-reveal
-                className={cn(
-                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,114,255,0.25)] cursor-default",
-                  inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                )}
-                style={{ transitionDelay: "560ms" }}
-              >
-                <div className="text-base sm:text-xl md:text-2xl font-bold text-cyan tracking-tight">
-                  Tirunelveli
-                </div>
-                <div className="text-slate-400 mt-1 text-[11px] sm:text-xs">
-                  Corporation Limits
-                </div>
-              </div>
-
               {/* Autonomous */}
               <div
                 data-reveal
@@ -542,23 +527,6 @@ export function AboutSection() {
                 </div>
                 <div className="text-slate-400 mt-1 text-[11px] sm:text-xs">
                   AICTE Approved &amp; Autonomous
-                </div>
-              </div>
-
-              {/* Co-Ed */}
-              <div
-                data-reveal
-                className={cn(
-                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(251,191,36,0.25)] cursor-default",
-                  inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                )}
-                style={{ transitionDelay: "720ms" }}
-              >
-                <div className="text-base sm:text-xl md:text-2xl font-bold text-amber-400 tracking-tight">
-                  Co-Ed
-                </div>
-                <div className="text-slate-400 mt-1 text-[11px] sm:text-xs">
-                  Residential Campus
                 </div>
               </div>
             </div>
