@@ -204,7 +204,6 @@ export function AboutSection() {
 
     if (prefersReducedMotion) {
       setInView(true);
-      setAcresCount(25);
       return;
     }
 

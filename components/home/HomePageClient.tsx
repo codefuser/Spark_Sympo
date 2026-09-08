@@ -41,6 +41,86 @@ import { useRegistrationModal } from "@/components/registration/RegistrationModa
 import { SymposiumEvent, CoordinatorType, SponsorType } from "@/types";
 import { AboutSection } from "@/components/home/AboutSection";
 
+function ScheduleRow({ item, idx }: { item: { time: string; title: string; venue: string }; idx: number }) {
+  const rowRef = React.useRef<HTMLDivElement>(null);
+  const [rotation, setRotation] = React.useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!rowRef.current) return;
+    const rect = rowRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    const rotateX = ((y - centerY) / centerY) * -4; // Subtle 4 deg max
+    const rotateY = ((x - centerX) / centerX) * 4;
+    
+    setRotation({ x: rotateX, y: rotateY });
+  };
+
+  const handleMouseEnter = () => setIsHovered(true);
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setRotation({ x: 0, y: 0 });
+  };
+
+  return (
+    <div
+      ref={rowRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="group/row relative p-4 rounded-xl bg-card border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-[fade-in-up_0.6s_ease-out_both] group-hover/schedule:opacity-40 hover:!opacity-100"
+      style={{
+        animationDelay: `${idx * 100 + 100}ms`,
+        transition: isHovered 
+          ? 'transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, z-index 0s' 
+          : 'transform 0.5s ease-out, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, z-index 0.5s',
+        transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) ${isHovered ? 'translateZ(10px) translateY(-6px)' : 'translateZ(0px) translateY(0px)'}`,
+        transformStyle: 'preserve-3d',
+        borderColor: isHovered ? 'rgba(0, 240, 255, 0.6)' : '',
+        boxShadow: isHovered ? '0 20px 40px -10px rgba(0,240,255,0.2), 0 0 15px rgba(0,240,255,0.1)' : '',
+        zIndex: isHovered ? 10 : 1,
+      }}
+    >
+      {/* Surface Gradient */}
+      <div 
+        className="absolute inset-0 rounded-xl bg-gradient-to-br from-black/60 to-transparent pointer-events-none transition-opacity duration-300"
+        style={{ opacity: isHovered ? 1 : 0 }}
+      />
+      
+      <div 
+        className="relative z-10 flex items-center space-x-3 text-primary text-sm font-bold shrink-0 transition-all duration-300"
+        style={{ transform: isHovered ? 'translateZ(20px)' : 'translateZ(0px)', color: isHovered ? '#00F0FF' : '' }}
+      >
+        <Clock className="w-4 h-4 transition-colors duration-300" style={{ color: isHovered ? '#FFFFFF' : '#00F0FF' }} />
+        <span style={{ textShadow: isHovered ? '0 0 8px rgba(0,240,255,0.4)' : 'none' }}>{item.time}</span>
+      </div>
+      <div 
+        className="relative z-10 flex-1 transition-transform duration-300"
+        style={{ transform: isHovered ? 'translateZ(25px)' : 'translateZ(0px)' }}
+      >
+        <h4 className="font-bold text-white text-sm font-sans tracking-wide drop-shadow-md">{item.title}</h4>
+      </div>
+      <div 
+        className="relative z-10 text-xs text-slate-400 bg-background px-3 py-1 rounded-lg border border-primary/10 shrink-0 transition-all duration-300"
+        style={{ 
+          transform: isHovered ? 'translateZ(30px)' : 'translateZ(0px)',
+          borderColor: isHovered ? 'rgba(0,240,255,0.4)' : '',
+          color: isHovered ? '#00F0FF' : '',
+          boxShadow: isHovered ? '0 0 15px rgba(0,240,255,0.15)' : ''
+        }}
+      >
+        {item.venue}
+      </div>
+    </div>
+  );
+}
+
 interface HomePageClientProps {
   events: SymposiumEvent[];
   sponsors: SponsorType[];
@@ -209,27 +289,12 @@ export function HomePageClient({
         />
 
         {/* Master Schedule */}
-        <div className="max-w-3xl mx-auto space-y-3 font-mono relative">
+        <div className="group/schedule max-w-3xl mx-auto space-y-3 font-mono relative">
           {/* Subtle Vertical Timeline */}
           <div className="absolute left-0 sm:-left-6 top-8 bottom-8 w-[1px] bg-gradient-to-b from-transparent via-cyan/30 to-transparent hidden sm:block animate-[fade-in-up_1s_ease-out_both_0.4s]" />
 
           {schedule.map((item, idx) => (
-            <div
-              key={idx}
-              className="group relative p-4 rounded-xl bg-card border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all duration-300 ease-out hover:-translate-y-[2px] hover:border-cyan/60 hover:shadow-[0_0_15px_rgba(0,240,255,0.15)] hover:bg-[#0b1018] animate-[fade-in-up_0.6s_ease-out_both]"
-              style={{ animationDelay: `${idx * 100 + 100}ms` }}
-            >
-              <div className="flex items-center space-x-3 text-primary text-sm font-bold shrink-0 transition-colors duration-300 group-hover:text-cyan-glow">
-                <Clock className="w-4 h-4 text-cyan transition-colors duration-300 group-hover:text-white" />
-                <span>{item.time}</span>
-              </div>
-              <div className="flex-1">
-                <h4 className="font-bold text-white text-sm font-sans">{item.title}</h4>
-              </div>
-              <div className="text-xs text-slate-400 bg-background px-3 py-1 rounded-lg border border-primary/10 shrink-0 transition-all duration-300 group-hover:border-cyan/40 group-hover:text-cyan group-hover:shadow-[0_0_10px_rgba(0,240,255,0.1)]">
-                {item.venue}
-              </div>
-            </div>
+            <ScheduleRow key={idx} item={item} idx={idx} />
           ))}
         </div>
 
