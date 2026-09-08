@@ -510,6 +510,89 @@ export function AboutSection() {
         </div>
       </div>
 
+      {/* Department Overview: ECE & EEE */}
+      <div
+        data-reveal
+        className={cn(
+          "grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch transition-all duration-500 ease-out",
+          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+        )}
+        style={{ transitionDelay: "1320ms" }}
+      >
+        {/* Department of ECE */}
+        <Card
+          glowOnHover
+          className="group relative space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8"
+        >
+          <HudCorners />
+          <div>
+            <div className="flex items-center space-x-2 text-cyan font-mono text-sm mb-2">
+              <Cpu className="w-4 h-4" />
+              <span>DEPARTMENT OVERVIEW</span>
+            </div>
+            <h3 className="text-2xl font-extrabold text-white mb-3">
+              Department of ECE
+            </h3>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              The Department of Electronics and Communication Engineering is
+              renowned for its academic rigor, research publications, and
+              cutting-edge laboratory infrastructure. Equipped with advanced
+              VLSI design tools, Embedded System kits, DSP trainers, and
+              Microwave test setups, the department nurtures industry-ready
+              engineers.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-primary/50 transition-colors">
+              <div className="text-xl sm:text-2xl font-bold text-primary">
+                12+
+              </div>
+              <div className="text-slate-400 mt-1">Advanced Labs</div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-cyan/50 transition-colors">
+              <div className="text-xl sm:text-2xl font-bold text-cyan">
+                100%
+              </div>
+              <div className="text-slate-400 mt-1">Placement Record</div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Department of EEE */}
+        <Card
+          glowOnHover
+          className="group relative space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8"
+        >
+          <HudCorners />
+          <div>
+            <div className="flex items-center space-x-2 text-amber-500 font-mono text-sm mb-2">
+              <Cpu className="w-4 h-4" />
+              <span>DEPARTMENT OVERVIEW</span>
+            </div>
+            <h3 className="text-2xl font-extrabold text-white mb-3">
+              Department of EEE
+            </h3>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              The program in Electrical &amp; Electronics Engineering is one of the premier undergraduate programs offered by the Thamirabharani Engineering College. The EEE department has a team of highly qualified and experienced faculty. With its excellent infrastructure, the department places emphasis on sound practical knowledge, while nurturing creativity in the students. With Anna University's curriculum, the Department places equal emphasis on theoretical and experimental electrical and electronics engineering.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
+            <div className="p-3.5 rounded-xl bg-background/85 border border-amber-500/20 hover:border-amber-500/50 transition-colors">
+              <div className="text-xl sm:text-2xl font-bold text-amber-500">
+                Premier
+              </div>
+              <div className="text-slate-400 mt-1">UG Program</div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-background/85 border border-amber-500/20 hover:border-emerald-400/50 transition-colors">
+              <div className="text-xl sm:text-2xl font-bold text-emerald-400">
+                Excellent
+              </div>
+              <div className="text-slate-400 mt-1">Infrastructure</div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
       {/* Symposium Legacy (Top Center) */}
       <div
         data-reveal
@@ -517,11 +600,11 @@ export function AboutSection() {
           "transition-all duration-500 ease-out",
           inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
         )}
-        style={{ transitionDelay: "1320ms" }}
+        style={{ transitionDelay: "1360ms" }}
       >
         <Card
           glowOnHover
-          className="group relative space-y-4 flex flex-col justify-between border-primary/20 hover:border-primary/40 bg-card/90 p-6 sm:p-8 max-w-4xl mx-auto text-center"
+          className="group relative space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 max-w-4xl mx-auto text-center"
         >
           <HudCorners />
           <div>
@@ -562,89 +645,6 @@ export function AboutSection() {
         </Card>
       </div>
 
-      {/* Department Overview: ECE & EEE */}
-      <div
-        data-reveal
-        className={cn(
-          "grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch transition-all duration-500 ease-out",
-          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-        )}
-        style={{ transitionDelay: "1360ms" }}
-      >
-        {/* Department of ECE */}
-        <Card
-          glowOnHover
-          className="group relative space-y-4 flex flex-col justify-between border-primary/20 hover:border-primary/40 bg-card/90 p-6 sm:p-8"
-        >
-          <HudCorners />
-          <div>
-            <div className="flex items-center space-x-2 text-cyan font-mono text-sm mb-2">
-              <Cpu className="w-4 h-4" />
-              <span>DEPARTMENT OVERVIEW</span>
-            </div>
-            <h3 className="text-2xl font-extrabold text-white mb-3">
-              Department of ECE
-            </h3>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              The Department of Electronics and Communication Engineering is
-              renowned for its academic rigor, research publications, and
-              cutting-edge laboratory infrastructure. Equipped with advanced
-              VLSI design tools, Embedded System kits, DSP trainers, and
-              Microwave test setups, the department nurtures industry-ready
-              engineers.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
-            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-primary/50 transition-colors">
-              <div className="text-xl sm:text-2xl font-bold text-primary">
-                12+
-              </div>
-              <div className="text-slate-400 mt-1">Advanced Labs</div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-cyan/50 transition-colors">
-              <div className="text-xl sm:text-2xl font-bold text-cyan">
-                100%
-              </div>
-              <div className="text-slate-400 mt-1">Placement Record</div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Department of EEE */}
-        <Card
-          glowOnHover
-          className="group relative space-y-4 flex flex-col justify-between border-amber-500/20 hover:border-amber-500/40 bg-card/90 p-6 sm:p-8"
-        >
-          <HudCorners />
-          <div>
-            <div className="flex items-center space-x-2 text-amber-500 font-mono text-sm mb-2">
-              <Cpu className="w-4 h-4" />
-              <span>DEPARTMENT OVERVIEW</span>
-            </div>
-            <h3 className="text-2xl font-extrabold text-white mb-3">
-              Department of EEE
-            </h3>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              The program in Electrical &amp; Electronics Engineering is one of the premier undergraduate programs offered by the Thamirabharani Engineering College. The EEE department has a team of highly qualified and experienced faculty. With its excellent infrastructure, the department places emphasis on sound practical knowledge, while nurturing creativity in the students. With Anna University's curriculum, the Department places equal emphasis on theoretical and experimental electrical and electronics engineering.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
-            <div className="p-3.5 rounded-xl bg-background/85 border border-amber-500/20 hover:border-amber-500/50 transition-colors">
-              <div className="text-xl sm:text-2xl font-bold text-amber-500">
-                Premier
-              </div>
-              <div className="text-slate-400 mt-1">UG Program</div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-background/85 border border-amber-500/20 hover:border-emerald-400/50 transition-colors">
-              <div className="text-xl sm:text-2xl font-bold text-emerald-400">
-                Excellent
-              </div>
-              <div className="text-slate-400 mt-1">Infrastructure</div>
-            </div>
-          </div>
-        </Card>
-      </div>
-
       {/* Vision & Mission (Staggered Entrance) */}
       <div
         data-reveal
@@ -654,7 +654,7 @@ export function AboutSection() {
         )}
         style={{ transitionDelay: "1400ms" }}
       >
-        <Card className="group relative border-l-4 border-l-primary border-primary/20 bg-card/90 p-6 sm:p-8">
+        <Card className="group relative border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8">
           <HudCorners />
           <div className="flex items-center space-x-3 mb-3">
             <div className="p-2 rounded-lg bg-primary/10 text-primary">
@@ -669,7 +669,7 @@ export function AboutSection() {
           </p>
         </Card>
 
-        <Card className="group relative border-l-4 border-l-cyan border-cyan/20 bg-card/90 p-6 sm:p-8">
+        <Card className="group relative border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8">
           <HudCorners />
           <div className="flex items-center space-x-3 mb-3">
             <div className="p-2 rounded-lg bg-cyan/10 text-cyan">
