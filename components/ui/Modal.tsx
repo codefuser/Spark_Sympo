@@ -64,7 +64,7 @@ export function Modal({
         )}
       >
         {/* Subtle accent border top */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500/40 via-cyan-500/60 to-purple-500/40" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-600/50 via-cyan-400/80 to-blue-600/50" />
 
         <button
           onClick={onClose}

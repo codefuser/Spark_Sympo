@@ -258,33 +258,79 @@ export function HomePageClient({
         </div>
       </section>
 
-      {/* SECTION 4: EVENTS CATALOG */}
-      <section id="events" className="container mx-auto px-4 sm:px-6 space-y-12">
-        <SectionHeading
-          badge="COMPETITIONS & TRACKS"
-          title="SPARKTRON 2K26 Events Catalog"
-          description="Click any event card to view full rules, guidelines, and round specifications."
-        />
+      {/* SECTION 4: EVENTS CATALOG (Black, Blue, White Sci-Fi Theme) */}
+      <section id="events" className="relative container mx-auto px-4 sm:px-6 space-y-12 py-6">
+        {/* Ambient Cyber Blue Lighting */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-blue-600/10 rounded-full blur-[130px] pointer-events-none -z-10" />
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap items-center justify-center gap-3 max-w-2xl mx-auto font-mono">
+        {/* Section Header */}
+        <div className="space-y-4 text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-950/60 border border-blue-500/40 text-cyan-400 text-[11px] font-mono tracking-[0.2em] uppercase font-bold shadow-[0_0_15px_rgba(0,114,255,0.2)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff] animate-pulse" />
+            <span>SYSTEM // LIVE TRACKS CATALOG</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white uppercase font-sans">
+            SPARKTRON 2K26{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-400 to-blue-500 drop-shadow-[0_0_20px_rgba(0,114,255,0.5)]">
+              EVENTS CATALOG
+            </span>
+          </h2>
+
+          <div className="h-1 w-24 bg-gradient-to-r from-blue-600 via-cyan-400 to-blue-600 rounded-full mx-auto shadow-[0_0_12px_#00f0ff]" />
+
+          <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto font-sans leading-relaxed">
+            Click any event card to view full rules, guidelines, round specifications, and instant registration.
+          </p>
+        </div>
+
+        {/* Category Filters in Black, Blue & White */}
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 max-w-2xl mx-auto font-mono">
           {[
-            { label: "ALL TRACKS (5)", value: "ALL" },
-            { label: "TECHNICAL (3)", value: "TECHNICAL" },
-            { label: "NON-TECHNICAL (2)", value: "NON_TECHNICAL" },
-          ].map((cat) => (
-            <button
-              key={cat.value}
-              onClick={() => setActiveCategory(cat.value)}
-              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
-                activeCategory === cat.value
-                  ? "bg-primary text-background border-primary shadow-[0_0_20px_rgba(0,240,255,0.4)]"
-                  : "bg-card/70 text-slate-300 border-white/10 hover:border-primary/50 hover:text-white hover:bg-card"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+            { label: "ALL TRACKS", value: "ALL", count: validEvents.length },
+            { label: "TECHNICAL", value: "TECHNICAL", count: validEvents.filter(e => e.category === "TECHNICAL").length },
+            { label: "NON-TECHNICAL", value: "NON_TECHNICAL", count: validEvents.filter(e => e.category === "NON_TECHNICAL").length },
+          ].map((cat) => {
+            const isActive = activeCategory === cat.value;
+            return (
+              <button
+                key={cat.value}
+                onClick={() => setActiveCategory(cat.value)}
+                className={`relative group px-5 sm:px-6 py-2.5 rounded-xl text-xs font-bold font-mono transition-all duration-300 border cursor-pointer flex items-center gap-2.5 ${
+                  isActive
+                    ? "bg-blue-950/80 text-white border-blue-400 shadow-[0_0_25px_rgba(0,114,255,0.45)] ring-1 ring-blue-400/50"
+                    : "bg-[#02050f]/80 text-slate-300 border-blue-500/20 hover:border-blue-400/50 hover:text-white hover:bg-blue-950/30"
+                }`}
+              >
+                {/* Active Indicator dot */}
+                <span
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    isActive
+                      ? "bg-cyan-400 shadow-[0_0_8px_#00f0ff]"
+                      : "bg-slate-500 group-hover:bg-blue-400"
+                  }`}
+                />
+                <span className="tracking-wider">{cat.label}</span>
+                <span
+                  className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
+                    isActive
+                      ? "bg-blue-500/30 text-cyan-300 border border-blue-400/40"
+                      : "bg-white/5 text-slate-400 border border-white/10"
+                  }`}
+                >
+                  {cat.count}
+                </span>
+
+                {/* Cyber Corner tick marks on active */}
+                {isActive && (
+                  <>
+                    <span className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t-2 border-l-2 border-cyan-400" />
+                    <span className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b-2 border-r-2 border-cyan-400" />
+                  </>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Events Grid - Centered 5-box alignment */}
@@ -494,39 +540,52 @@ export function HomePageClient({
         </div>
       </section>
 
-      {/* EVENT DETAIL RULES MODAL */}
+      {/* EVENT DETAIL RULES MODAL (Black, Blue, White Theme) */}
       {selectedEventDetail && (
         <Modal
           isOpen={!!selectedEventDetail}
           onClose={() => setSelectedEventDetail(null)}
           title={selectedEventDetail.title}
-          description={`${selectedEventDetail.category} Track • ${selectedEventDetail.teamSize}`}
+          description={`${selectedEventDetail.category === "TECHNICAL" ? "Technical Track" : "Non-Technical Track"} • ${selectedEventDetail.teamSize}`}
           maxWidth="lg"
         >
           <div className="space-y-4 py-2">
             <div>
-              <h4 className="text-xs font-mono text-primary uppercase font-bold mb-1">Overview</h4>
-              <p className="text-sm text-slate-300 leading-relaxed">{selectedEventDetail.fullDesc}</p>
+              <h4 className="text-xs font-mono text-cyan-400 uppercase font-bold mb-1.5 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff] animate-pulse" />
+                Overview
+              </h4>
+              <p className="text-sm text-slate-300 leading-relaxed font-sans">{selectedEventDetail.fullDesc}</p>
             </div>
 
-            <div className="pt-2 border-t border-primary/10">
-              <h4 className="text-xs font-mono text-cyan uppercase font-bold mb-2">Rules & Guidelines</h4>
-              <div className="space-y-2 text-xs text-slate-300 font-mono">
+            <div className="pt-2 border-t border-blue-500/20">
+              <h4 className="text-xs font-mono text-blue-400 uppercase font-bold mb-2 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_#3b82f6]" />
+                Rules & Guidelines
+              </h4>
+              <div className="space-y-2 text-xs text-slate-200 font-mono">
                 {selectedEventDetail.rules.split("\n").map((r, i) => (
-                  <p key={i}>• {r}</p>
+                  <p key={i} className="flex items-start gap-2">
+                    <span className="text-cyan-400 font-bold">›</span>
+                    <span>{r}</span>
+                  </p>
                 ))}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-xs font-mono pt-2 border-t border-primary/10">
-              <div><span className="text-slate-400">Rounds:</span> <span className="text-white font-bold">{selectedEventDetail.rounds}</span></div>
-              <div><span className="text-slate-400">Venue:</span> <span className="text-white font-bold">{selectedEventDetail.venue}</span></div>
-              <div><span className="text-slate-400">Coordinator:</span> <span className="text-primary">{selectedEventDetail.coordinatorName}</span></div>
-              <div><span className="text-slate-400">Phone:</span> <span className="text-cyan">{selectedEventDetail.coordinatorPhone}</span></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs font-mono pt-3 border-t border-blue-500/20 bg-[#020714] p-3.5 rounded-xl border border-blue-500/30">
+              <div><span className="text-slate-400">Rounds:</span> <span className="text-white font-bold ml-1">{selectedEventDetail.rounds}</span></div>
+              <div><span className="text-slate-400">Venue:</span> <span className="text-cyan-300 font-semibold ml-1">{selectedEventDetail.venue}</span></div>
+              <div><span className="text-slate-400">Coordinator:</span> <span className="text-white font-medium ml-1">{selectedEventDetail.coordinatorName}</span></div>
+              <div><span className="text-slate-400">Phone:</span> <span className="text-cyan-400 font-mono ml-1">{selectedEventDetail.coordinatorPhone}</span></div>
             </div>
 
             <div className="pt-4 flex justify-end gap-3">
-              <Button variant="ghost" onClick={() => setSelectedEventDetail(null)}>
+              <Button
+                variant="ghost"
+                onClick={() => setSelectedEventDetail(null)}
+                className="text-slate-300 hover:text-white border border-white/10 hover:border-blue-400/40 cursor-pointer"
+              >
                 Close
               </Button>
               <Button
@@ -536,6 +595,7 @@ export function HomePageClient({
                   setSelectedEventDetail(null);
                   openRegistrationModal(id);
                 }}
+                className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 hover:from-blue-500 hover:to-cyan-400 text-black font-bold shadow-[0_0_20px_rgba(0,114,255,0.4)] cursor-pointer"
               >
                 Register For Event →
               </Button>
