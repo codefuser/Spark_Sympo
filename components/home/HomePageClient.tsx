@@ -137,101 +137,126 @@ export function HomePageClient({
 
   return (
     <div className="space-y-24 pb-20 pt-20">
-      {/* SECTION 1: HERO (3D Futuristic Sci-Fi Engineering Model Theme) */}
-      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-6 sm:py-12 md:py-16 overflow-hidden border-b border-blue-500/15">
-        {/* Deep 3D Ambient Lighting Glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-blue-600/12 rounded-full blur-[160px] pointer-events-none -z-10" />
-        <div className="absolute top-1/3 right-10 w-[400px] h-[350px] bg-cyan-500/10 rounded-full blur-[130px] pointer-events-none -z-10" />
+      {/* SECTION 1: HERO (Unified Futuristic Sci-Fi Engineering Command Center) */}
+      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-4 sm:py-8 lg:py-10 overflow-hidden border-b border-blue-500/15">
+        {/* Deep 3D Ambient Lighting Glow - Static & GPU optimized */}
+        <div className="absolute top-1/4 left-1/3 w-[600px] h-[350px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+        <div className="absolute top-1/3 right-10 w-[350px] h-[300px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none -z-10" />
 
-        <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center space-y-6 sm:space-y-8 my-auto max-w-5xl">
-          {/* Top Department Badge - 3D Cyber Chamfered Pill */}
-          <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-gradient-to-r from-[#030917]/95 via-[#06142a]/95 to-[#030917]/95 border border-blue-500/40 text-xs sm:text-sm font-mono tracking-widest uppercase shadow-[0_0_20px_rgba(0,114,255,0.25)] hover:border-cyan-400 transition-all max-w-full">
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
-            </span>
-            <Zap className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
-            <span className="text-white font-semibold">
-              Departments of <span className="text-cyan-300 font-bold">Electronics &amp; Communication</span> &amp; <span className="text-blue-300 font-bold">Electrical &amp; Electronics</span> Engineering
-            </span>
-          </div>
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-7xl my-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            {/* LEFT COLUMN: All Core Symposium Information & Actions */}
+            <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4">
+              {/* Top Department Badge - Cyber Chamfered Pill */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#030917]/95 via-[#06142a]/95 to-[#030917]/95 border border-blue-500/40 text-xs font-mono tracking-wider uppercase shadow-[0_0_15px_rgba(0,114,255,0.25)] hover:border-cyan-400 transition-all max-w-full">
+                <span className="flex h-2 w-2 relative shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
+                </span>
+                <Zap className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
+                <span className="text-white font-semibold text-[11px] sm:text-xs">
+                  Departments of <span className="text-cyan-300 font-bold">Electronics &amp; Communication</span> &amp; <span className="text-blue-300 font-bold">Electrical &amp; Electronics</span> Engineering
+                </span>
+              </div>
 
-          {/* College Presents line */}
-          <div className="flex items-center justify-center gap-3 pt-1">
-            <div className="h-[1px] w-8 sm:w-16 bg-gradient-to-r from-transparent to-cyan-400" />
-            <p className="text-xs sm:text-sm md:text-base font-mono font-bold text-cyan-300 uppercase tracking-[0.25em] drop-shadow-[0_0_10px_rgba(0,240,255,0.5)]">
-              {collegeName} Presents
-            </p>
-            <div className="h-[1px] w-8 sm:w-16 bg-gradient-to-l from-transparent to-cyan-400" />
-          </div>
+              {/* College Presents Line */}
+              <div className="flex items-center justify-center lg:justify-start gap-2.5">
+                <div className="h-[1px] w-6 sm:w-10 bg-gradient-to-r from-transparent to-cyan-400" />
+                <p className="text-xs sm:text-sm font-mono font-bold text-cyan-300 uppercase tracking-[0.22em] drop-shadow-[0_0_10px_rgba(0,240,255,0.5)]">
+                  {collegeName} Presents
+                </p>
+                <div className="h-[1px] w-6 sm:w-10 bg-gradient-to-l from-transparent to-cyan-400" />
+              </div>
 
-          {/* 3D Interactive Holographic Model Centerpiece */}
-          <div className="py-1">
-            <Hero3DModel />
-          </div>
+              {/* Main Title: SPARKTRON 2K26 with Electric Glow */}
+              <div className="space-y-2">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black font-mono tracking-tight text-white uppercase select-none leading-none">
+                  <span className="text-white drop-shadow-[0_4px_16px_rgba(255,255,255,0.35)]">SPARK</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500 drop-shadow-[0_0_35px_rgba(0,180,255,0.75)] animate-sparktron-glow">
+                    TRON
+                  </span>{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-blue-400 font-sans drop-shadow-[0_0_30px_rgba(0,114,255,0.6)]">
+                    2K26
+                  </span>
+                </h1>
 
-          {/* Main Title: SPARKTRON 2K26 */}
-          <div className="space-y-4">
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black font-mono tracking-tight text-white uppercase select-none">
-              <span className="text-white drop-shadow-[0_4px_16px_rgba(255,255,255,0.35)]">SPARK</span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500 drop-shadow-[0_0_35px_rgba(0,180,255,0.75)]">
-                TRON
-              </span>{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-blue-400 font-sans drop-shadow-[0_0_30px_rgba(0,114,255,0.6)]">
-                2K26
-              </span>
-            </h1>
+                {/* Tagline Description */}
+                <p className="text-xs sm:text-sm md:text-base text-slate-200 font-normal max-w-xl leading-relaxed font-sans mx-auto lg:mx-0">
+                  <span className="text-white font-semibold">Electrify Your Engineering Instincts.</span> A National-Level Technical Symposium featuring innovation, knowledge, circuit challenges, and engaging non-technical events.
+                </p>
+              </div>
 
-            {/* Tagline Description */}
-            <p className="text-base sm:text-lg md:text-xl text-slate-200 font-normal max-w-2xl mx-auto leading-relaxed font-sans">
-              <span className="text-white font-semibold">Electrify Your Engineering Instincts.</span> A National-Level Technical Symposium featuring innovation, knowledge, circuit challenges, and engaging non-technical events.
-            </p>
-          </div>
+              {/* Date and Venue HUD Badges */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 sm:gap-3 text-xs font-mono pt-1">
+                {/* Date Box */}
+                <div className="relative group flex items-center space-x-2 bg-gradient-to-b from-[#060e1f]/95 via-[#030712]/95 to-[#010206] px-3.5 py-2 rounded-xl border border-blue-500/35 hover:border-cyan-400 shadow-[0_0_15px_rgba(0,114,255,0.15)] transition-all">
+                  <span className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t-2 border-l-2 border-cyan-400" />
+                  <span className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b-2 border-r-2 border-cyan-400" />
+                  <Calendar className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
+                  <span className="text-slate-400 font-medium">Date:</span>
+                  <span className="text-white font-bold tracking-wide">{symposiumDate}</span>
+                </div>
 
-          {/* Date and Venue 3D HUD Boxes */}
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs sm:text-sm font-mono pt-2">
-            {/* Date Box */}
-            <div className="relative group flex items-center space-x-2.5 bg-gradient-to-b from-[#060e1f]/95 via-[#030712]/95 to-[#010206] px-5 py-3 rounded-2xl border border-blue-500/35 hover:border-cyan-400 shadow-[0_0_20px_rgba(0,114,255,0.18)] hover:shadow-[0_0_30px_rgba(0,240,255,0.35)] transition-all hover:-translate-y-1">
-              <span className="absolute -top-[1px] -left-[1px] w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-400" />
-              <span className="absolute -bottom-[1px] -right-[1px] w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-400" />
-              <Calendar className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
-              <span className="text-slate-400 font-medium">Date:</span>
-              <span className="text-white font-bold tracking-wide">{symposiumDate}</span>
+                {/* Venue Box */}
+                <div className="relative group flex items-center space-x-2 bg-gradient-to-b from-[#060e1f]/95 via-[#030712]/95 to-[#010206] px-3.5 py-2 rounded-xl border border-blue-500/35 hover:border-cyan-400 shadow-[0_0_15px_rgba(0,114,255,0.15)] transition-all">
+                  <span className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t-2 border-l-2 border-cyan-400" />
+                  <span className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b-2 border-r-2 border-cyan-400" />
+                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
+                  <span className="text-slate-400 font-medium">Venue:</span>
+                  <span className="text-white font-bold tracking-wide truncate max-w-[240px] sm:max-w-none">{venue}</span>
+                </div>
+              </div>
+
+              {/* 4-Unit Cyber Countdown Timer */}
+              <div className="w-full flex justify-center lg:justify-start pt-1">
+                <CountdownTimer targetDate="2026-09-16T09:00:00" />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 pt-1">
+                <Button
+                  size="lg"
+                  variant="primary"
+                  rightIcon={<ArrowRight className="w-4 h-4" />}
+                  onClick={() => openRegistrationModal()}
+                  className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 hover:from-blue-500 hover:to-cyan-400 text-black font-black tracking-wider uppercase shadow-[0_0_25px_rgba(0,114,255,0.45)] cursor-pointer px-7 py-3 text-sm sm:text-base rounded-xl transition-all hover:scale-105 border border-cyan-300/40"
+                >
+                  Register Now
+                </Button>
+                <a href="#events" className="inline-flex">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="bg-[#02050f]/90 text-white border-blue-500/40 hover:border-cyan-400 hover:bg-blue-950/40 hover:text-white px-7 py-3 text-sm sm:text-base rounded-xl transition-all shadow-[0_0_15px_rgba(0,114,255,0.15)] cursor-pointer hover:scale-105"
+                  >
+                    Explore Events
+                  </Button>
+                </a>
+              </div>
             </div>
 
-            {/* Venue Box */}
-            <div className="relative group flex items-center space-x-2.5 bg-gradient-to-b from-[#060e1f]/95 via-[#030712]/95 to-[#010206] px-5 py-3 rounded-2xl border border-blue-500/35 hover:border-cyan-400 shadow-[0_0_20px_rgba(0,114,255,0.18)] hover:shadow-[0_0_30px_rgba(0,240,255,0.35)] transition-all hover:-translate-y-1">
-              <span className="absolute -top-[1px] -left-[1px] w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-400" />
-              <span className="absolute -bottom-[1px] -right-[1px] w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-400" />
-              <MapPin className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
-              <span className="text-slate-400 font-medium">Venue:</span>
-              <span className="text-white font-bold tracking-wide">{venue}</span>
+            {/* RIGHT COLUMN: 3D Holographic Core & Telemetry Visuals */}
+            <div className="lg:col-span-5 flex flex-col items-center justify-center relative mt-4 lg:mt-0">
+              <Hero3DModel />
+
+              {/* High-Tech Telemetry Chips below 3D Model */}
+              <div className="grid grid-cols-2 gap-2.5 w-full max-w-[340px] sm:max-w-[380px] mt-2 font-mono text-xs">
+                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-gradient-to-b from-[#060e1d]/90 to-[#020612]/95 border border-blue-500/30 shadow-[0_0_15px_rgba(0,114,255,0.12)]">
+                  <Trophy className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00f0ff]" />
+                  <div>
+                    <div className="text-[9px] text-slate-400 uppercase tracking-wider">Prize Pool</div>
+                    <div className="text-white font-bold text-xs">₹20,000+ Cash</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-gradient-to-b from-[#060e1d]/90 to-[#020612]/95 border border-blue-500/30 shadow-[0_0_15px_rgba(0,114,255,0.12)]">
+                  <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00f0ff]" />
+                  <div>
+                    <div className="text-[9px] text-slate-400 uppercase tracking-wider">Entry Status</div>
+                    <div className="text-cyan-300 font-bold text-xs">100% Free Entry</div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-
-          {/* 4 3D Countdown Timer Boxes */}
-          <CountdownTimer targetDate="2026-09-16T09:00:00" />
-
-          {/* 3D Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <Button
-              size="lg"
-              variant="primary"
-              rightIcon={<ArrowRight className="w-5 h-5" />}
-              onClick={() => openRegistrationModal()}
-              className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 hover:from-blue-500 hover:to-cyan-400 text-black font-black tracking-wider uppercase shadow-[0_0_30px_rgba(0,114,255,0.5)] cursor-pointer px-9 py-4 text-base rounded-2xl transition-all hover:scale-105 border border-cyan-300/40"
-            >
-              Register Now
-            </Button>
-            <a href="#events" className="inline-flex">
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-[#02050f]/90 text-white border-blue-500/40 hover:border-cyan-400 hover:bg-blue-950/40 hover:text-white px-9 py-4 text-base rounded-2xl transition-all shadow-[0_0_20px_rgba(0,114,255,0.18)] cursor-pointer hover:scale-105"
-              >
-                Explore Events
-              </Button>
-            </a>
           </div>
         </div>
       </section>
