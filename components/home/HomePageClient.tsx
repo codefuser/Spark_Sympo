@@ -184,7 +184,7 @@ export function HomePageClient({
 
             {/* Tagline Description */}
             <p className="text-base sm:text-lg md:text-xl text-slate-200 font-normal max-w-2xl mx-auto leading-relaxed font-sans">
-              <span className="text-white font-semibold">Electrify Your Engineering Instincts.</span> The National Level Technical Symposium standardizing innovation, circuit synthesis, and robotics.
+              <span className="text-white font-semibold">Electrify Your Engineering Instincts.</span> A National-Level Technical Symposium featuring innovation, knowledge, circuit challenges, and engaging non-technical events.
             </p>
           </div>
 
