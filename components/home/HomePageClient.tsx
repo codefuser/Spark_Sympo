@@ -43,6 +43,7 @@ import { useRegistrationModal } from "@/components/registration/RegistrationModa
 import { SymposiumEvent, CoordinatorType, SponsorType } from "@/types";
 import { AboutSection } from "@/components/home/AboutSection";
 import { EventCard } from "@/components/home/EventCard";
+import { Hero3DModel } from "@/components/home/Hero3DModel";
 
 interface HomePageClientProps {
   events: SymposiumEvent[];
@@ -136,54 +137,98 @@ export function HomePageClient({
 
   return (
     <div className="space-y-24 pb-20 pt-20">
-      {/* SECTION 1: HERO */}
-      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-6 sm:py-12 md:py-16 overflow-hidden border-b border-primary/10">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute top-1/3 right-10 w-[300px] h-[250px] bg-cyan/10 rounded-full blur-[100px] pointer-events-none" />
+      {/* SECTION 1: HERO (3D Futuristic Sci-Fi Engineering Model Theme) */}
+      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-6 sm:py-12 md:py-16 overflow-hidden border-b border-blue-500/15">
+        {/* Deep 3D Ambient Lighting Glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-blue-600/12 rounded-full blur-[160px] pointer-events-none -z-10" />
+        <div className="absolute top-1/3 right-10 w-[400px] h-[350px] bg-cyan-500/10 rounded-full blur-[130px] pointer-events-none -z-10" />
 
-        <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center space-y-6 sm:space-y-8 my-auto">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-mono tracking-widest uppercase shadow-glow animate-pulse max-w-full text-center">
-            <Zap className="w-4 h-4 text-primary shrink-0" />
-            <span>Departments of Electronics & Communication Engineering & Electrical & Electronics Engineering</span>
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center space-y-6 sm:space-y-8 my-auto max-w-5xl">
+          {/* Top Department Badge - 3D Cyber Chamfered Pill */}
+          <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-gradient-to-r from-[#030917]/95 via-[#06142a]/95 to-[#030917]/95 border border-blue-500/40 text-xs sm:text-sm font-mono tracking-widest uppercase shadow-[0_0_20px_rgba(0,114,255,0.25)] hover:border-cyan-400 transition-all max-w-full">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
+            </span>
+            <Zap className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
+            <span className="text-white font-semibold">
+              Departments of <span className="text-cyan-300 font-bold">Electronics &amp; Communication</span> &amp; <span className="text-blue-300 font-bold">Electrical &amp; Electronics</span> Engineering
+            </span>
           </div>
 
-          <div className="space-y-4 max-w-4xl mx-auto">
-            <p className="text-sm sm:text-base font-mono text-cyan uppercase tracking-widest">
+          {/* College Presents line */}
+          <div className="flex items-center justify-center gap-3 pt-1">
+            <div className="h-[1px] w-8 sm:w-16 bg-gradient-to-r from-transparent to-cyan-400" />
+            <p className="text-xs sm:text-sm md:text-base font-mono font-bold text-cyan-300 uppercase tracking-[0.25em] drop-shadow-[0_0_10px_rgba(0,240,255,0.5)]">
               {collegeName} Presents
             </p>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black font-mono tracking-tight text-white uppercase">
-              SPARK<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan to-cyan-glow">TRON</span>{" "}
-              <span className="text-primary font-sans">2K26</span>
+            <div className="h-[1px] w-8 sm:w-16 bg-gradient-to-l from-transparent to-cyan-400" />
+          </div>
+
+          {/* 3D Interactive Holographic Model Centerpiece */}
+          <div className="py-1">
+            <Hero3DModel />
+          </div>
+
+          {/* Main Title: SPARKTRON 2K26 */}
+          <div className="space-y-4">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black font-mono tracking-tight text-white uppercase select-none">
+              <span className="text-white drop-shadow-[0_4px_16px_rgba(255,255,255,0.35)]">SPARK</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500 drop-shadow-[0_0_35px_rgba(0,180,255,0.75)]">
+                TRON
+              </span>{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-blue-400 font-sans drop-shadow-[0_0_30px_rgba(0,114,255,0.6)]">
+                2K26
+              </span>
             </h1>
-            <p className="text-lg sm:text-xl text-secondary-foreground font-light max-w-2xl mx-auto leading-relaxed">
-              Electrify Your Engineering Instincts. The National Level Technical Symposium standardizing innovation, circuit synthesis, and robotics.
+
+            {/* Tagline Description */}
+            <p className="text-base sm:text-lg md:text-xl text-slate-200 font-normal max-w-2xl mx-auto leading-relaxed font-sans">
+              <span className="text-white font-semibold">Electrify Your Engineering Instincts.</span> The National Level Technical Symposium standardizing innovation, circuit synthesis, and robotics.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-mono text-slate-300">
-            <div className="flex items-center space-x-2 bg-card/80 px-4 py-2 rounded-xl border border-primary/20">
-              <Calendar className="w-4 h-4 text-primary" />
-              <span>{symposiumDate}</span>
+          {/* Date and Venue 3D HUD Boxes */}
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs sm:text-sm font-mono pt-2">
+            {/* Date Box */}
+            <div className="relative group flex items-center space-x-2.5 bg-gradient-to-b from-[#060e1f]/95 via-[#030712]/95 to-[#010206] px-5 py-3 rounded-2xl border border-blue-500/35 hover:border-cyan-400 shadow-[0_0_20px_rgba(0,114,255,0.18)] hover:shadow-[0_0_30px_rgba(0,240,255,0.35)] transition-all hover:-translate-y-1">
+              <span className="absolute -top-[1px] -left-[1px] w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-400" />
+              <span className="absolute -bottom-[1px] -right-[1px] w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-400" />
+              <Calendar className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
+              <span className="text-slate-400 font-medium">Date:</span>
+              <span className="text-white font-bold tracking-wide">{symposiumDate}</span>
             </div>
-            <div className="flex items-center space-x-2 bg-card/80 px-4 py-2 rounded-xl border border-primary/20">
-              <MapPin className="w-4 h-4 text-cyan" />
-              <span>{venue}</span>
+
+            {/* Venue Box */}
+            <div className="relative group flex items-center space-x-2.5 bg-gradient-to-b from-[#060e1f]/95 via-[#030712]/95 to-[#010206] px-5 py-3 rounded-2xl border border-blue-500/35 hover:border-cyan-400 shadow-[0_0_20px_rgba(0,114,255,0.18)] hover:shadow-[0_0_30px_rgba(0,240,255,0.35)] transition-all hover:-translate-y-1">
+              <span className="absolute -top-[1px] -left-[1px] w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-400" />
+              <span className="absolute -bottom-[1px] -right-[1px] w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-400" />
+              <MapPin className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
+              <span className="text-slate-400 font-medium">Venue:</span>
+              <span className="text-white font-bold tracking-wide">{venue}</span>
             </div>
           </div>
 
+          {/* 4 3D Countdown Timer Boxes */}
           <CountdownTimer targetDate="2026-09-16T09:00:00" />
 
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+          {/* 3D Action Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <Button
               size="lg"
               variant="primary"
               rightIcon={<ArrowRight className="w-5 h-5" />}
               onClick={() => openRegistrationModal()}
+              className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 hover:from-blue-500 hover:to-cyan-400 text-black font-black tracking-wider uppercase shadow-[0_0_30px_rgba(0,114,255,0.5)] cursor-pointer px-9 py-4 text-base rounded-2xl transition-all hover:scale-105 border border-cyan-300/40"
             >
               Register Now
             </Button>
             <a href="#events" className="inline-flex">
-              <Button size="lg" variant="outline">
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-[#02050f]/90 text-white border-blue-500/40 hover:border-cyan-400 hover:bg-blue-950/40 hover:text-white px-9 py-4 text-base rounded-2xl transition-all shadow-[0_0_20px_rgba(0,114,255,0.18)] cursor-pointer hover:scale-105"
+              >
                 Explore Events
               </Button>
             </a>
@@ -191,18 +236,22 @@ export function HomePageClient({
         </div>
       </section>
 
-      {/* QUICK STATS */}
+      {/* QUICK STATS - 3D Cyber Vault Card (Black, Blue, White) */}
       <section className="container mx-auto px-4 sm:px-6">
         <div className="max-w-md mx-auto">
-          <Card glowOnHover className="text-center p-6 bg-card/70 border-amber-500/30 shadow-glow">
-            <Trophy className="w-10 h-10 text-amber-400 mx-auto mb-3" />
-            <div className="text-4xl sm:text-5xl font-extrabold font-mono text-white mb-1">
+          <div className="relative group text-center p-7 rounded-2xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_30px_rgba(0,114,255,0.25)] hover:shadow-[0_0_45px_rgba(0,240,255,0.45)] transition-all hover:-translate-y-1 overflow-hidden">
+            <span className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
+            <span className="absolute -top-[1px] -right-[1px] w-3 h-3 border-t-2 border-r-2 border-cyan-400" />
+            <span className="absolute -bottom-[1px] -left-[1px] w-3 h-3 border-b-2 border-l-2 border-cyan-400" />
+            <span className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
+            <Trophy className="w-12 h-12 text-cyan-400 mx-auto mb-3 drop-shadow-[0_0_15px_rgba(0,240,255,0.8)]" />
+            <div className="text-4xl sm:text-5xl font-black font-mono text-white mb-1 tracking-tight drop-shadow-md">
               ₹20,000+
             </div>
-            <div className="text-xs font-mono text-amber-400 tracking-widest uppercase font-bold">
+            <div className="text-xs font-mono text-cyan-300 tracking-[0.25em] uppercase font-bold">
               TOTAL CASH PRIZES
             </div>
-          </Card>
+          </div>
         </div>
       </section>
 
