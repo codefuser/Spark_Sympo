@@ -142,9 +142,9 @@ export function HomePageClient({
         <div className="absolute top-1/3 right-10 w-[300px] h-[250px] bg-cyan/10 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center space-y-6 sm:space-y-8 my-auto">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-mono tracking-widest uppercase shadow-glow animate-pulse">
-            <Zap className="w-4 h-4 text-primary" />
-            <span>Department of Electronics & Communication Engineering</span>
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-mono tracking-widest uppercase shadow-glow animate-pulse max-w-full text-center">
+            <Zap className="w-4 h-4 text-primary shrink-0" />
+            <span>Departments of Electronics & Communication Engineering & Electrical & Electronics Engineering</span>
           </div>
 
           <div className="space-y-4 max-w-4xl mx-auto">

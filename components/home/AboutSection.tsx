@@ -598,8 +598,9 @@ export function AboutSection() {
             <p className="text-sm text-slate-300 leading-relaxed space-y-3">
               <span>
                 SPARKTRON 2K26 is the annual flagship National Level Technical
-                Symposium organized by the Department of Electronics and
-                Communication Engineering. It serves as a high-octane nexus
+                Symposium organized jointly by the Department of Electronics and
+                Communication Engineering (ECE) and the Department of Electrical
+                and Electronics Engineering (EEE). It serves as a high-octane nexus
                 where budding engineers from across the nation converge to
                 benchmark their technical prowess.
               </span>
@@ -726,8 +727,8 @@ export function AboutSection() {
             <h4 className="text-xl font-bold text-white">Our Vision</h4>
           </div>
           <p className="text-sm text-slate-300 leading-relaxed">
-            To evolve into a center of excellence in Electronics and
-            Communication Engineering education and research, producing globally
+            To evolve into a center of excellence in Electronics, Communication,
+            and Electrical Engineering education and research, producing globally
             competent, ethically sound, and innovative engineers.
           </p>
         </Card>

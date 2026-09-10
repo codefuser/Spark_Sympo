@@ -91,7 +91,7 @@ export function Navbar() {
               SPARK<span className="text-primary">TRON</span>
               <span className="text-xs ml-1.5 px-1.5 py-0.5 rounded bg-cyan/20 text-cyan border border-cyan/40">2K26</span>
             </span>
-            <span className="text-[10px] text-secondary-foreground tracking-wider uppercase">ECE Symposium</span>
+            <span className="text-[10px] text-secondary-foreground tracking-wider uppercase">ECE & EEE Symposium</span>
           </div>
         </a>
 
