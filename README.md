@@ -1,6 +1,6 @@
 run  
 
-# SPARKTRON 2K26 —l Clege Symposium Platform
+# SPARKTRON 2K26 — Full-Stack Symposium Platform
 
 SPARKTRON 2K26 is a production-ready, full-stack digital platform built for the National  Technical Symposium organized by the Department .
 

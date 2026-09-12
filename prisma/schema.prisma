@@ -124,3 +124,38 @@ model Announcement {
   priority  String   @default("NORMAL") // HIGH, NORMAL
   date      DateTime @default(now())
 }
+
+model EmailMessage {
+  id                String    @id @default(uuid())
+  registrationId    String?
+  recipientName     String
+  recipientEmail    String
+  subject           String
+  messageContent    String
+  templateName      String    @default("CUSTOM")
+  status            String    @default("Pending") // Pending, Sending, Sent, Delivered, Failed
+  providerMessageId String?
+  errorMessage      String?
+  createdAt         DateTime  @default(now())
+  sentAt            DateTime?
+  deliveredAt       DateTime?
+}
+
+model EmailSetting {
+  id               String   @id @default("default_settings")
+  senderName       String   @default("SPARKTRON 2K26")
+  senderEmail      String   @default("onboarding@resend.dev")
+  replyToEmail     String   @default("sparktron2k26@gmail.com")
+  venueName        String   @default("Thamirabharani Engineering College")
+  venueAddress     String   @default("ECE Block Auditorium & Labs, College Campus, Tirunelveli")
+  mapLink          String   @default("https://maps.google.com/?q=Thamirabharani+Engineering+College")
+  latitude         Float?
+  longitude        Float?
+  quizLink         String   @default("https://sparktron-quiz.vercel.app")
+  pptUploadLink    String   @default("https://forms.gle/sparktron2k26ppt")
+  projectLink      String   @default("https://forms.gle/sparktron2k26project")
+  customEventLinks String   @default("{}")
+  updatedAt        DateTime @default(now())
+}
+
+
