@@ -8,12 +8,13 @@ import { prisma } from "@/lib/database/prisma";
 import { DEFAULT_EVENTS } from "@/lib/constants/defaults";
 
 export const metadata: Metadata = {
-  title: "SPARKTRON 2K26 | ECE Technical Symposium",
+  title: "SPARKTRON 2K26 | ECE & EEE Technical Symposium",
   description:
-    "Official National Level Technical Symposium organized by the Department of Electronics and Communication Engineering (ECE). CircuitRIX, PaperTronix, RoboCombat, and Workshops.",
+    "Official National Level Technical Symposium organized jointly by the Department of Electronics and Communication Engineering (ECE) & Department of Electrical and Electronics Engineering (EEE). CircuitRIX, PaperTronix, RoboCombat, and Workshops.",
   keywords: [
     "SPARKTRON 2K26",
     "ECE Symposium",
+    "EEE Symposium",
     "Technical Symposium 2026",
     "CircuitRIX",
     "Paper presentation ECE",

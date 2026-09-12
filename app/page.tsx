@@ -36,7 +36,9 @@ export default async function HomePage() {
   try { studentCoordinators = await prisma.coordinator.findMany({ where: { role: "STUDENT" } }); } catch (err) { console.warn("page: prisma students failed", err); }
   try { announcements = await prisma.announcement.findMany({ orderBy: { date: "desc" } }); } catch (err) { console.warn("page: prisma announcements failed", err); }
 
-  const finalEvents = events && events.length > 0 ? events : DEFAULT_EVENTS;
+  const finalEvents = (events && events.length > 0 ? events : DEFAULT_EVENTS).filter(
+    (e: any) => e.category !== "WORKSHOP" && e.slug !== "iot-workshop"
+  );
   const finalSponsors = sponsors && sponsors.length > 0 ? sponsors : DEFAULT_SPONSORS;
   const finalFaculty = facultyCoordinators && facultyCoordinators.length > 0 ? facultyCoordinators : DEFAULT_FACULTY_COORDINATORS;
   const finalStudents = studentCoordinators && studentCoordinators.length > 0 ? studentCoordinators : DEFAULT_STUDENT_COORDINATORS;
@@ -52,7 +54,7 @@ export default async function HomePage() {
     { time: "10:15 AM - 01:00 PM", title: "Morning Track: CircuitRIX & PaperTronix", venue: "VLSI Lab & Seminar Hall" },
     { time: "11:30 AM - 02:00 PM", title: "RoboCombat 2.0 Arena Knockouts", venue: "Central Courtyard Arena" },
     { time: "01:00 PM - 01:45 PM", title: "Complimentary Lunch Break", venue: "College Dining Hall" },
-    { time: "01:45 PM - 04:15 PM", title: "IoT Workshop & Non-Tech Challenges", venue: "DSP Lab & Media Center" },
+    { time: "01:45 PM - 04:15 PM", title: "Rythemania & E-Sports Tournaments", venue: "Open Air Theater & Media Arena" },
     { time: "04:30 PM - 05:30 PM", title: "Valedictory Ceremony & Prize Distribution", venue: "Main Auditorium" },
   ];
 

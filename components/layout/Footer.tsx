@@ -97,12 +97,12 @@ export function Footer() {
             </div>
           </div>
           <p className="text-sm leading-relaxed text-slate-400 font-sans">
-            National Level Technical Symposium organized by the Department of Electronics and Communication Engineering (ECE). Empowering next-gen innovators.
+            National Level Technical Symposium organized jointly by the Department of Electronics and Communication Engineering (ECE) & Department of Electrical and Electronics Engineering (EEE). Empowering next-gen innovators.
           </p>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card/80 border border-primary/20 text-xs font-sans text-primary">
             <span className="font-semibold text-white">September 16, 2026</span>
             <span className="text-primary/50">•</span>
-            <span className="text-slate-300">ECE Campus Auditorium</span>
+            <span className="text-slate-300">College Campus Auditorium</span>
           </div>
         </div>
 
@@ -155,7 +155,7 @@ export function Footer() {
               "CircuitRIX Debugging",
               "PaperTronix Symposium",
               "RoboCombat 2.0 Arena",
-              "IoT Edge Workshop",
+              "Rythemania & Gaming",
             ].map((track) => (
               <li key={track}>
                 <a
@@ -193,7 +193,7 @@ export function Footer() {
                 <MapPin className="w-4 h-4" />
               </div>
               <div className="text-xs leading-relaxed text-slate-300">
-                <span className="text-white font-semibold block mb-0.5">ECE Department</span>
+                <span className="text-white font-semibold block mb-0.5">Departments of ECE & EEE</span>
                 <span className="text-slate-400">Thamirabharani Engineering College, Thatchanallur, Tirunelveli - 627358</span>
               </div>
             </div>
@@ -231,7 +231,7 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-primary/10 py-6 bg-background/50 text-xs font-sans">
         <div className="container mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-slate-400 font-medium">© 2026 SPARKTRON 2K26. Department of ECE. All rights reserved.</p>
+          <p className="text-slate-400 font-medium">© 2026 SPARKTRON 2K26. Departments of ECE & EEE. All rights reserved.</p>
           <div className="flex items-center gap-4 text-slate-500 text-xs">
             <span className="hover:text-slate-400 transition-colors">Thamirabharani Engineering College</span>
             <span>•</span>
