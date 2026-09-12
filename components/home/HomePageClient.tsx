@@ -45,6 +45,93 @@ import { AboutSection } from "@/components/home/AboutSection";
 import { EventCard } from "@/components/home/EventCard";
 import { Hero3DModel } from "@/components/home/Hero3DModel";
 
+function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: string; title: string; venue: string }; idx: number; isVisible: boolean; isReducedMotion: boolean }) {
+  const rowRef = React.useRef<HTMLDivElement>(null);
+  const [rotation, setRotation] = React.useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!rowRef.current) return;
+    const rect = rowRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    const rotateX = ((y - centerY) / centerY) * -4; // Subtle 4 deg max
+    const rotateY = ((x - centerX) / centerX) * 4;
+    
+    setRotation({ x: rotateX, y: rotateY });
+  };
+
+  const handleMouseEnter = () => setIsHovered(true);
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setRotation({ x: 0, y: 0 });
+  };
+
+  return (
+    <div
+      style={{
+        opacity: isVisible || isReducedMotion ? 1 : 0,
+        transform: isVisible || isReducedMotion ? "translateY(0)" : "translateY(20px)",
+        transition: isReducedMotion ? "none" : `opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) ${idx * 0.8}s, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) ${idx * 0.8}s`
+      }}
+    >
+      <div
+        ref={rowRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="group/row relative p-4 rounded-xl bg-card border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group-hover/schedule:opacity-40 hover:!opacity-100"
+        style={{
+          transition: isHovered 
+            ? 'transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, z-index 0s' 
+            : 'transform 0.5s ease-out, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, z-index 0.5s',
+          transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) ${isHovered ? 'translateZ(10px) translateY(-6px)' : 'translateZ(0px) translateY(0px)'}`,
+          transformStyle: 'preserve-3d',
+          borderColor: isHovered ? 'rgba(0, 240, 255, 0.6)' : '',
+          boxShadow: isHovered ? '0 20px 40px -10px rgba(0,240,255,0.2), 0 0 15px rgba(0,240,255,0.1)' : '',
+          zIndex: isHovered ? 10 : 1,
+        }}
+      >
+      {/* Surface Gradient */}
+      <div 
+        className="absolute inset-0 rounded-xl bg-gradient-to-br from-black/60 to-transparent pointer-events-none transition-opacity duration-300"
+        style={{ opacity: isHovered ? 1 : 0 }}
+      />
+      
+      <div 
+        className="relative z-10 flex items-center space-x-3 text-primary text-sm font-bold shrink-0 transition-all duration-300"
+        style={{ transform: isHovered ? 'translateZ(20px)' : 'translateZ(0px)', color: isHovered ? '#00F0FF' : '' }}
+      >
+        <Clock className="w-4 h-4 transition-colors duration-300" style={{ color: isHovered ? '#FFFFFF' : '#00F0FF' }} />
+        <span style={{ textShadow: isHovered ? '0 0 8px rgba(0,240,255,0.4)' : 'none' }}>{item.time}</span>
+      </div>
+      <div 
+        className="relative z-10 flex-1 transition-transform duration-300"
+        style={{ transform: isHovered ? 'translateZ(25px)' : 'translateZ(0px)' }}
+      >
+        <h4 className="font-bold text-white text-sm font-sans tracking-wide drop-shadow-md">{item.title}</h4>
+      </div>
+      <div 
+        className="relative z-10 text-xs text-slate-400 bg-background px-3 py-1 rounded-lg border border-primary/10 shrink-0 transition-all duration-300"
+        style={{ 
+          transform: isHovered ? 'translateZ(30px)' : 'translateZ(0px)',
+          borderColor: isHovered ? 'rgba(0,240,255,0.4)' : '',
+          color: isHovered ? '#00F0FF' : '',
+          boxShadow: isHovered ? '0 0 15px rgba(0,240,255,0.15)' : ''
+        }}
+      >
+        {item.venue}
+      </div>
+      </div>
+    </div>
+  );
+}
+
 interface HomePageClientProps {
   events: SymposiumEvent[];
   sponsors: SponsorType[];
@@ -77,6 +164,35 @@ export function HomePageClient({
 
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
   const [selectedEventDetail, setSelectedEventDetail] = useState<SymposiumEvent | null>(null);
+
+  const scheduleRef = React.useRef<HTMLDivElement>(null);
+  const [isScheduleVisible, setIsScheduleVisible] = useState(false);
+  const [isReducedMotion, setIsReducedMotion] = useState(false);
+
+  React.useEffect(() => {
+    const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setIsReducedMotion(prefersReducedMotion);
+
+    if (prefersReducedMotion) {
+      setIsScheduleVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsScheduleVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    if (scheduleRef.current) {
+      observer.observe(scheduleRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
 
   // Contact Form state
   const [contactName, setContactName] = useState("");
@@ -284,31 +400,21 @@ export function HomePageClient({
       <AboutSection />
 
       {/* SECTION 3: SYMPOSIUM HUB */}
-      <section id="symposium" className="container mx-auto px-4 sm:px-6 space-y-16">
+      <section id="symposium" className="container mx-auto px-4 sm:px-6 space-y-16 relative">
         <SectionHeading
           badge="SCHEDULE & GUIDELINES"
           title="Symposium Master Schedule"
           description="Everything you need to know about timings, venue rules, and announcements."
+          className="animate-[fade-in-up_0.8s_ease-out_both] [&>div:last-child]:animate-[scale-x_0.8s_ease-out_0.4s_both] [&>div:last-child]:origin-center"
         />
 
         {/* Master Schedule */}
-        <div className="max-w-3xl mx-auto space-y-3 font-mono">
+        <div ref={scheduleRef} className="group/schedule max-w-3xl mx-auto space-y-3 font-mono relative">
+          {/* Subtle Vertical Timeline */}
+          <div className="absolute left-0 sm:-left-6 top-8 bottom-8 w-[1px] bg-gradient-to-b from-transparent via-cyan/30 to-transparent hidden sm:block animate-[fade-in-up_1s_ease-out_both_0.4s]" />
+
           {schedule.map((item, idx) => (
-            <div
-              key={idx}
-              className="p-4 rounded-xl bg-card border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-primary/40 transition-colors"
-            >
-              <div className="flex items-center space-x-3 text-primary text-sm font-bold shrink-0">
-                <Clock className="w-4 h-4 text-cyan" />
-                <span>{item.time}</span>
-              </div>
-              <div className="flex-1">
-                <h4 className="font-bold text-white text-sm font-sans">{item.title}</h4>
-              </div>
-              <div className="text-xs text-slate-400 bg-background px-3 py-1 rounded-lg border border-primary/10 shrink-0">
-                {item.venue}
-              </div>
-            </div>
+            <ScheduleRow key={idx} item={item} idx={idx} isVisible={isScheduleVisible} isReducedMotion={isReducedMotion} />
           ))}
         </div>
 

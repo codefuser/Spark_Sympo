@@ -14,12 +14,58 @@ import {
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 
+function AnimatedCounter({ inView, target, duration = 4000, delay = 480 }: { inView: boolean, target: number, duration?: number, delay?: number }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion) {
+      setCount(target);
+      return;
+    }
+
+    let animId: number;
+    const timeoutId = setTimeout(() => {
+      let startTime: number | null = null;
+
+      const step = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        setCount(Math.round(easedProgress * target));
+
+        if (progress < 1) {
+          animId = requestAnimationFrame(step);
+        } else {
+          setCount(target);
+        }
+      };
+
+      animId = requestAnimationFrame(step);
+    }, delay);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      if (animId) {
+        cancelAnimationFrame(animId);
+      }
+    };
+  }, [inView, target, duration, delay]);
+
+  return <>{count}</>;
+}
+
 // 5. Minimal PCB Circuit Traces - Top Right
 function PcbTracesTopRight({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute select-none overflow-hidden opacity-30 transition-opacity duration-700",
+        "pointer-events-none absolute select-none overflow-hidden opacity-60 transition-opacity duration-700",
         className
       )}
       aria-hidden="true"
@@ -30,21 +76,33 @@ function PcbTracesTopRight({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d="M220 30 H140 L90 80 H60"
-          stroke="#00F0FF"
-          strokeWidth="1.2"
-        />
-        <circle cx="60" cy="80" r="2.5" fill="#00F0FF" />
-        <circle cx="140" cy="30" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
+        <g opacity="0.5">
+          <path d="M220 30 H140 L90 80 H60" stroke="#00F0FF" strokeWidth="1.2" />
+          <circle cx="60" cy="80" r="2.5" fill="#00F0FF" />
+          <circle cx="140" cy="30" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
+        </g>
         
-        <path
-          d="M220 50 H160 L110 100 H80"
-          stroke="#0072FF"
-          strokeWidth="1.2"
-        />
-        <circle cx="80" cy="100" r="2.5" fill="#0072FF" />
-        <circle cx="160" cy="50" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
+        {/* Animated glowing dot 1 */}
+        <circle r="3.5" fill="#00F0FF" opacity="0.6">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M220 30 H140 L90 80 H60" />
+        </circle>
+        <circle r="1.5" fill="#fff">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M220 30 H140 L90 80 H60" />
+        </circle>
+        
+        <g opacity="0.5">
+          <path d="M220 50 H160 L110 100 H80" stroke="#0072FF" strokeWidth="1.2" />
+          <circle cx="80" cy="100" r="2.5" fill="#0072FF" />
+          <circle cx="160" cy="50" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
+        </g>
+
+        {/* Animated glowing dot 2 */}
+        <circle r="3.5" fill="#0072FF" opacity="0.6">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M220 50 H160 L110 100 H80" />
+        </circle>
+        <circle r="1.5" fill="#fff">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M220 50 H160 L110 100 H80" />
+        </circle>
       </svg>
     </div>
   );
@@ -55,7 +113,7 @@ function PcbTracesBottomLeft({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute select-none overflow-hidden opacity-30 transition-opacity duration-700",
+        "pointer-events-none absolute select-none overflow-hidden opacity-60 transition-opacity duration-700",
         className
       )}
       aria-hidden="true"
@@ -66,21 +124,33 @@ function PcbTracesBottomLeft({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d="M0 90 H80 L130 40 H160"
-          stroke="#0072FF"
-          strokeWidth="1.2"
-        />
-        <circle cx="160" cy="40" r="2.5" fill="#0072FF" />
-        <circle cx="80" cy="90" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
+        <g opacity="0.5">
+          <path d="M0 90 H80 L130 40 H160" stroke="#0072FF" strokeWidth="1.2" />
+          <circle cx="160" cy="40" r="2.5" fill="#0072FF" />
+          <circle cx="80" cy="90" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
+        </g>
 
-        <path
-          d="M0 70 H60 L110 20 H140"
-          stroke="#00F0FF"
-          strokeWidth="1.2"
-        />
-        <circle cx="140" cy="20" r="2.5" fill="#00F0FF" />
-        <circle cx="60" cy="70" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
+        {/* Animated glowing dot 1 */}
+        <circle r="3.5" fill="#0072FF" opacity="0.6">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M0 90 H80 L130 40 H160" />
+        </circle>
+        <circle r="1.5" fill="#fff">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M0 90 H80 L130 40 H160" />
+        </circle>
+
+        <g opacity="0.5">
+          <path d="M0 70 H60 L110 20 H140" stroke="#00F0FF" strokeWidth="1.2" />
+          <circle cx="140" cy="20" r="2.5" fill="#00F0FF" />
+          <circle cx="60" cy="70" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
+        </g>
+
+        {/* Animated glowing dot 2 */}
+        <circle r="3.5" fill="#00F0FF" opacity="0.6">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M0 70 H60 L110 20 H140" />
+        </circle>
+        <circle r="1.5" fill="#fff">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M0 70 H60 L110 20 H140" />
+        </circle>
       </svg>
     </div>
   );
@@ -110,10 +180,104 @@ function HudCorners() {
   );
 }
 
+function ScanningText({ text, isVisible }: { text: string; isVisible: boolean }) {
+  const [isScanning, setIsScanning] = useState(false);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    
+    if (isVisible) {
+      timeout = setTimeout(() => {
+        setIsScanning(true);
+      }, 1000);
+    } else {
+      setIsScanning(false);
+    }
+    
+    return () => clearTimeout(timeout);
+  }, [isVisible]);
+
+  return (
+    <span className="relative inline-grid">
+      <span className="col-start-1 row-start-1">{text}</span>
+      {isScanning && (
+        <span 
+          aria-hidden="true"
+          className="col-start-1 row-start-1 bg-clip-text text-transparent pointer-events-none"
+          style={{
+            backgroundImage: "linear-gradient(90deg, transparent 0%, transparent 40%, rgba(0, 240, 255, 0.8) 50%, transparent 60%, transparent 100%)",
+            backgroundSize: "300% 100%",
+            backgroundRepeat: "no-repeat",
+            animation: "scanTextAnim 5.5s linear infinite",
+          }}
+        >
+          {text}
+        </span>
+      )}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes scanTextAnim {
+          0% { background-position: 100% 0; }
+          27.27% { background-position: 0% 0; }
+          100% { background-position: 0% 0; }
+        }
+      `}} />
+    </span>
+  );
+}
+
+function NeonScanText({ text }: { text: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <span ref={ref} className="relative inline-grid">
+      <span className="col-start-1 row-start-1">{text}</span>
+      {isVisible && (
+        <span 
+          aria-hidden="true"
+          className="col-start-1 row-start-1 bg-clip-text text-transparent pointer-events-none"
+          style={{
+            backgroundImage: "linear-gradient(90deg, transparent 0%, transparent 40%, rgba(0, 240, 255, 0.8) 50%, transparent 60%, transparent 100%)",
+            backgroundSize: "300% 100%",
+            backgroundRepeat: "no-repeat",
+            animation: "neonScanAnim 3s linear infinite",
+          }}
+        >
+          {text}
+        </span>
+      )}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes neonScanAnim {
+          0% { background-position: 100% 0; }
+          50% { background-position: 0% 0; }
+          100% { background-position: 0% 0; }
+        }
+      `}} />
+    </span>
+  );
+}
+
 export function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
-  const [acresCount, setAcresCount] = useState(0);
+  const [isCurrentlyVisible, setIsCurrentlyVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isClamped, setIsClamped] = useState(true);
 
@@ -135,7 +299,6 @@ export function AboutSection() {
 
     if (prefersReducedMotion) {
       setInView(true);
-      setAcresCount(25);
       return;
     }
 
@@ -154,58 +317,24 @@ export function AboutSection() {
       }
     );
 
+    const continuousObserver = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        setIsCurrentlyVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
+      continuousObserver.observe(sectionRef.current);
     }
 
     return () => {
       observer.disconnect();
+      continuousObserver.disconnect();
     };
   }, []);
-
-  // 4. Statistics Animation: Snappy count-up from 0 to 25 when in view (~1.5s)
-  useEffect(() => {
-    if (!inView) return;
-
-    const prefersReducedMotion =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (prefersReducedMotion) {
-      setAcresCount(25);
-      return;
-    }
-
-    let animId: number;
-    const timeoutId = setTimeout(() => {
-      let startTime: number | null = null;
-      const duration = 4000; // 4 seconds
-      const target = 25;
-
-      const step = (timestamp: number) => {
-        if (!startTime) startTime = timestamp;
-        const progress = Math.min((timestamp - startTime) / duration, 1);
-        // Smooth cubic deceleration
-        const easedProgress = 1 - Math.pow(1 - progress, 3);
-        setAcresCount(Math.round(easedProgress * target));
-
-        if (progress < 1) {
-          animId = requestAnimationFrame(step);
-        } else {
-          setAcresCount(target);
-        }
-      };
-
-      animId = requestAnimationFrame(step);
-    }, 480); // match the CSS transition delay of 480ms
-    
-    return () => {
-      clearTimeout(timeoutId);
-      if (animId) {
-        cancelAnimationFrame(animId);
-      }
-    };
-  }, [inView]);
 
   return (
     <section
@@ -221,11 +350,11 @@ export function AboutSection() {
 
       {/* 1. Slow Ambient Cyan/Blue Radial Lighting (Low Intensity) */}
       <div
-        className="pointer-events-none absolute top-12 left-1/4 -z-10 w-[420px] h-[320px] rounded-full bg-primary/[0.05] blur-[110px] hud-ambient-primary"
+        className="pointer-events-none absolute top-12 left-1/4 -z-10 w-[420px] h-[320px] rounded-full bg-primary/[0.05] blur-[110px] hud-ambient-primary transform-gpu"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute bottom-16 right-1/4 -z-10 w-[460px] h-[360px] rounded-full bg-cyan/[0.05] blur-[130px] hud-ambient-cyan"
+        className="pointer-events-none absolute bottom-16 right-1/4 -z-10 w-[460px] h-[360px] rounded-full bg-cyan/[0.05] blur-[130px] hud-ambient-cyan transform-gpu"
         aria-hidden="true"
       />
 
@@ -256,16 +385,33 @@ export function AboutSection() {
         {/* Heading with Scroll Reveal */}
         <h2
           data-reveal
-          className={cn(
-            "text-3xl md:text-4xl lg:text-[2.65rem] font-extrabold tracking-tight uppercase leading-tight sm:leading-snug transition-all duration-500 ease-out",
-            inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          )}
-          style={{ transitionDelay: "140ms" }}
+          className="text-3xl md:text-4xl lg:text-[2.65rem] font-extrabold tracking-tight uppercase leading-tight sm:leading-snug"
         >
-          <span className="text-white block font-bold">
-            About Thamirabharani Engineering College
+          <span 
+            className={cn(
+              "text-white block font-bold transition-all duration-500 ease-out",
+              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            )}
+            style={{ transitionDelay: "140ms" }}
+          >
+            About Thamirabharani
           </span>
-          <span className="mt-1.5 inline-flex flex-wrap items-center justify-center gap-2 text-slate-300 font-extrabold text-2xl md:text-3xl lg:text-4xl">
+          <span 
+            className={cn(
+              "text-white block font-bold transition-all duration-500 ease-out",
+              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            )}
+            style={{ transitionDelay: "340ms" }}
+          >
+            Engineering College
+          </span>
+          <span 
+            className={cn(
+              "mt-1.5 flex flex-wrap items-center justify-center gap-2 text-slate-300 font-extrabold text-2xl md:text-3xl lg:text-4xl transition-all duration-500 ease-out",
+              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            )}
+            style={{ transitionDelay: "540ms" }}
+          >
             <span className="text-primary/60 font-light">&amp;</span>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-glow to-cyan drop-shadow-[0_0_10px_rgba(0,240,255,0.2)]">
               SPARKTRON 2K26
@@ -280,7 +426,7 @@ export function AboutSection() {
             "space-y-2 transition-all duration-500 ease-out",
             inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           )}
-          style={{ transitionDelay: "220ms" }}
+          style={{ transitionDelay: "740ms" }}
         >
           <div className="h-0.5 w-16 bg-gradient-to-r from-primary to-cyan rounded-full mx-auto my-2 opacity-80" />
           <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
@@ -295,72 +441,14 @@ export function AboutSection() {
         <div
           data-reveal
           className={cn(
-            "group relative rounded-2xl bg-card/90 border border-primary/20 p-6 sm:p-8 md:p-10 backdrop-blur-md shadow-2xl transition-all duration-600 ease-out shadow-[0_4px_30px_-5px_rgba(0,240,255,0.05)] hover:border-primary/35",
+            "group relative rounded-[24px] bg-card/90 border border-cyan p-6 sm:p-8 md:p-10 backdrop-blur-md shadow-2xl transition-all duration-600 ease-out shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80",
             inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           )}
-          style={{ transitionDelay: "300ms" }}
+          style={{ transitionDelay: "820ms" }}
         >
           {/* HUD Corner Brackets */}
           <HudCorners />
 
-          {/* 2. Scanning Light: Outer border tracking pulses from top-left to bottom-right */}
-          <div
-            className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden z-20"
-            aria-hidden="true"
-          >
-            <style>
-              {`
-                @keyframes pulse-horz {
-                  0% { left: -40%; }
-                  100% { left: 100%; }
-                }
-                @keyframes pulse-vert {
-                  0% { top: -40%; }
-                  100% { top: 100%; }
-                }
-                .animate-pulse-top {
-                  animation: pulse-horz 2s linear forwards;
-                  animation-delay: 300ms;
-                }
-                .animate-pulse-right {
-                  animation: pulse-vert 2s linear forwards;
-                  animation-delay: 2300ms;
-                }
-                .animate-pulse-bottom {
-                  animation: pulse-horz 2s linear forwards;
-                  animation-delay: 2300ms;
-                }
-                .animate-pulse-left {
-                  animation: pulse-vert 2s linear forwards;
-                  animation-delay: 300ms;
-                }
-              `}
-            </style>
-            {inView && (
-              <>
-                {/* Top Edge (moves L -> R) */}
-                <div 
-                  className="absolute top-0 h-[2px] w-[40%] bg-gradient-to-r from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-top" 
-                  style={{ left: '-40%' }}
-                />
-                {/* Right Edge (moves T -> B) */}
-                <div 
-                  className="absolute right-0 w-[2px] h-[40%] bg-gradient-to-b from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-right" 
-                  style={{ top: '-40%' }}
-                />
-                {/* Left Edge (moves T -> B) */}
-                <div 
-                  className="absolute left-0 w-[2px] h-[40%] bg-gradient-to-b from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-left" 
-                  style={{ top: '-40%' }}
-                />
-                {/* Bottom Edge (moves L -> R) */}
-                <div 
-                  className="absolute bottom-0 h-[2px] w-[40%] bg-gradient-to-r from-transparent via-cyan-400 to-cyan-300 shadow-[0_0_15px_3px_rgba(0,240,255,0.6)] animate-pulse-bottom" 
-                  style={{ left: '-40%' }}
-                />
-              </>
-            )}
-          </div>
 
           {/* 5. PCB Circuit Traces inside the About card (Cyan & Blue, decorative & subtle) */}
           <PcbTracesTopRight className="top-1 right-2 sm:top-2 sm:right-5 w-36 h-20 sm:w-56 sm:h-28" />
@@ -368,11 +456,11 @@ export function AboutSection() {
 
           {/* Subtle interior radial corner glow */}
           <div
-            className="pointer-events-none absolute -top-16 -right-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl"
+            className="pointer-events-none absolute -top-16 -right-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl transform-gpu"
             aria-hidden="true"
           />
           <div
-            className="pointer-events-none absolute -bottom-16 -left-16 w-64 h-64 bg-cyan/10 rounded-full blur-3xl"
+            className="pointer-events-none absolute -bottom-16 -left-16 w-64 h-64 bg-cyan/10 rounded-full blur-3xl transform-gpu"
             aria-hidden="true"
           />
 
@@ -384,48 +472,49 @@ export function AboutSection() {
                 "flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-primary/15 pb-5 transition-all duration-500 ease-out",
                 inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               )}
-              style={{ transitionDelay: "360ms" }}
+              style={{ transitionDelay: "880ms" }}
             >
               <div className="flex items-center space-x-4">
-                {/* 3. Animated College / Institution Icon: Smooth fade, scale & glow effect */}
+                {/* 3. Animated College / Institution Icon: 68px round circle with breathing cyan glow */}
                 <div
                   className={cn(
-                    "relative p-3 rounded-xl bg-primary/10 text-primary border border-primary/25 shrink-0 group-hover:border-primary/50 transition-colors",
-                    inView && "college-badge-animated"
+                    "relative flex items-center justify-center shrink-0 w-[68px] h-[68px] rounded-full bg-transparent text-cyan border border-cyan transition-colors overflow-hidden",
+                    inView && "slow-breathing-cyan-glow"
                   )}
                 >
-                  {inView && (
-                    <span
-                      className="pointer-events-none absolute inset-0 rounded-xl border border-primary/40 animate-icon-echo"
-                      aria-hidden="true"
-                    />
-                  )}
-                  <Building2
+                  <svg width="0" height="0" className="absolute pointer-events-none">
+                    <filter id="remove-white">
+                      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -1 -1 -1 0 3" />
+                    </filter>
+                  </svg>
+                  <img 
+                    src="/eagle.png"
+                    alt="Eagle Logo"
                     className={cn(
-                      "w-6 h-6 sm:w-7 sm:h-7 transition-all duration-500 ease-out",
-                      inView ? "college-icon-animated" : "scale-75 opacity-0"
+                      "w-[85%] h-[85%] object-contain transition-all duration-500 ease-out",
+                      inView ? "opacity-100 scale-100" : "scale-75 opacity-0"
                     )}
+                    style={{ filter: "url(#remove-white)" }}
                   />
                 </div>
 
                 <div>
-                  <div className="flex items-center space-x-2 text-primary font-mono text-xs tracking-wider uppercase font-semibold">
+                  <div className="flex items-center space-x-2 text-primary font-mono text-xs tracking-[0.25em] uppercase font-semibold">
                     <GraduationCap className="w-4 h-4" />
                     <span>INSTITUTION PROFILE</span>
                   </div>
                   <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mt-1">
-                    About Thamirabharani Engineering College
+                    About <ScanningText text="Thamirabharani Engineering College" isVisible={isCurrentlyVisible} />
                   </h3>
                 </div>
               </div>
 
-              {/* Accreditation Badges */}
               <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
                 <span className="px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary font-semibold flex items-center gap-1.5 shadow-[0_0_6px_rgba(0,240,255,0.06)]">
-                  <ShieldCheck className="w-4 h-4 text-primary" /> AICTE Approved, New Delhi
+                  <ShieldCheck className="w-4 h-4 text-primary" /> AICTE Approved
                 </span>
                 <span className="px-3 py-1.5 rounded-full bg-cyan/10 border border-cyan/30 text-cyan font-semibold flex items-center gap-1.5 shadow-[0_0_6px_rgba(0,114,255,0.06)]">
-                  <Award className="w-4 h-4 text-cyan" /> Autonomous Institution
+                  <Award className="w-4 h-4 text-cyan" /> Autonomous
                 </span>
               </div>
             </div>
@@ -437,7 +526,7 @@ export function AboutSection() {
                 "text-sm sm:text-base text-slate-300 font-normal leading-relaxed space-y-4 transition-all duration-500 ease-out",
                 inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               )}
-              style={{ transitionDelay: "420ms" }}
+              style={{ transitionDelay: "940ms" }}
             >
               <div className="space-y-0">
                 {/* First paragraph container - animates max-height so it doesn't snap instantly */}
@@ -500,38 +589,20 @@ export function AboutSection() {
             </div>
 
             {/* 4 & 6. Statistics Grid: Smooth scroll reveal, count-up, hover lift & glow */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-2 font-mono text-xs">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-2 font-mono text-xs">
               {/* 25 Acres with Count-up */}
               <div
                 data-reveal
                 className={cn(
-                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-primary/60 hover:shadow-[0_0_20px_rgba(0,240,255,0.22)] cursor-default",
+                  "group/stat relative overflow-hidden p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-300 ease-out hover:-translate-y-[2px] hover:border-primary/80 hover:shadow-[0_0_15px_rgba(0,240,255,0.15)] cursor-default flex flex-col items-center justify-center min-h-[80px]",
                   inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 )}
-                style={{ transitionDelay: "480ms" }}
+                style={{ transitionDelay: "1000ms" }}
               >
-                <div className="text-base sm:text-xl md:text-2xl font-bold text-primary tracking-tight">
-                  {acresCount} Acres
-                </div>
-                <div className="text-slate-400 mt-1 text-[11px] sm:text-xs">
-                  Lush Green Campus
-                </div>
-              </div>
-
-              {/* Tirunelveli */}
-              <div
-                data-reveal
-                className={cn(
-                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,114,255,0.25)] cursor-default",
-                  inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                )}
-                style={{ transitionDelay: "560ms" }}
-              >
-                <div className="text-base sm:text-xl md:text-2xl font-bold text-cyan tracking-tight">
-                  Tirunelveli
-                </div>
-                <div className="text-slate-400 mt-1 text-[11px] sm:text-xs">
-                  Corporation Limits
+                <div className="absolute top-0 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-0 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                <div className="text-base sm:text-xl md:text-2xl font-bold text-primary tracking-tight transition-transform duration-300 group-hover/stat:scale-[1.03]">
+                  <AnimatedCounter inView={inView} target={25} delay={480} /> Acres
                 </div>
               </div>
 
@@ -539,33 +610,15 @@ export function AboutSection() {
               <div
                 data-reveal
                 className={cn(
-                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-emerald-400/60 hover:shadow-[0_0_20px_rgba(52,211,153,0.25)] cursor-default",
+                  "group/stat relative overflow-hidden p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-300 ease-out hover:-translate-y-[2px] hover:border-emerald-400/80 hover:shadow-[0_0_15px_rgba(52,211,153,0.15)] cursor-default flex flex-col items-center justify-center min-h-[80px]",
                   inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 )}
-                style={{ transitionDelay: "640ms" }}
+                style={{ transitionDelay: "1160ms" }}
               >
-                <div className="text-base sm:text-xl md:text-2xl font-bold text-emerald-400 tracking-tight">
+                <div className="absolute top-0 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-0 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                <div className="text-base sm:text-xl md:text-2xl font-bold text-emerald-400 tracking-tight transition-transform duration-300 group-hover/stat:scale-[1.03]">
                   Autonomous
-                </div>
-                <div className="text-slate-400 mt-1 text-[11px] sm:text-xs">
-                  AICTE Approved &amp; Autonomous
-                </div>
-              </div>
-
-              {/* Co-Ed */}
-              <div
-                data-reveal
-                className={cn(
-                  "group/stat relative p-3.5 sm:p-4 rounded-xl bg-background/85 border border-primary/20 text-center transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(251,191,36,0.25)] cursor-default",
-                  inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                )}
-                style={{ transitionDelay: "720ms" }}
-              >
-                <div className="text-base sm:text-xl md:text-2xl font-bold text-amber-400 tracking-tight">
-                  Co-Ed
-                </div>
-                <div className="text-slate-400 mt-1 text-[11px] sm:text-xs">
-                  Residential Campus
                 </div>
               </div>
             </div>
@@ -573,19 +626,106 @@ export function AboutSection() {
         </div>
       </div>
 
+      {/* Department Overview: ECE & EEE */}
+      <div
+        data-reveal
+        className={cn(
+          "grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch transition-all duration-700 ease-out",
+          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+        )}
+        style={{ transitionDelay: "1320ms" }}
+      >
+        {/* Department of ECE */}
+        <Card
+          glowOnHover
+          className="group relative overflow-hidden space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 transition-all duration-500 hover:-translate-y-1"
+        >
+          <HudCorners />
+          <div>
+            <div className="flex items-center space-x-2 text-cyan font-mono text-sm mb-2">
+              <Cpu className="w-4 h-4" />
+              <span>DEPARTMENT OVERVIEW</span>
+            </div>
+            <h3 className="text-2xl font-extrabold text-white mb-3 transition-colors duration-300 group-hover:text-cyan">
+              <NeonScanText text="Department of ECE" />
+            </h3>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              The Department of Electronics and Communication Engineering is
+              renowned for its academic rigor, research publications, and
+              cutting-edge laboratory infrastructure. Equipped with advanced
+              VLSI design tools, Embedded System kits, DSP trainers, and
+              Microwave test setups, the department nurtures industry-ready
+              engineers.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-primary/50 transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+              <div className="text-xl sm:text-2xl font-bold text-primary">
+                12+
+              </div>
+              <div className="text-slate-400 mt-1">Advanced Labs</div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-cyan/50 transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+              <div className="text-xl sm:text-2xl font-bold text-cyan">
+                100%
+              </div>
+              <div className="text-slate-400 mt-1">Placement Record</div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Department of EEE */}
+        <Card
+          glowOnHover
+          className="group relative overflow-hidden space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 transition-all duration-500 hover:-translate-y-1"
+        >
+          <HudCorners />
+          <div>
+            <div className="flex items-center space-x-2 text-cyan font-mono text-sm mb-2">
+              <Cpu className="w-4 h-4" />
+              <span>DEPARTMENT OVERVIEW</span>
+            </div>
+            <h3 className="text-2xl font-extrabold text-white mb-3 transition-colors duration-300 group-hover:text-cyan">
+              <NeonScanText text="Department of EEE" />
+            </h3>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              The program in Electrical &amp; Electronics Engineering is one of the premier undergraduate programs offered by the Thamirabharani Engineering College. The EEE department has a team of highly qualified and experienced faculty. With its excellent infrastructure, the department places emphasis on sound practical knowledge, while nurturing creativity in the students. With Anna University's curriculum, the Department places equal emphasis on theoretical and experimental electrical and electronics engineering.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-primary/50 transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+              <div className="text-xl sm:text-2xl font-bold text-primary">
+                Premier
+              </div>
+              <div className="text-slate-400 mt-1">UG Program</div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-cyan/50 transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+              <div className="text-xl sm:text-2xl font-bold text-cyan">
+                Excellent
+              </div>
+              <div className="text-slate-400 mt-1">Infrastructure</div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
       {/* Symposium Legacy (Top Center) */}
       <div
         data-reveal
         className={cn(
-          "transition-all duration-500 ease-out",
-          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          "transition-all duration-700 ease-out",
+          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
         )}
-        style={{ transitionDelay: "800ms" }}
+        style={{ transitionDelay: "1420ms" }}
       >
         <Card
           glowOnHover
-          className="group relative space-y-4 flex flex-col justify-between border-primary/20 hover:border-primary/40 bg-card/90 p-6 sm:p-8 max-w-4xl mx-auto text-center"
+          className="group relative overflow-hidden space-y-4 flex flex-col justify-between border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 max-w-4xl mx-auto text-center"
         >
+          {/* Animated circuit lines */}
+          <div className="absolute top-0 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 animate-[pulse_3s_ease-in-out_infinite] transition-opacity duration-700" />
+          <div className="absolute bottom-0 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 animate-[pulse_3s_ease-in-out_infinite] transition-opacity duration-700" />
+          
           <HudCorners />
           <div>
             <div className="flex items-center justify-center space-x-2 text-primary font-mono text-sm mb-2">
@@ -593,7 +733,7 @@ export function AboutSection() {
               <span>THE SYMPOSIUM LEGACY</span>
             </div>
             <h3 className="text-2xl font-extrabold text-white mb-3">
-              What is SPARKTRON 2K26?
+              <NeonScanText text="What is SPARKTRON 2K26?" />
             </h3>
             <p className="text-sm text-slate-300 leading-relaxed space-y-3">
               <span>
@@ -626,105 +766,22 @@ export function AboutSection() {
         </Card>
       </div>
 
-      {/* Department Overview: ECE & EEE */}
-      <div
-        data-reveal
-        className={cn(
-          "grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch transition-all duration-500 ease-out",
-          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-        )}
-        style={{ transitionDelay: "840ms" }}
-      >
-        {/* Department of ECE */}
-        <Card
-          glowOnHover
-          className="group relative space-y-4 flex flex-col justify-between border-primary/20 hover:border-primary/40 bg-card/90 p-6 sm:p-8"
-        >
-          <HudCorners />
-          <div>
-            <div className="flex items-center space-x-2 text-cyan font-mono text-sm mb-2">
-              <Cpu className="w-4 h-4" />
-              <span>DEPARTMENT OVERVIEW</span>
-            </div>
-            <h3 className="text-2xl font-extrabold text-white mb-3">
-              Department of ECE
-            </h3>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              The Department of Electronics and Communication Engineering is
-              renowned for its academic rigor, research publications, and
-              cutting-edge laboratory infrastructure. Equipped with advanced
-              VLSI design tools, Embedded System kits, DSP trainers, and
-              Microwave test setups, the department nurtures industry-ready
-              engineers.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
-            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-primary/50 transition-colors">
-              <div className="text-xl sm:text-2xl font-bold text-primary">
-                12+
-              </div>
-              <div className="text-slate-400 mt-1">Advanced Labs</div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-background/85 border border-primary/20 hover:border-cyan/50 transition-colors">
-              <div className="text-xl sm:text-2xl font-bold text-cyan">
-                100%
-              </div>
-              <div className="text-slate-400 mt-1">Placement Record</div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Department of EEE */}
-        <Card
-          glowOnHover
-          className="group relative space-y-4 flex flex-col justify-between border-amber-500/20 hover:border-amber-500/40 bg-card/90 p-6 sm:p-8"
-        >
-          <HudCorners />
-          <div>
-            <div className="flex items-center space-x-2 text-amber-500 font-mono text-sm mb-2">
-              <Cpu className="w-4 h-4" />
-              <span>DEPARTMENT OVERVIEW</span>
-            </div>
-            <h3 className="text-2xl font-extrabold text-white mb-3">
-              Department of EEE
-            </h3>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              The program in Electrical &amp; Electronics Engineering is one of the premier undergraduate programs offered by the Thamirabharani Engineering College. The EEE department has a team of highly qualified and experienced faculty. With its excellent infrastructure, the department places emphasis on sound practical knowledge, while nurturing creativity in the students. With Anna University's curriculum, the Department places equal emphasis on theoretical and experimental electrical and electronics engineering.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-3 pt-4 font-mono text-xs text-center mt-auto">
-            <div className="p-3.5 rounded-xl bg-background/85 border border-amber-500/20 hover:border-amber-500/50 transition-colors">
-              <div className="text-xl sm:text-2xl font-bold text-amber-500">
-                Premier
-              </div>
-              <div className="text-slate-400 mt-1">UG Program</div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-background/85 border border-amber-500/20 hover:border-emerald-400/50 transition-colors">
-              <div className="text-xl sm:text-2xl font-bold text-emerald-400">
-                Excellent
-              </div>
-              <div className="text-slate-400 mt-1">Infrastructure</div>
-            </div>
-          </div>
-        </Card>
-      </div>
-
       {/* Vision & Mission (Staggered Entrance) */}
       <div
         data-reveal
         className={cn(
-          "grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-500 ease-out",
-          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          "grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-700 ease-out",
+          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
         )}
-        style={{ transitionDelay: "880ms" }}
+        style={{ transitionDelay: "1520ms" }}
       >
-        <Card className="group relative border-l-4 border-l-primary border-primary/20 bg-card/90 p-6 sm:p-8">
+        <Card className="group relative overflow-hidden border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 transition-all duration-500 hover:-translate-y-1">
           <HudCorners />
           <div className="flex items-center space-x-3 mb-3">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)]">
               <Target className="w-6 h-6" />
             </div>
-            <h4 className="text-xl font-bold text-white">Our Vision</h4>
+            <h4 className="text-xl font-bold text-white transition-colors duration-300 group-hover:text-primary"><NeonScanText text="Our Vision" /></h4>
           </div>
           <p className="text-sm text-slate-300 leading-relaxed">
             To evolve into a center of excellence in Electronics, Communication,
@@ -733,13 +790,13 @@ export function AboutSection() {
           </p>
         </Card>
 
-        <Card className="group relative border-l-4 border-l-cyan border-cyan/20 bg-card/90 p-6 sm:p-8">
+        <Card className="group relative overflow-hidden border border-cyan rounded-[24px] shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:border-cyan/80 bg-card/90 p-6 sm:p-8 transition-all duration-500 hover:-translate-y-1">
           <HudCorners />
           <div className="flex items-center space-x-3 mb-3">
-            <div className="p-2 rounded-lg bg-cyan/10 text-cyan">
+            <div className="p-2 rounded-lg bg-cyan/10 text-cyan transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)]">
               <Compass className="w-6 h-6" />
             </div>
-            <h4 className="text-xl font-bold text-white">Our Mission</h4>
+            <h4 className="text-xl font-bold text-white transition-colors duration-300 group-hover:text-cyan"><NeonScanText text="Our Mission" /></h4>
           </div>
           <ul className="text-sm text-slate-300 leading-relaxed space-y-2 list-disc list-inside">
             <li>
