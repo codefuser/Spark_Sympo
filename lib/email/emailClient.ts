@@ -30,7 +30,10 @@ export function getEmailConfig(): EmailConfig {
 
   // 1. Brevo Priority (Sends to all students without custom domain requirement)
   if (brevoApiKey) {
-    const senderEmail = process.env.EMAIL_FROM || "hello.sparktron@gmail.com";
+    let senderEmail = process.env.EMAIL_FROM || "hello.sparktron@gmail.com";
+    if (senderEmail.includes("resend.dev") || !senderEmail.includes("@")) {
+      senderEmail = "hello.sparktron@gmail.com";
+    }
     return {
       isConfigured: true,
       missingVars: [],
@@ -142,9 +145,13 @@ export async function sendEmail({
   // ==========================================
   if (config.driver === "brevo") {
     try {
-      const cleanSenderEmail = config.senderEmail.includes("<")
+      let cleanSenderEmail = config.senderEmail.includes("<")
         ? config.senderEmail.replace(/.*<([^>]+)>.*/, "$1").trim()
         : config.senderEmail.trim();
+
+      if (cleanSenderEmail.includes("resend.dev") || !cleanSenderEmail.includes("@")) {
+        cleanSenderEmail = "hello.sparktron@gmail.com";
+      }
 
       const payload = {
         sender: {

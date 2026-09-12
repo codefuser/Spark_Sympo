@@ -4,7 +4,7 @@ import { EmailSettings } from "@/types/email";
 export const DEFAULT_EMAIL_SETTINGS: EmailSettings = {
   id: "default_settings",
   senderName: "SPARKTRON 2K26",
-  senderEmail: "onboarding@resend.dev",
+  senderEmail: "hello.sparktron@gmail.com",
   replyToEmail: "hello.sparktron@gmail.com",
   venueName: "Thamirabharani Engineering College",
   venueAddress: "ECE Block Auditorium & Labs, College Campus, Tirunelveli",
