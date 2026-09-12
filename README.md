@@ -1,11 +1,10 @@
 run  
 
-# SPARKTRON 2K26 — Full-Stack College Symposium Platform
+# SPARKTRON 2K26 — Full-Stack Symposium Platform
 
-SPARKTRON 2K26 is a production-ready, full-stack digital platform built for the National Level Technical Symposium organized by the Department .
+SPARKTRON 2K26 is a production-ready, full-stack digital platform built for the National  Technical Symposium organized by the Department .
 
----
-
+--
 ## Technical Stack & Architecture
 
 - **Frontend**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, Lucide Icons

@@ -72,8 +72,8 @@ export function Navbar() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 w-full border-b transition-all duration-300",
         isScrolled
-          ? "bg-background/95 backdrop-blur-2xl border-primary/25 shadow-xl shadow-primary/5"
-          : "bg-background/75 backdrop-blur-xl border-primary/15"
+          ? "bg-[#02050e]/95 backdrop-blur-2xl border-blue-500/25 shadow-xl shadow-blue-500/5"
+          : "bg-[#02050e]/80 backdrop-blur-xl border-blue-500/15"
       )}
     >
       <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6">
@@ -83,15 +83,17 @@ export function Navbar() {
           onClick={(e) => handleNavClick(e, "#hero")}
           className="flex items-center space-x-3 group cursor-pointer"
         >
-          <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/40 flex items-center justify-center text-primary group-hover:shadow-glow group-hover:scale-105 transition-all">
-            <Cpu className="w-6 h-6" />
+          <div className="relative w-10 h-10 rounded-xl bg-gradient-to-b from-[#081730] to-[#020712] border border-blue-500/40 flex items-center justify-center text-cyan-400 group-hover:border-cyan-300 shadow-[0_0_15px_rgba(0,114,255,0.3)] group-hover:scale-105 transition-all">
+            <span className="absolute -top-[1px] -left-[1px] w-1.5 h-1.5 border-t border-l border-cyan-400" />
+            <span className="absolute -bottom-[1px] -right-[1px] w-1.5 h-1.5 border-b border-r border-cyan-400" />
+            <Cpu className="w-5 h-5 drop-shadow-[0_0_8px_#00f0ff]" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-black tracking-widest text-white font-mono flex items-center">
-              SPARK<span className="text-primary">TRON</span>
-              <span className="text-xs ml-1.5 px-1.5 py-0.5 rounded bg-cyan/20 text-cyan border border-cyan/40">2K26</span>
+            <span className="text-xl font-black tracking-widest text-white font-mono flex items-center drop-shadow-sm">
+              SPARK<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]">TRON</span>
+              <span className="text-[11px] ml-2 px-2 py-0.5 rounded-md bg-blue-950/80 text-cyan-300 border border-blue-400/50 shadow-[0_0_10px_rgba(0,114,255,0.3)] font-bold">2K26</span>
             </span>
-            <span className="text-[10px] text-secondary-foreground tracking-wider uppercase">ECE Symposium</span>
+            <span className="text-[10px] text-slate-400 tracking-[0.15em] uppercase font-semibold">ECE &amp; EEE Symposium</span>
           </div>
         </a>
 
@@ -108,8 +110,8 @@ export function Navbar() {
                 className={cn(
                   "relative py-2 text-sm font-medium transition-all duration-200 cursor-pointer group select-none",
                   isActive
-                    ? "text-primary font-extrabold"
-                    : "text-slate-400 hover:text-primary"
+                    ? "text-white font-black drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]"
+                    : "text-slate-300 hover:text-cyan-400"
                 )}
               >
                 <span>{link.name}</span>
@@ -117,7 +119,7 @@ export function Navbar() {
                 {/* Underline Indicator without any box border */}
                 <span
                   className={cn(
-                    "absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-primary via-cyan to-cyan-glow shadow-glow transition-all duration-300 transform origin-left",
+                    "absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 shadow-[0_0_10px_#00f0ff] transition-all duration-300 transform origin-left",
                     isActive
                       ? "opacity-100 scale-x-100"
                       : "opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100"
@@ -134,6 +136,7 @@ export function Navbar() {
             variant="primary"
             size="sm"
             onClick={() => openRegistrationModal()}
+            className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 hover:from-blue-500 hover:to-cyan-400 text-black font-extrabold shadow-[0_0_20px_rgba(0,114,255,0.4)] cursor-pointer rounded-xl px-5 transition-all hover:scale-105"
           >
             Register Now
           </Button>
