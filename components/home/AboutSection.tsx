@@ -433,21 +433,7 @@ export function AboutSection() {
                   )}
                 >
                   <p className={cn(isClamped && "line-clamp-4")}>
-                    Thamirabharani Engineering College which is in the Tirunelveli
-                    Corporation limits is located at Thatchanallur, 5km away from
-                    Palayamkottai and 40 km from Tuticorin airport. Unfolding its
-                    grandeur over 25 acres of land, the college exhibits an attractive
-                    panorama conducive to studies. Considering a holistic approach to
-                    life and education, an ambient infrastructure is provided for the
-                    students. They enjoy a natural sanctuary of birds, magnificent
-                    scenery of evergreen trees and amazing mountains and a gorgeous
-                    garden of multicolored flowers. Thamirabharani Engineering College
-                    was founded with the noble vision to raise professionals and
-                    leaders of high academic caliber and unblemished character,
-                    nurtured with a strong motivation and commitment to serve humanity.
-                    TEC aims at educating &amp; training its students to become not
-                    only competent professionals but also excellent human beings to
-                    influence the quality of life of people around.
+                    Thamirabharani Engineering College is an autonomous institution located at Thatchanallur, Tirunelveli, spanning a lush 25-acre campus. Founded with a vision to nurture high academic caliber and ethical leadership, TEC provides modern infrastructure and holistic education to prepare students for successful engineering careers.
                   </p>
                 </div>
                 
@@ -460,18 +446,7 @@ export function AboutSection() {
                 >
                   <div className="overflow-hidden">
                     <p>
-                      Thamirabharani Engineering College was established with the goal
-                      of producing outstanding students in Technical and Business fields
-                      and preparing them to tackle the challenges of a dynamic and
-                      rapidly changing world. The management implements an
-                      interdisciplinary curriculum as an Autonomous Institution, making
-                      sure that practical applications are combined with the classroom
-                      material. All the programs offered by the institute are recognized
-                      by statutory bodies like the All India Council of Technical
-                      Education (AICTE), New Delhi. In a nutshell, Thamirabharani
-                      Engineering College is an autonomous, co-educational, residential,
-                      technological college imparting holistic education to develop the
-                      technical and the character of the students.
+                      Approved by AICTE, TEC offers an industry-aligned curriculum combining strong theoretical foundations with practical hands-on experience, empowering students to excel in dynamic technological and business environments.
                     </p>
                   </div>
                 </div>
@@ -631,22 +606,14 @@ export function AboutSection() {
             <h3 className="text-2xl font-extrabold text-white mb-3">
               <NeonScanText text="What is SPARKTRON 2K26?" />
             </h3>
-            <p className="text-sm text-slate-300 leading-relaxed space-y-3">
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed space-y-2.5 max-w-2xl mx-auto">
               <span>
-                SPARKTRON 2K26 is the annual flagship National Level Technical
-                Symposium organized jointly by the Department of Electronics and
-                Communication Engineering (ECE) and the Department of Electrical
-                and Electronics Engineering (EEE). It serves as a high-octane nexus
-                where budding engineers from across the nation converge to
-                benchmark their technical prowess.
+                SPARKTRON 2K26 is a premier National Level Technical Symposium organized jointly by the Departments of ECE &amp; EEE. It brings aspiring engineers together to innovate, compete, and showcase technical excellence.
               </span>
               <br />
               <br />
               <span>
-                Featuring state-of-the-art competitions in circuit debugging,
-                technical paper synthesis, autonomous robot combat, and embedded
-                edge workshops, SPARKTRON bridges academic theory and practical
-                industry execution.
+                Featuring high-energy competitions in circuit debugging, paper presentation, and competitive tech challenges, SPARKTRON bridges classroom learning with real-world innovation.
               </span>
             </p>
           </div>
