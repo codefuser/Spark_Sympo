@@ -255,7 +255,7 @@ export function HomePageClient({
   return (
     <div className="space-y-24 pb-20 pt-20">
       {/* SECTION 1: HERO (Matching Reference Image 1) */}
-      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-8 sm:py-12 lg:py-16 overflow-hidden border-b border-blue-500/15">
+      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-start items-center pt-4 sm:pt-6 lg:pt-8 pb-12 sm:pb-16 overflow-hidden border-b border-blue-500/15">
         {/* Deep 3D Ambient Lighting Glow - Static & GPU optimized */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[380px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
@@ -317,15 +317,18 @@ export function HomePageClient({
         <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 rounded-full bg-cyan-300/60 blur-[1px] animate-cyber-particle-3 pointer-events-none hidden md:block" />
         <div className="absolute top-2/3 right-1/4 w-2 h-2 rounded-full bg-white/60 blur-[1px] animate-cyber-particle-1 pointer-events-none hidden md:block" />
 
-        <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-5xl my-auto">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-5xl">
           {/* CENTERED HERO MASTER DECK */}
           <div className="flex flex-col items-center text-center space-y-4 sm:space-y-6">
-            {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] */}
-            <div className="space-y-2">
-              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-orbitron tracking-tight text-white uppercase drop-shadow-[0_2px_20px_rgba(255,255,255,0.4)]">
-                THAMIRABHARANI <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-white">ENGINEERING COLLEGE</span>
+            {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] - Elevated Above with Unique Syne Typography */}
+            <div className="space-y-2.5 pt-1 sm:pt-2">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold font-syne tracking-wider text-white uppercase drop-shadow-[0_2px_25px_rgba(255,255,255,0.4)] leading-tight">
+                <span className="text-white">THAMIRABHARANI</span>{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-white drop-shadow-[0_0_20px_rgba(0,240,255,0.45)]">
+                  ENGINEERING COLLEGE
+                </span>
               </h1>
-              <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-950/50 border border-cyan-500/40 text-xs sm:text-sm font-mono font-bold tracking-[0.25em] text-cyan-300 uppercase shadow-[0_0_15px_rgba(0,240,255,0.25)]">
+              <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-950/50 border border-cyan-400/40 text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-cyan-300 uppercase shadow-[0_0_15px_rgba(0,240,255,0.25)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
                 <span>[ AN AUTONOMOUS INSTITUTION ]</span>
               </div>

@@ -52,13 +52,13 @@ export function CountdownTimer({ targetDate }: { targetDate: string }) {
           <span className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-cyan-400 pointer-events-none" />
           <span className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-cyan-400 pointer-events-none" />
 
-          {/* High-Tech Number Display */}
-          <span className="text-2xl sm:text-4xl lg:text-5xl font-black font-mono tracking-tight text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">
+          {/* High-Tech Digital Number Display */}
+          <span className="text-2xl sm:text-4xl lg:text-5xl font-black font-orbitron tracking-tight text-white drop-shadow-[0_0_15px_rgba(0,240,255,0.6)] group-hover:text-cyan-300 transition-colors">
             {unit.value.toString().padStart(2, "0")}
           </span>
 
           {/* Pure White Tracking Label */}
-          <span className="text-[10px] sm:text-xs font-mono font-bold text-slate-300 tracking-[0.2em] uppercase mt-1 drop-shadow-sm">
+          <span className="text-[10px] sm:text-xs font-mono font-bold text-cyan-400/90 tracking-[0.25em] uppercase mt-1 drop-shadow-sm">
             {unit.label}
           </span>
         </div>
