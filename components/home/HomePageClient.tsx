@@ -43,7 +43,6 @@ import { useRegistrationModal } from "@/components/registration/RegistrationModa
 import { SymposiumEvent, CoordinatorType, SponsorType } from "@/types";
 import { AboutSection } from "@/components/home/AboutSection";
 import { EventCard } from "@/components/home/EventCard";
-import { Hero3DModel } from "@/components/home/Hero3DModel";
 
 function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: string; title: string; venue: string }; idx: number; isVisible: boolean; isReducedMotion: boolean }) {
   const rowRef = React.useRef<HTMLDivElement>(null);
@@ -364,7 +363,7 @@ export function HomePageClient({
 
             {/* 4. Grand Main Title: SPARKTRON'2K26 with Orbitron Typography */}
             <div className="py-2 sm:py-3 relative group">
-              <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black italic font-orbitron tracking-tight uppercase select-none leading-none">
+              <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black italic font-orbitron tracking-tight uppercase select-none leading-none">
                 <span className="text-white drop-shadow-[0_4px_30px_rgba(255,255,255,0.6)]">SPARK</span>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-400 to-blue-500 drop-shadow-[0_0_35px_rgba(0,240,255,0.9)]">TRON</span>
                 <span className="text-cyan-400 drop-shadow-[0_0_40px_rgba(0,240,255,0.95)] animate-sparktron-glow">'2K26</span>
@@ -375,11 +374,6 @@ export function HomePageClient({
                 <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff]" />
                 <div className="h-[2px] flex-1 bg-gradient-to-r from-cyan-400 via-cyan-500 to-transparent" />
               </div>
-            </div>
-
-            {/* Interactive Zero-Lag 3D Cyber Core Reactor (Pure CSS GPU transform) */}
-            <div className="w-full flex justify-center py-1">
-              <Hero3DModel />
             </div>
 
             {/* 5. Date & Venue */}
