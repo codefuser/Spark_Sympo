@@ -24,6 +24,7 @@ import {
   GraduationCap,
   Shield,
   UserCheck,
+  Radio,
   ExternalLink,
   Send,
   Gamepad2,
@@ -125,6 +126,159 @@ function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: 
       >
         {item.venue}
       </div>
+      </div>
+    </div>
+  );
+}
+
+function GlassmorphismTerminalCard({
+  coord,
+  index,
+  isFaculty = false,
+}: {
+  coord: CoordinatorType;
+  index: number;
+  isFaculty?: boolean;
+}) {
+  return (
+    <div className="relative group p-5 sm:p-6 bg-gradient-to-br from-[#031815]/95 via-[#010c0a]/95 to-[#062420]/95 backdrop-blur-2xl border-2 border-emerald-500/40 hover:border-emerald-300 rounded-2xl shadow-[0_0_25px_rgba(16,185,129,0.18)] hover:shadow-[0_0_40px_rgba(16,185,129,0.35)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between overflow-hidden">
+      {/* Outer Corner HUD Chamfer Deco */}
+      <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-emerald-400 rounded-tl-xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-emerald-400 rounded-tr-xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-emerald-400 rounded-bl-xl pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-emerald-400 rounded-br-xl pointer-events-none" />
+
+      {/* Subdued Background Grid Pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.04] pointer-events-none" />
+
+      {/* TOP HEADER ROW: Institution Branding & 3 Neon Dots */}
+      <div className="relative z-10 flex items-center justify-between pb-3 border-b border-emerald-500/20 mb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded bg-emerald-500/20 border border-emerald-400/60 flex items-center justify-center text-emerald-300 shadow-[0_0_8px_#10b981]">
+            <Cpu className="w-3.5 h-3.5" />
+          </div>
+          <div>
+            <div className="text-[10px] font-mono font-bold tracking-widest text-emerald-300 uppercase leading-none">
+              THAMIRABHARANI ENGG COLLEGE
+            </div>
+            <div className="text-[8px] font-mono text-emerald-400/70 uppercase tracking-wider mt-0.5">
+              {isFaculty ? "FACULTY CONVENER BOARD" : "STUDENT EXECUTIVE COMMITTEE"}
+            </div>
+          </div>
+        </div>
+
+        {/* 3 Glowing Status Dots */}
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]" />
+          <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
+          <span className="w-2 h-2 rounded-full bg-emerald-300/50" />
+        </div>
+      </div>
+
+      {/* MAIN CONTENT BODY */}
+      <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-5">
+        {/* LEFT: HEARTBEAT SIGNAL RING AVATAR */}
+        <div className="relative shrink-0 flex flex-col items-center">
+          <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
+            {/* Outer Rotating Dash Circle */}
+            <div className="absolute inset-0 rounded-full border-2 border-dashed border-emerald-400/40 animate-spin-slow pointer-events-none" />
+
+            {/* SVG Horizontal Heartbeat ECG Spikes */}
+            <svg className="absolute -inset-4 w-[calc(100%+32px)] h-[calc(100%+32px)] text-emerald-400 pointer-events-none z-10" viewBox="0 0 140 140" fill="none">
+              <circle cx="70" cy="70" r="52" stroke="#10b981" strokeWidth="1.5" opacity="0.7" />
+              {/* Left ECG Wave */}
+              <path d="M 2 70 L 16 70 L 22 54 L 28 86 L 34 70 L 44 70" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              {/* Right ECG Wave */}
+              <path d="M 96 70 L 106 70 L 112 54 L 118 86 L 124 70 L 138 70" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+
+            {/* Center Avatar Lens */}
+            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[#062420] via-[#020f0d] to-[#041a17] border-2 border-emerald-400/80 flex items-center justify-center text-emerald-300 font-mono text-2xl font-black shadow-[0_0_25px_rgba(16,185,129,0.45)] group-hover:scale-105 transition-transform overflow-hidden">
+              {coord.avatar ? (
+                <img src={coord.avatar} alt={coord.name} className="w-full h-full object-cover" />
+              ) : (
+                coord.name.charAt(0)
+              )}
+            </div>
+          </div>
+
+          {/* Subtitle Motto Below Avatar */}
+          <div className="mt-2.5 text-[9px] font-mono tracking-[0.22em] text-center uppercase font-bold">
+            <div className="text-emerald-400 drop-shadow-[0_0_6px_#10b981]">STAY CURIOUS</div>
+            <div className="text-teal-300/80">STAY AHEAD</div>
+          </div>
+        </div>
+
+        {/* RIGHT/CENTER: DETAILS & INFO LIST */}
+        <div className="flex-1 space-y-2.5 w-full text-center sm:text-left">
+          {/* Top Quote Box (Visible on SM+) */}
+          <div className="hidden sm:flex flex-col items-end text-right text-[10px] font-mono text-emerald-300/70 italic float-right">
+            <div>"Different Ideas</div>
+            <div>Brighter Futures"</div>
+            <div className="w-6 h-[1.5px] bg-emerald-400/60 mt-0.5" />
+          </div>
+
+          {/* Name & Role */}
+          <div>
+            <h3 className="text-lg sm:text-xl font-extrabold text-white tracking-wide uppercase group-hover:text-emerald-300 transition-colors drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+              {coord.name}
+            </h3>
+            <p className="text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase mt-0.5">
+              {coord.designation || (coord.role === "FACULTY" ? "FACULTY CONVENER" : "STUDENT LEAD")}
+            </p>
+          </div>
+
+          {/* Key-Value Rows with Icons */}
+          <div className="space-y-1.5 pt-1 text-xs font-mono text-slate-200">
+            <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-300">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span className="truncate">{coord.department}</span>
+            </div>
+
+            <a
+              href={`tel:${coord.phone}`}
+              className="flex items-center justify-center sm:justify-start gap-2 text-slate-300 hover:text-emerald-300 transition-colors cursor-pointer"
+            >
+              <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span>{coord.phone}</span>
+            </a>
+
+            <a
+              href={`mailto:${coord.email}`}
+              className="flex items-center justify-center sm:justify-start gap-2 text-slate-300 hover:text-emerald-300 transition-colors cursor-pointer truncate"
+            >
+              <Mail className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span className="truncate">{coord.email}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* FOOTER BAR: Barcode & RFID Sensor Icon */}
+      <div className="relative z-10 pt-3 mt-4 border-t border-emerald-500/20 flex items-center justify-between gap-4">
+        {/* Barcode Graphic */}
+        <div className="flex items-center gap-0.5 opacity-70 group-hover:opacity-100 transition-opacity">
+          {[4,2,6,3,1,5,2,4,2,6,1,3,5,2,4,3,2,6,1,3,2].map((h, i) => (
+            <span
+              key={i}
+              className="bg-emerald-400 rounded-sm"
+              style={{
+                width: i % 3 === 0 ? "2.5px" : "1px",
+                height: `${h * 3.5 + 8}px`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* RFID Radar Lens */}
+        <div className="flex items-center gap-2">
+          <span className="text-[9px] font-mono text-emerald-400/80 uppercase tracking-widest hidden sm:inline">
+            VALID // 2K26
+          </span>
+          <div className="w-7 h-7 rounded-full border border-emerald-400/60 bg-emerald-950/80 flex items-center justify-center text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.4)]">
+            <Radio className="w-3.5 h-3.5 animate-pulse" />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -501,63 +655,49 @@ export function HomePageClient({
       </section>
 
       {/* SECTION 5: COORDINATORS */}
-      <section id="coordinators" className="container mx-auto px-4 sm:px-6 space-y-16">
+      <section id="coordinators" className="container mx-auto px-4 sm:px-6 space-y-12 py-6">
         <SectionHeading
           badge="THE TEAM"
           title="Symposium Coordinators & Conveners"
           description="Our dedicated faculty conveners and student leads for queries."
         />
 
-        {/* Faculty */}
+        {/* Faculty Conveners */}
         <div className="space-y-6">
-          <div className="flex items-center space-x-2 text-primary font-mono text-sm uppercase tracking-widest font-bold">
-            <Shield className="w-4 h-4" />
+          <div className="flex items-center space-x-2.5 text-emerald-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
+            <Shield className="w-4 h-4 text-emerald-400 drop-shadow-[0_0_8px_#10b981]" />
             <span>Faculty Conveners</span>
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-emerald-500/40 to-transparent ml-2" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {facultyCoordinators.map((coord) => (
-              <Card key={coord.id} glowOnHover className="flex items-start space-x-4">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 text-primary font-mono text-2xl font-bold flex items-center justify-center shrink-0">
-                  {coord.name.charAt(0)}
-                </div>
-                <div className="space-y-1 text-xs font-mono">
-                  <Badge variant="primary">{coord.department}</Badge>
-                  <h3 className="text-lg font-bold text-white font-sans">{coord.name}</h3>
-                  <p className="text-cyan font-semibold">{coord.designation}</p>
-                  <div className="pt-2 flex flex-wrap gap-4 text-slate-300">
-                    <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5 text-primary" /> {coord.phone}</span>
-                    <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5 text-cyan" /> {coord.email}</span>
-                  </div>
-                </div>
-              </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {facultyCoordinators.map((coord, idx) => (
+              <GlassmorphismTerminalCard
+                key={coord.id}
+                coord={coord}
+                index={idx}
+                isFaculty={true}
+              />
             ))}
           </div>
         </div>
 
-        {/* Students */}
-        <div className="space-y-6">
-          <div className="flex items-center space-x-2 text-cyan font-mono text-sm uppercase tracking-widest font-bold">
-            <UserCheck className="w-4 h-4" />
+        {/* Student Executive Committee */}
+        <div className="space-y-6 pt-4">
+          <div className="flex items-center space-x-2.5 text-emerald-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
+            <UserCheck className="w-4 h-4 text-emerald-400 drop-shadow-[0_0_8px_#10b981]" />
             <span>Student Executive Committee</span>
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-emerald-500/40 to-transparent ml-2" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {studentCoordinators.map((coord) => (
-              <Card key={coord.id} glowOnHover className="text-center space-y-3">
-                <div className="w-16 h-16 rounded-full bg-cyan/10 border border-cyan/30 text-cyan font-mono text-2xl font-bold flex items-center justify-center mx-auto shadow-cyan-glow">
-                  {coord.name.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-white">{coord.name}</h3>
-                  <p className="text-xs font-mono text-primary mt-0.5">{coord.designation}</p>
-                  <p className="text-xs font-mono text-slate-400 mt-1">{coord.department}</p>
-                </div>
-                <div className="pt-2 border-t border-primary/10 flex justify-center items-center gap-2 text-xs font-mono text-slate-300">
-                  <Phone className="w-3.5 h-3.5 text-primary" />
-                  <span>{coord.phone}</span>
-                </div>
-              </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {studentCoordinators.map((coord, idx) => (
+              <GlassmorphismTerminalCard
+                key={coord.id}
+                coord={coord}
+                index={idx}
+                isFaculty={false}
+              />
             ))}
           </div>
         </div>
