@@ -58,25 +58,6 @@ export default async function HomePage() {
     { time: "04:30 PM - 05:30 PM", title: "Valedictory Ceremony & Prize Distribution", venue: "Main Auditorium" },
   ];
 
-  const faqs = [
-    {
-      q: "Who is eligible to participate in SPARKTRON 2K26?",
-      a: "Engineering students (UG/PG) and Diploma students from any recognized institution across India are eligible.",
-    },
-    {
-      q: "Is there a registration fee?",
-      a: "No! Registration for SPARKTRON 2K26 is completely FREE of cost for all participants.",
-    },
-    {
-      q: "Can a participant register for multiple events?",
-      a: "Yes, provided event timings do not overlap. Select your tracks in the registration modal.",
-    },
-    {
-      q: "Will lunch and refreshments be provided?",
-      a: "Yes, complimentary lunch and tea/snacks will be provided to all registered delegates with valid ID badges.",
-    },
-  ];
-
   return (
     <HomePageClient
       events={finalEvents as any}
@@ -85,7 +66,6 @@ export default async function HomePage() {
       studentCoordinators={finalStudents as any}
       announcements={finalAnnouncements as any}
       schedule={schedule}
-      faqs={faqs}
       symposiumDate={symposiumDate}
       collegeName={collegeName}
       venue={venue}

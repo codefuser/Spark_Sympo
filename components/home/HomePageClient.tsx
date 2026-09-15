@@ -18,7 +18,6 @@ import {
   Target,
   Compass,
   BookOpen,
-  HelpCircle,
   FileText,
   Phone,
   Mail,
@@ -139,7 +138,6 @@ interface HomePageClientProps {
   studentCoordinators: CoordinatorType[];
   announcements: any[];
   schedule: { time: string; title: string; venue: string }[];
-  faqs: { q: string; a: string }[];
   symposiumDate: string;
   collegeName: string;
   venue: string;
@@ -154,7 +152,6 @@ export function HomePageClient({
   studentCoordinators,
   announcements,
   schedule,
-  faqs,
   symposiumDate,
   collegeName,
   venue,
@@ -416,25 +413,6 @@ export function HomePageClient({
           {schedule.map((item, idx) => (
             <ScheduleRow key={idx} item={item} idx={idx} isVisible={isScheduleVisible} isReducedMotion={isReducedMotion} />
           ))}
-        </div>
-
-        {/* FAQs */}
-        <div className="space-y-6 max-w-4xl mx-auto">
-          <div className="text-center">
-            <Badge variant="cyan" size="md">FAQ</Badge>
-            <h3 className="text-2xl font-bold text-white mt-2">Frequently Asked Questions</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {faqs.map((faq, idx) => (
-              <Card key={idx}>
-                <h4 className="font-bold text-white text-sm flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4 text-primary shrink-0" /> {faq.q}
-                </h4>
-                <p className="text-xs text-secondary-foreground mt-2 pl-6">{faq.a}</p>
-              </Card>
-            ))}
-          </div>
         </div>
       </section>
 
