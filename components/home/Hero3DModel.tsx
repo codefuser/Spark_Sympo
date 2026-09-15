@@ -12,57 +12,77 @@ export function Hero3DModel() {
     let currentY = -12;
     let targetX = 10;
     let targetY = -12;
-    let animationFrameId: number;
-    let isHovering = false;
+    let animationFrameId: number | null = null;
+    let isRunning = false;
 
     const container = containerRef.current;
     const stage = stageRef.current;
     if (!container || !stage) return;
 
+    const startLoopIfNeeded = () => {
+      if (!isRunning) {
+        isRunning = true;
+        animationFrameId = requestAnimationFrame(renderLoop);
+      }
+    };
+
     const handleMouseMove = (e: MouseEvent) => {
-      isHovering = true;
       const rect = container.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
       // Max tilt of +/- 18 degrees
       targetX = -Math.max(-18, Math.min(18, y / 10));
       targetY = Math.max(-18, Math.min(18, x / 10));
+      startLoopIfNeeded();
     };
 
     const handleMouseLeave = () => {
-      isHovering = false;
       targetX = 10;
       targetY = -12;
+      startLoopIfNeeded();
     };
 
-    // Smooth 60 FPS animation loop with lerp (linear interpolation) - ZERO React re-renders!
+    // Smooth 60 FPS animation loop with lerp - sleeping when settled to ensure ZERO LAG
     const renderLoop = () => {
-      // Lerp smoothing factor: 0.08 for buttery fluid motion
-      currentX += (targetX - currentX) * 0.08;
-      currentY += (targetY - currentY) * 0.08;
+      const diffX = Math.abs(targetX - currentX);
+      const diffY = Math.abs(targetY - currentY);
 
-      if (stage) {
-        stage.style.transform = `rotateX(${currentX.toFixed(2)}deg) rotateY(${currentY.toFixed(2)}deg)`;
+      if (diffX > 0.02 || diffY > 0.02) {
+        currentX += (targetX - currentX) * 0.12;
+        currentY += (targetY - currentY) * 0.12;
+
+        if (stage) {
+          stage.style.transform = `rotateX(${currentX.toFixed(2)}deg) rotateY(${currentY.toFixed(2)}deg) translateZ(0)`;
+        }
+        animationFrameId = requestAnimationFrame(renderLoop);
+      } else {
+        currentX = targetX;
+        currentY = targetY;
+        if (stage) {
+          stage.style.transform = `rotateX(${currentX.toFixed(2)}deg) rotateY(${currentY.toFixed(2)}deg) translateZ(0)`;
+        }
+        isRunning = false;
+        animationFrameId = null;
       }
-
-      animationFrameId = requestAnimationFrame(renderLoop);
     };
 
     container.addEventListener("mousemove", handleMouseMove, { passive: true });
     container.addEventListener("mouseleave", handleMouseLeave, { passive: true });
-    animationFrameId = requestAnimationFrame(renderLoop);
+    startLoopIfNeeded();
 
     return () => {
       container.removeEventListener("mousemove", handleMouseMove);
       container.removeEventListener("mouseleave", handleMouseLeave);
-      cancelAnimationFrame(animationFrameId);
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+      }
     };
   }, []);
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full max-w-[340px] sm:max-w-[380px] lg:max-w-[400px] h-[260px] sm:h-[300px] lg:h-[340px] mx-auto flex items-center justify-center cursor-grab active:cursor-grabbing select-none"
+      className="relative w-full max-w-[320px] sm:max-w-[360px] h-[220px] sm:h-[250px] mx-auto flex items-center justify-center cursor-grab active:cursor-grabbing select-none my-1"
       style={{ perspective: "1000px" }}
     >
       {/* Ambient Blue Holographic Backlight - Hardware accelerated */}

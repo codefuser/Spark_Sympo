@@ -47,11 +47,10 @@ import { Hero3DModel } from "@/components/home/Hero3DModel";
 
 function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: string; title: string; venue: string }; idx: number; isVisible: boolean; isReducedMotion: boolean }) {
   const rowRef = React.useRef<HTMLDivElement>(null);
-  const [rotation, setRotation] = React.useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = React.useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!rowRef.current) return;
+    if (!rowRef.current || isReducedMotion) return;
     const rect = rowRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -62,14 +61,16 @@ function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: 
     const rotateX = ((y - centerY) / centerY) * -4; // Subtle 4 deg max
     const rotateY = ((x - centerX) / centerX) * 4;
     
-    setRotation({ x: rotateX, y: rotateY });
+    rowRef.current.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateZ(10px) translateY(-6px)`;
   };
 
   const handleMouseEnter = () => setIsHovered(true);
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    setRotation({ x: 0, y: 0 });
+    if (rowRef.current) {
+      rowRef.current.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px) translateY(0px)`;
+    }
   };
 
   return (
@@ -85,12 +86,12 @@ function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: 
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="group/row relative p-4 rounded-xl bg-card border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group-hover/schedule:opacity-40 hover:!opacity-100"
+        className="group/row relative p-4 rounded-xl bg-card border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group-hover/schedule:opacity-40 hover:!opacity-100 will-change-transform"
         style={{
           transition: isHovered 
             ? 'transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, z-index 0s' 
             : 'transform 0.5s ease-out, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, z-index 0.5s',
-          transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) ${isHovered ? 'translateZ(10px) translateY(-6px)' : 'translateZ(0px) translateY(0px)'}`,
+          transform: `perspective(1000px) rotateX(0deg) rotateY(0deg) ${isHovered ? 'translateZ(10px) translateY(-6px)' : 'translateZ(0px) translateY(0px)'}`,
           transformStyle: 'preserve-3d',
           borderColor: isHovered ? 'rgba(0, 240, 255, 0.6)' : '',
           boxShadow: isHovered ? '0 20px 40px -10px rgba(0,240,255,0.2), 0 0 15px rgba(0,240,255,0.1)' : '',
@@ -253,144 +254,232 @@ export function HomePageClient({
 
   return (
     <div className="space-y-24 pb-20 pt-20">
-      {/* SECTION 1: HERO (Unified Futuristic Sci-Fi Engineering Command Center) */}
-      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-4 sm:py-8 lg:py-10 overflow-hidden border-b border-blue-500/15">
+      {/* SECTION 1: HERO (Matching Reference Image 1) */}
+      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-8 sm:py-12 lg:py-16 overflow-hidden border-b border-blue-500/15">
         {/* Deep 3D Ambient Lighting Glow - Static & GPU optimized */}
-        <div className="absolute top-1/4 left-1/3 w-[600px] h-[350px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
-        <div className="absolute top-1/3 right-10 w-[350px] h-[300px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none -z-10" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[380px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
 
-        <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-7xl my-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-            {/* LEFT COLUMN: All Core Symposium Information & Actions */}
-            <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4">
-              {/* Top Department Badge - Cyber Chamfered Pill */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#030917]/95 via-[#06142a]/95 to-[#030917]/95 border border-blue-500/40 text-xs font-mono tracking-wider uppercase shadow-[0_0_15px_rgba(0,114,255,0.25)] hover:border-cyan-400 transition-all max-w-full">
-                <span className="flex h-2 w-2 relative shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
-                </span>
-                <Zap className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
-                <span className="text-white font-semibold text-[11px] sm:text-xs">
-                  Departments of <span className="text-cyan-300 font-bold">Electronics &amp; Communication</span> &amp; <span className="text-blue-300 font-bold">Electrical &amp; Electronics</span> Engineering
-                </span>
-              </div>
+        {/* Glowing Cyan Circuit Traces Background (Matching Image 1) */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10 opacity-70">
+          <svg
+            className="w-full h-full"
+            viewBox="0 0 1440 900"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            {/* Top Left Circuit Traces */}
+            <path d="M 0 140 L 180 140 L 260 60 L 440 60" stroke="#00f0ff" strokeWidth="1.75" opacity="0.65" />
+            <circle cx="440" cy="60" r="3.5" fill="#00f0ff" />
+            <path d="M 80 0 L 80 100 L 160 180 L 160 300 L 240 380" stroke="#00f0ff" strokeWidth="1.75" opacity="0.55" />
+            <circle cx="240" cy="380" r="3.5" fill="#00f0ff" />
+            <path d="M 0 260 L 100 260 L 140 220 L 220 220" stroke="#00f0ff" strokeWidth="1.5" opacity="0.45" />
+            <circle cx="220" cy="220" r="3" fill="#00f0ff" />
 
-              {/* College Presents Line */}
-              <div className="flex items-center justify-center lg:justify-start gap-2.5">
-                <div className="h-[1px] w-6 sm:w-10 bg-gradient-to-r from-transparent to-cyan-400" />
-                <p className="text-xs sm:text-sm font-mono font-bold text-cyan-300 uppercase tracking-[0.22em] drop-shadow-[0_0_10px_rgba(0,240,255,0.5)]">
-                  {collegeName} Presents
-                </p>
-                <div className="h-[1px] w-6 sm:w-10 bg-gradient-to-l from-transparent to-cyan-400" />
-              </div>
+            {/* Top Right Circuit Traces */}
+            <path d="M 1440 100 L 1260 100 L 1180 180 L 1020 180" stroke="#00f0ff" strokeWidth="1.75" opacity="0.65" />
+            <circle cx="1020" cy="180" r="3.5" fill="#00f0ff" />
+            <path d="M 1360 0 L 1360 80 L 1280 160 L 1280 260" stroke="#00f0ff" strokeWidth="1.75" opacity="0.5" />
+            <circle cx="1280" cy="260" r="3.5" fill="#00f0ff" />
+            <path d="M 1440 220 L 1340 220 L 1280 280 L 1120 280" stroke="#00f0ff" strokeWidth="1.5" opacity="0.45" />
+            <circle cx="1120" cy="280" r="3" fill="#00f0ff" />
 
-              {/* Main Title: SPARKTRON 2K26 with Electric Glow */}
-              <div className="space-y-2">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black font-mono tracking-tight text-white uppercase select-none leading-none">
-                  <span className="text-white drop-shadow-[0_4px_16px_rgba(255,255,255,0.35)]">SPARK</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500 drop-shadow-[0_0_35px_rgba(0,180,255,0.75)] animate-sparktron-glow">
-                    TRON
-                  </span>{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-blue-400 font-sans drop-shadow-[0_0_30px_rgba(0,114,255,0.6)]">
-                    2K26
-                  </span>
-                </h1>
+            {/* Mid Left Circuit Traces */}
+            <path d="M 0 460 L 140 460 L 220 540 L 360 540" stroke="#00f0ff" strokeWidth="1.75" opacity="0.6" />
+            <circle cx="360" cy="540" r="3.5" fill="#00f0ff" />
+            <path d="M 40 360 L 120 360 L 180 420 L 280 420" stroke="#00f0ff" strokeWidth="1.5" opacity="0.45" />
+            <circle cx="280" cy="420" r="3" fill="#00f0ff" />
 
-                {/* Tagline Description */}
-                <p className="text-xs sm:text-sm md:text-base text-slate-200 font-normal max-w-xl leading-relaxed font-sans mx-auto lg:mx-0">
-                  <span className="text-white font-semibold">Electrify Your Engineering Instincts.</span> A National-Level Technical Symposium featuring innovation, knowledge, circuit challenges, and engaging non-technical events.
-                </p>
-              </div>
+            {/* Mid Right Circuit Traces */}
+            <path d="M 1440 480 L 1300 480 L 1220 400 L 1080 400" stroke="#00f0ff" strokeWidth="1.75" opacity="0.6" />
+            <circle cx="1080" cy="400" r="3.5" fill="#00f0ff" />
+            <path d="M 1400 580 L 1320 580 L 1260 520 L 1160 520" stroke="#00f0ff" strokeWidth="1.5" opacity="0.45" />
+            <circle cx="1160" cy="520" r="3" fill="#00f0ff" />
 
-              {/* Date and Venue HUD Badges */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 sm:gap-3 text-xs font-mono pt-1">
-                {/* Date Box */}
-                <div className="relative group flex items-center space-x-2 bg-gradient-to-b from-[#060e1f]/95 via-[#030712]/95 to-[#010206] px-3.5 py-2 rounded-xl border border-blue-500/35 hover:border-cyan-400 shadow-[0_0_15px_rgba(0,114,255,0.15)] transition-all">
-                  <span className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t-2 border-l-2 border-cyan-400" />
-                  <span className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b-2 border-r-2 border-cyan-400" />
-                  <Calendar className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
-                  <span className="text-slate-400 font-medium">Date:</span>
-                  <span className="text-white font-bold tracking-wide">{symposiumDate}</span>
-                </div>
+            {/* Bottom Left Circuit Traces */}
+            <path d="M 0 720 L 160 720 L 240 640 L 400 640" stroke="#00f0ff" strokeWidth="1.75" opacity="0.55" />
+            <circle cx="400" cy="640" r="3.5" fill="#00f0ff" />
+            <path d="M 100 900 L 100 800 L 180 720 L 320 720" stroke="#00f0ff" strokeWidth="1.75" opacity="0.5" />
+            <circle cx="320" cy="720" r="3.5" fill="#00f0ff" />
 
-                {/* Venue Box */}
-                <div className="relative group flex items-center space-x-2 bg-gradient-to-b from-[#060e1f]/95 via-[#030712]/95 to-[#010206] px-3.5 py-2 rounded-xl border border-blue-500/35 hover:border-cyan-400 shadow-[0_0_15px_rgba(0,114,255,0.15)] transition-all">
-                  <span className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t-2 border-l-2 border-cyan-400" />
-                  <span className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b-2 border-r-2 border-cyan-400" />
-                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_8px_#00f0ff]" />
-                  <span className="text-slate-400 font-medium">Venue:</span>
-                  <span className="text-white font-bold tracking-wide truncate max-w-[240px] sm:max-w-none">{venue}</span>
-                </div>
-              </div>
+            {/* Bottom Right Circuit Traces */}
+            <path d="M 1440 760 L 1280 760 L 1200 840 L 1060 840" stroke="#00f0ff" strokeWidth="1.75" opacity="0.55" />
+            <circle cx="1060" cy="840" r="3.5" fill="#00f0ff" />
+            <path d="M 1340 900 L 1340 820 L 1260 740 L 1120 740" stroke="#00f0ff" strokeWidth="1.75" opacity="0.5" />
+            <circle cx="1120" cy="740" r="3.5" fill="#00f0ff" />
+          </svg>
+        </div>
 
-              {/* 4-Unit Cyber Countdown Timer */}
-              <div className="w-full flex justify-center lg:justify-start pt-1">
-                <CountdownTimer targetDate="2026-09-16T09:00:00" />
-              </div>
+        {/* Floating Cyber Particle Accents */}
+        <div className="absolute top-1/4 left-1/6 w-2 h-2 rounded-full bg-cyan-400/60 blur-[1px] animate-cyber-particle-1 pointer-events-none hidden md:block" />
+        <div className="absolute top-1/3 right-1/6 w-2.5 h-2.5 rounded-full bg-blue-400/60 blur-[1px] animate-cyber-particle-2 pointer-events-none hidden md:block" />
+        <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 rounded-full bg-cyan-300/60 blur-[1px] animate-cyber-particle-3 pointer-events-none hidden md:block" />
+        <div className="absolute top-2/3 right-1/4 w-2 h-2 rounded-full bg-white/60 blur-[1px] animate-cyber-particle-1 pointer-events-none hidden md:block" />
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 pt-1">
-                <Button
-                  size="lg"
-                  variant="primary"
-                  rightIcon={<ArrowRight className="w-4 h-4" />}
-                  onClick={() => openRegistrationModal()}
-                  className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 hover:from-blue-500 hover:to-cyan-400 text-black font-black tracking-wider uppercase shadow-[0_0_25px_rgba(0,114,255,0.45)] cursor-pointer px-7 py-3 text-sm sm:text-base rounded-xl transition-all hover:scale-105 border border-cyan-300/40"
-                >
-                  Register Now
-                </Button>
-                <a href="#events" className="inline-flex">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="bg-[#02050f]/90 text-white border-blue-500/40 hover:border-cyan-400 hover:bg-blue-950/40 hover:text-white px-7 py-3 text-sm sm:text-base rounded-xl transition-all shadow-[0_0_15px_rgba(0,114,255,0.15)] cursor-pointer hover:scale-105"
-                  >
-                    Explore Events
-                  </Button>
-                </a>
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-5xl my-auto">
+          {/* CENTERED HERO MASTER DECK */}
+          <div className="flex flex-col items-center text-center space-y-4 sm:space-y-6">
+            {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] */}
+            <div className="space-y-2">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-orbitron tracking-tight text-white uppercase drop-shadow-[0_2px_20px_rgba(255,255,255,0.4)]">
+                THAMIRABHARANI <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-white">ENGINEERING COLLEGE</span>
+              </h1>
+              <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-950/50 border border-cyan-500/40 text-xs sm:text-sm font-mono font-bold tracking-[0.25em] text-cyan-300 uppercase shadow-[0_0_15px_rgba(0,240,255,0.25)]">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+                <span>[ AN AUTONOMOUS INSTITUTION ]</span>
               </div>
             </div>
 
-            {/* RIGHT COLUMN: 3D Holographic Core & Telemetry Visuals */}
-            <div className="lg:col-span-5 flex flex-col items-center justify-center relative mt-4 lg:mt-0">
-              <Hero3DModel />
+            {/* 2. Organized By & Departments (Full official title requested by user) */}
+            <div className="space-y-2.5 pt-1 sm:pt-2 max-w-4xl mx-auto">
+              <p className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.35em] text-cyan-400/90 uppercase">
+                ORGANIZED BY
+              </p>
+              <div className="flex flex-col items-center justify-center">
+                <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-orbitron font-extrabold tracking-wider uppercase text-slate-100 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-center leading-relaxed">
+                  <span className="text-slate-300 font-bold">DEPARTMENT OF</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-cyan-400 drop-shadow-[0_0_12px_rgba(0,240,255,0.7)] font-black">
+                    ELECTRONICS AND COMMUNICATION
+                  </span>
+                  <span className="text-cyan-400 font-black px-0.5">&amp;</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-300 drop-shadow-[0_0_12px_rgba(0,114,255,0.7)] font-black">
+                    ELECTRICAL AND ELECTRONICS ENGINEERING
+                  </span>
+                </h2>
+              </div>
+            </div>
 
-              {/* High-Tech Telemetry Chips below 3D Model */}
-              <div className="grid grid-cols-2 gap-2.5 w-full max-w-[340px] sm:max-w-[380px] mt-2 font-mono text-xs">
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-gradient-to-b from-[#060e1d]/90 to-[#020612]/95 border border-blue-500/30 shadow-[0_0_15px_rgba(0,114,255,0.12)]">
-                  <Trophy className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00f0ff]" />
-                  <div>
-                    <div className="text-[9px] text-slate-400 uppercase tracking-wider">Prize Pool</div>
-                    <div className="text-white font-bold text-xs">₹20,000+ Cash</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-gradient-to-b from-[#060e1d]/90 to-[#020612]/95 border border-blue-500/30 shadow-[0_0_15px_rgba(0,114,255,0.12)]">
-                  <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00f0ff]" />
-                  <div>
-                    <div className="text-[9px] text-slate-400 uppercase tracking-wider">Entry Status</div>
-                    <div className="text-cyan-300 font-bold text-xs">100% Free Entry</div>
-                  </div>
-                </div>
+            {/* 3. National Level Technical Symposium Pill */}
+            <div className="pt-0.5">
+              <div className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-8 py-2 rounded-xl border border-cyan-500/50 bg-[#040e22]/90 text-cyan-300 font-mono text-xs sm:text-sm tracking-[0.25em] uppercase font-bold shadow-[0_0_25px_rgba(0,240,255,0.25)]">
+                <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
+                <span>NATIONAL LEVEL TECHNICAL SYMPOSIUM</span>
+                <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
+              </div>
+            </div>
+
+            {/* 4. Grand Main Title: SPARKTRON'2K26 with Orbitron Typography */}
+            <div className="py-2 sm:py-3 relative group">
+              <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black italic font-orbitron tracking-tight uppercase select-none leading-none">
+                <span className="text-white drop-shadow-[0_4px_30px_rgba(255,255,255,0.6)]">SPARK</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-400 to-blue-500 drop-shadow-[0_0_35px_rgba(0,240,255,0.9)]">TRON</span>
+                <span className="text-cyan-400 drop-shadow-[0_0_40px_rgba(0,240,255,0.95)] animate-sparktron-glow">'2K26</span>
+              </h2>
+              {/* Electric Circuit Underline Accent */}
+              <div className="flex items-center justify-center gap-2 pt-3 max-w-sm mx-auto opacity-80">
+                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-cyan-500 to-cyan-400" />
+                <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff]" />
+                <div className="h-[2px] flex-1 bg-gradient-to-r from-cyan-400 via-cyan-500 to-transparent" />
+              </div>
+            </div>
+
+            {/* Interactive Zero-Lag 3D Cyber Core Reactor (Pure CSS GPU transform) */}
+            <div className="w-full flex justify-center py-1">
+              <Hero3DModel />
+            </div>
+
+            {/* 5. Date & Venue */}
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2.5 px-5 py-1.5 rounded-full bg-[#030917]/80 border border-cyan-500/30 shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+                <Calendar className="w-4 h-4 text-cyan-400 shrink-0" />
+                <span className="text-xs sm:text-sm md:text-base font-orbitron font-bold tracking-[0.25em] text-slate-200 uppercase">
+                  {symposiumDate || "SEPTEMBER 16, 2026"}
+                </span>
+              </div>
+              <br />
+              <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-mono text-slate-300 bg-[#030917]/70 px-4 py-1.5 rounded-full border border-blue-500/25">
+                <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <span className="truncate max-w-[280px] sm:max-w-none">{venue}</span>
+              </div>
+            </div>
+
+            {/* 6. 4-Unit Cyber Countdown Timer */}
+            <div className="w-full flex justify-center pt-1">
+              <CountdownTimer targetDate="2026-09-16T09:00:00" />
+            </div>
+
+            {/* 7. Action Buttons: REGISTER NOW & VIEW EVENTS */}
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+              <Button
+                size="lg"
+                variant="primary"
+                onClick={() => openRegistrationModal()}
+                className="bg-gradient-to-r from-cyan-400 via-sky-400 to-cyan-500 hover:from-cyan-300 hover:to-sky-400 text-black font-black font-orbitron tracking-wider uppercase px-8 py-3.5 text-sm sm:text-base rounded-xl shadow-[0_0_30px_rgba(0,240,255,0.75)] transition-all hover:scale-105 border-0 cursor-pointer flex items-center gap-2"
+              >
+                <Zap className="w-4 h-4 fill-black" />
+                <span>REGISTER NOW</span>
+              </Button>
+              <a href="#events" className="inline-flex">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-[#02050f]/90 text-cyan-400 border border-cyan-400/80 hover:bg-cyan-500/15 hover:border-cyan-300 hover:text-white px-8 py-3.5 text-sm sm:text-base font-orbitron tracking-wider rounded-xl transition-all hover:scale-105 shadow-[0_0_20px_rgba(0,240,255,0.25)] cursor-pointer flex items-center gap-2"
+                >
+                  <Cpu className="w-4 h-4 text-cyan-400" />
+                  <span>EXPLORE EVENTS</span>
+                </Button>
+              </a>
+            </div>
+
+            {/* 8. Telemetry Status Chips */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2 font-mono text-xs">
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#060e1d]/80 border border-blue-500/30 text-slate-300">
+                <Trophy className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <span>Prize Pool: <strong className="text-white font-bold">₹20,000+ Cash</strong></span>
+              </div>
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#060e1d]/80 border border-blue-500/30 text-slate-300">
+                <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <span>Entry: <strong className="text-cyan-300 font-bold">100% Free Entry</strong></span>
+              </div>
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#060e1d]/80 border border-blue-500/30 text-slate-300">
+                <Award className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <span>Certification: <strong className="text-white font-bold">All Participants</strong></span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* QUICK STATS - 3D Cyber Vault Card (Black, Blue, White) */}
+      {/* QUICK STATS - High-Tech Cyber Vault Cards */}
       <section className="container mx-auto px-4 sm:px-6">
-        <div className="max-w-md mx-auto">
-          <div className="relative group text-center p-7 rounded-2xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_30px_rgba(0,114,255,0.25)] hover:shadow-[0_0_45px_rgba(0,240,255,0.45)] transition-all hover:-translate-y-1 overflow-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
+          {/* Card 1: Prize Pool */}
+          <div className="relative group text-center p-6 rounded-2xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_25px_rgba(0,114,255,0.2)] hover:shadow-[0_0_35px_rgba(0,240,255,0.4)] transition-all hover:-translate-y-1 overflow-hidden">
             <span className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
-            <span className="absolute -top-[1px] -right-[1px] w-3 h-3 border-t-2 border-r-2 border-cyan-400" />
-            <span className="absolute -bottom-[1px] -left-[1px] w-3 h-3 border-b-2 border-l-2 border-cyan-400" />
             <span className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
-            <Trophy className="w-12 h-12 text-cyan-400 mx-auto mb-3 drop-shadow-[0_0_15px_rgba(0,240,255,0.8)]" />
-            <div className="text-4xl sm:text-5xl font-black font-mono text-white mb-1 tracking-tight drop-shadow-md">
+            <Trophy className="w-9 h-9 text-cyan-400 mx-auto mb-2 drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]" />
+            <div className="text-3xl sm:text-4xl font-black font-orbitron text-white mb-1 tracking-tight drop-shadow-md">
               ₹20,000+
             </div>
-            <div className="text-xs font-mono text-cyan-300 tracking-[0.25em] uppercase font-bold">
+            <div className="text-[11px] font-mono text-cyan-300 tracking-[0.2em] uppercase font-bold">
               TOTAL CASH PRIZES
+            </div>
+          </div>
+
+          {/* Card 2: Free Registration */}
+          <div className="relative group text-center p-6 rounded-2xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_25px_rgba(0,114,255,0.2)] hover:shadow-[0_0_35px_rgba(0,240,255,0.4)] transition-all hover:-translate-y-1 overflow-hidden">
+            <span className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
+            <span className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
+            <ShieldCheck className="w-9 h-9 text-cyan-400 mx-auto mb-2 drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]" />
+            <div className="text-3xl sm:text-4xl font-black font-orbitron text-white mb-1 tracking-tight drop-shadow-md">
+              ₹0 FREE
+            </div>
+            <div className="text-[11px] font-mono text-cyan-300 tracking-[0.2em] uppercase font-bold">
+              REGISTRATION &amp; ENTRY
+            </div>
+          </div>
+
+          {/* Card 3: Events Catalog */}
+          <div className="relative group text-center p-6 rounded-2xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_25px_rgba(0,114,255,0.2)] hover:shadow-[0_0_35px_rgba(0,240,255,0.4)] transition-all hover:-translate-y-1 overflow-hidden">
+            <span className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
+            <span className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
+            <Cpu className="w-9 h-9 text-cyan-400 mx-auto mb-2 drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]" />
+            <div className="text-3xl sm:text-4xl font-black font-orbitron text-white mb-1 tracking-tight drop-shadow-md">
+              {validEvents.length} TRACKS
+            </div>
+            <div className="text-[11px] font-mono text-cyan-300 tracking-[0.2em] uppercase font-bold">
+              TECH &amp; NON-TECH ARENAS
             </div>
           </div>
         </div>
@@ -628,7 +717,7 @@ export function HomePageClient({
                 <div>
                   <p className="text-white font-bold">Venue Address</p>
                   <p className="text-slate-400 text-xs mt-0.5">
-                    Department of ECE, Thamirabharani Engineering College, Thatchanallur, Tirunelveli - 627358, Tamil Nadu.
+                    Department of ECE &amp; Department of EEE, Thamirabharani Engineering College, Thatchanallur, Tirunelveli - 627358, Tamil Nadu.
                   </p>
                 </div>
               </div>

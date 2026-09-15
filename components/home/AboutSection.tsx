@@ -60,7 +60,7 @@ function AnimatedCounter({ inView, target, duration = 4000, delay = 480 }: { inV
   return <>{count}</>;
 }
 
-// 5. Minimal PCB Circuit Traces - Top Right
+// 5. Minimal PCB Circuit Traces - Top Right (Hardware Accelerated GPU)
 function PcbTracesTopRight({ className }: { className?: string }) {
   return (
     <div
@@ -76,39 +76,22 @@ function PcbTracesTopRight({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g opacity="0.5">
+        <g opacity="0.6">
           <path d="M220 30 H140 L90 80 H60" stroke="#00F0FF" strokeWidth="1.2" />
-          <circle cx="60" cy="80" r="2.5" fill="#00F0FF" />
+          <circle cx="60" cy="80" r="2.5" fill="#00F0FF" className="animate-pulse" />
           <circle cx="140" cy="30" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
         </g>
-        
-        {/* Animated glowing dot 1 */}
-        <circle r="3.5" fill="#00F0FF" opacity="0.6">
-          <animateMotion dur="4s" repeatCount="indefinite" path="M220 30 H140 L90 80 H60" />
-        </circle>
-        <circle r="1.5" fill="#fff">
-          <animateMotion dur="4s" repeatCount="indefinite" path="M220 30 H140 L90 80 H60" />
-        </circle>
-        
-        <g opacity="0.5">
+        <g opacity="0.6">
           <path d="M220 50 H160 L110 100 H80" stroke="#0072FF" strokeWidth="1.2" />
-          <circle cx="80" cy="100" r="2.5" fill="#0072FF" />
+          <circle cx="80" cy="100" r="2.5" fill="#0072FF" className="animate-pulse" />
           <circle cx="160" cy="50" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
         </g>
-
-        {/* Animated glowing dot 2 */}
-        <circle r="3.5" fill="#0072FF" opacity="0.6">
-          <animateMotion dur="4s" repeatCount="indefinite" path="M220 50 H160 L110 100 H80" />
-        </circle>
-        <circle r="1.5" fill="#fff">
-          <animateMotion dur="4s" repeatCount="indefinite" path="M220 50 H160 L110 100 H80" />
-        </circle>
       </svg>
     </div>
   );
 }
 
-// 5. Minimal PCB Circuit Traces - Bottom Left
+// 5. Minimal PCB Circuit Traces - Bottom Left (Hardware Accelerated GPU)
 function PcbTracesBottomLeft({ className }: { className?: string }) {
   return (
     <div
@@ -124,33 +107,16 @@ function PcbTracesBottomLeft({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g opacity="0.5">
+        <g opacity="0.6">
           <path d="M0 90 H80 L130 40 H160" stroke="#0072FF" strokeWidth="1.2" />
-          <circle cx="160" cy="40" r="2.5" fill="#0072FF" />
+          <circle cx="160" cy="40" r="2.5" fill="#0072FF" className="animate-pulse" />
           <circle cx="80" cy="90" r="2" stroke="#0072FF" strokeWidth="1" fill="none" />
         </g>
-
-        {/* Animated glowing dot 1 */}
-        <circle r="3.5" fill="#0072FF" opacity="0.6">
-          <animateMotion dur="4s" repeatCount="indefinite" path="M0 90 H80 L130 40 H160" />
-        </circle>
-        <circle r="1.5" fill="#fff">
-          <animateMotion dur="4s" repeatCount="indefinite" path="M0 90 H80 L130 40 H160" />
-        </circle>
-
-        <g opacity="0.5">
+        <g opacity="0.6">
           <path d="M0 70 H60 L110 20 H140" stroke="#00F0FF" strokeWidth="1.2" />
-          <circle cx="140" cy="20" r="2.5" fill="#00F0FF" />
+          <circle cx="140" cy="20" r="2.5" fill="#00F0FF" className="animate-pulse" />
           <circle cx="60" cy="70" r="2" stroke="#00F0FF" strokeWidth="1" fill="none" />
         </g>
-
-        {/* Animated glowing dot 2 */}
-        <circle r="3.5" fill="#00F0FF" opacity="0.6">
-          <animateMotion dur="4s" repeatCount="indefinite" path="M0 70 H60 L110 20 H140" />
-        </circle>
-        <circle r="1.5" fill="#fff">
-          <animateMotion dur="4s" repeatCount="indefinite" path="M0 70 H60 L110 20 H140" />
-        </circle>
       </svg>
     </div>
   );
@@ -181,95 +147,25 @@ function HudCorners() {
 }
 
 function ScanningText({ text, isVisible }: { text: string; isVisible: boolean }) {
-  const [isScanning, setIsScanning] = useState(false);
-
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    
-    if (isVisible) {
-      timeout = setTimeout(() => {
-        setIsScanning(true);
-      }, 1000);
-    } else {
-      setIsScanning(false);
-    }
-    
-    return () => clearTimeout(timeout);
-  }, [isVisible]);
-
   return (
     <span className="relative inline-grid">
       <span className="col-start-1 row-start-1">{text}</span>
-      {isScanning && (
+      {isVisible && (
         <span 
           aria-hidden="true"
-          className="col-start-1 row-start-1 bg-clip-text text-transparent pointer-events-none"
-          style={{
-            backgroundImage: "linear-gradient(90deg, transparent 0%, transparent 40%, rgba(0, 240, 255, 0.8) 50%, transparent 60%, transparent 100%)",
-            backgroundSize: "300% 100%",
-            backgroundRepeat: "no-repeat",
-            animation: "scanTextAnim 5.5s linear infinite",
-          }}
+          className="col-start-1 row-start-1 bg-clip-text text-transparent pointer-events-none bg-gradient-to-r from-transparent via-cyan-400 to-transparent bg-[length:200%_100%] animate-pulse"
         >
           {text}
         </span>
       )}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes scanTextAnim {
-          0% { background-position: 100% 0; }
-          27.27% { background-position: 0% 0; }
-          100% { background-position: 0% 0; }
-        }
-      `}} />
     </span>
   );
 }
 
 function NeonScanText({ text }: { text: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const prefersReducedMotion =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      { threshold: 0.1 }
-    );
-
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <span ref={ref} className="relative inline-grid">
-      <span className="col-start-1 row-start-1">{text}</span>
-      {isVisible && (
-        <span 
-          aria-hidden="true"
-          className="col-start-1 row-start-1 bg-clip-text text-transparent pointer-events-none"
-          style={{
-            backgroundImage: "linear-gradient(90deg, transparent 0%, transparent 40%, rgba(0, 240, 255, 0.8) 50%, transparent 60%, transparent 100%)",
-            backgroundSize: "300% 100%",
-            backgroundRepeat: "no-repeat",
-            animation: "neonScanAnim 3s linear infinite",
-          }}
-        >
-          {text}
-        </span>
-      )}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes neonScanAnim {
-          0% { background-position: 100% 0; }
-          50% { background-position: 0% 0; }
-          100% { background-position: 0% 0; }
-        }
-      `}} />
+    <span className="relative inline-block font-bold">
+      <span className="text-white hover:text-cyan-300 transition-colors duration-300">{text}</span>
     </span>
   );
 }
