@@ -123,7 +123,6 @@ export function Footer() {
               { label: "Schedule & Guidelines", href: "#symposium" },
               { label: "Events Catalog", href: "#events" },
               { label: "Coordinators", href: "#coordinators" },
-              { label: "Sponsors & Partners", href: "#sponsors" },
             ].map((link) => (
               <li key={link.label}>
                 <a

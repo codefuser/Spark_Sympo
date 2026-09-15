@@ -21,7 +21,6 @@ import {
   FileText,
   Phone,
   Mail,
-  Building2,
   GraduationCap,
   Shield,
   UserCheck,
@@ -39,7 +38,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useRegistrationModal } from "@/components/registration/RegistrationModalContext";
-import { SymposiumEvent, CoordinatorType, SponsorType } from "@/types";
+import { SymposiumEvent, CoordinatorType } from "@/types";
 import { AboutSection } from "@/components/home/AboutSection";
 import { EventCard } from "@/components/home/EventCard";
 import { Hero3DModel } from "@/components/home/Hero3DModel";
@@ -133,7 +132,6 @@ function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: 
 
 interface HomePageClientProps {
   events: SymposiumEvent[];
-  sponsors: SponsorType[];
   facultyCoordinators: CoordinatorType[];
   studentCoordinators: CoordinatorType[];
   announcements: any[];
@@ -147,7 +145,6 @@ interface HomePageClientProps {
 
 export function HomePageClient({
   events,
-  sponsors,
   facultyCoordinators,
   studentCoordinators,
   announcements,
@@ -566,29 +563,7 @@ export function HomePageClient({
         </div>
       </section>
 
-      {/* SECTION 6: SPONSORS */}
-      <section id="sponsors" className="container mx-auto px-4 sm:px-6 space-y-12">
-        <SectionHeading
-          badge="SPONSORS & PARTNERS"
-          title="Sponsored By Industry Leaders"
-          description="SPARKTRON 2K26 is backed by global technology leaders and academic organizations."
-        />
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {sponsors.map((sponsor) => (
-            <div
-              key={sponsor.id}
-              className="flex flex-col items-center justify-center p-6 rounded-xl bg-card/40 border border-primary/15 font-mono text-center hover:border-primary/40 transition-colors"
-            >
-              <Building2 className="w-8 h-8 text-primary mb-2" />
-              <span className="text-white font-bold text-sm">{sponsor.name}</span>
-              <span className="text-[10px] text-cyan uppercase tracking-wider mt-1">{sponsor.tier} PARTNER</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* SECTION 7: CONTACT */}
+      {/* SECTION 6: CONTACT */}
       <section id="contact" className="container mx-auto px-4 sm:px-6 space-y-12 max-w-5xl">
         <SectionHeading
           badge="GET IN TOUCH"
