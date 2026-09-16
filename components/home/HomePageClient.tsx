@@ -150,164 +150,172 @@ function CyberOctagonShieldCard({
   return (
     <div className="group relative w-full flex flex-col justify-between transition-all duration-300 ease-out hover:-translate-y-2.5 will-change-transform select-none max-w-[320px] mx-auto">
       {/* TOP RECESSED METALLIC LANYARD CLIP ATTACHMENT */}
-      <div className="relative z-30 w-24 h-3 bg-gradient-to-r from-[#030a17] via-[#091f42] to-[#030a17] border-x border-b border-cyan-400/60 rounded-b-md shadow-[0_2px_8px_rgba(0,229,255,0.3)] flex items-center justify-center mx-auto -mb-1.5">
-        <div className="w-8 h-1 rounded-full bg-cyan-400/60 shadow-[0_0_6px_#00e5ff]" />
+      <div className="relative z-30 w-24 h-3.5 bg-gradient-to-r from-[#030a17] via-[#0d2e5c] to-[#030a17] border-x-2 border-b-2 border-cyan-400/80 rounded-b-md shadow-[0_3px_10px_rgba(0,229,255,0.4)] flex items-center justify-center mx-auto -mb-1.5">
+        <div className="w-9 h-1 rounded-full bg-cyan-300 shadow-[0_0_8px_#00e5ff]" />
       </div>
 
-      {/* 1. OUTER METALLIC STEEL SHELL (PHYSICAL ID BADGE CAPSULE SILHOUETTE) */}
+      {/* LAYER 1: HEAVY PROMINENT OUTER METALLIC CYBER SHELL */}
       <div 
-        className="relative z-10 w-full p-[2px] bg-gradient-to-b from-[#0e2752] via-[#071936] to-[#020817] shadow-[0_0_20px_rgba(0,229,255,0.3)] group-hover:shadow-[0_0_35px_rgba(0,229,255,0.65)] transition-shadow duration-300"
+        className="relative z-10 w-full p-[3.5px] bg-gradient-to-b from-[#1b4b8a] via-[#0e2c59] to-[#030d21] shadow-[0_0_24px_rgba(0,229,255,0.4)] group-hover:shadow-[0_0_42px_rgba(0,229,255,0.8)] transition-all duration-300"
         style={{
-          clipPath: "polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(40% - 12px), calc(100% - 6px) 40%, calc(100% - 6px) 60%, 100% calc(60% + 12px), 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% calc(60% + 12px), 6px 60%, 6px 40%, 0% calc(40% - 12px), 0% 22px)"
+          clipPath: "polygon(26px 0%, calc(100% - 26px) 0%, 100% 26px, 100% calc(40% - 14px), calc(100% - 8px) 40%, calc(100% - 8px) 60%, 100% calc(60% + 14px), 100% calc(100% - 26px), calc(100% - 26px) 100%, 26px 100%, 0% calc(100% - 26px), 0% calc(60% + 14px), 8px 60%, 8px 40%, 0% calc(40% - 14px), 0% 26px)"
         }}
       >
-        {/* DUAL GLOWING ELECTRIC CYAN & CYBER BLUE RIMS */}
+        {/* LAYER 2: PRIMARY CYAN & ELECTRIC BLUE GLOWING OUTER RIM EDGE */}
         <div 
-          className="w-full h-full p-4 sm:p-5 bg-gradient-to-b from-[#071a38] via-[#041026] to-[#020817] flex flex-col justify-between items-center text-center space-y-4 overflow-hidden relative"
+          className="w-full h-full p-[2.5px] bg-gradient-to-b from-[#00e5ff] via-[#168bff] to-[#0044cc] group-hover:from-cyan-300 group-hover:via-cyan-400 transition-colors duration-300"
           style={{
-            clipPath: "polygon(21px 1px, calc(100% - 21px) 1px, calc(100% - 1px) 21px, calc(100% - 1px) calc(40% - 11px), calc(100% - 7px) 40%, calc(100% - 7px) 60%, calc(100% - 1px) calc(60% + 11px), calc(100% - 1px) calc(100% - 21px), calc(100% - 21px) calc(100% - 1px), 21px calc(100% - 1px), 1px calc(100% - 21px), 1px calc(60% + 11px), 7px 60%, 7px 40%, 1px calc(40% - 11px), 1px 21px)"
+            clipPath: "polygon(25px 0%, calc(100% - 25px) 0%, 100% 25px, 100% calc(40% - 13px), calc(100% - 7px) 40%, calc(100% - 7px) 60%, 100% calc(60% + 13px), 100% calc(100% - 25px), calc(100% - 25px) 100%, 25px 100%, 0% calc(100% - 25px), 0% calc(60% + 13px), 7px 60%, 7px 40%, 0% calc(40% - 13px), 0% 25px)"
           }}
         >
-          {/* Subtle HUD Grid Overlay & Radial Glow Accent */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#00e5ff0d_1px,transparent_1px),linear-gradient(to_bottom,#00e5ff0d_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none opacity-50" />
-          <div className="absolute -top-16 -right-16 w-36 h-36 bg-cyan-500/15 blur-2xl pointer-events-none group-hover:bg-cyan-400/30 transition-colors" />
-          <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-blue-600/20 blur-2xl pointer-events-none" />
-
-          {/* SECONDARY INNER ILLUMINATED BORDER LAYER */}
+          {/* LAYER 3: SECONDARY DARK METALLIC BLUE STEEL RIM */}
           <div 
-            className="absolute inset-[3px] border border-cyan-400/30 group-hover:border-cyan-400/70 transition-colors pointer-events-none"
+            className="w-full h-full p-4 sm:p-5 bg-gradient-to-b from-[#081e3d] via-[#041229] to-[#020817] flex flex-col justify-between items-center text-center space-y-4 overflow-hidden relative"
             style={{
-              clipPath: "polygon(20px 0%, calc(100% - 20px) 0%, 100% 20px, 100% calc(40% - 10px), calc(100% - 6px) 40%, calc(100% - 6px) 60%, 100% calc(60% + 10px), 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0% calc(100% - 20px), 0% calc(60% + 10px), 6px 60%, 6px 40%, 0% calc(40% - 10px), 0% 20px)"
+              clipPath: "polygon(24px 0%, calc(100% - 24px) 0%, 100% 24px, 100% calc(40% - 12px), calc(100% - 6px) 40%, calc(100% - 6px) 60%, 100% calc(60% + 12px), 100% calc(100% - 24px), calc(100% - 24px) 100%, 24px 100%, 0% calc(100% - 24px), 0% calc(60% + 12px), 6px 60%, 6px 40%, 0% calc(40% - 12px), 0% 24px)"
             }}
-          />
+          >
+            {/* Subtle HUD Grid Overlay & Radial Glow Accent */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#00e5ff10_1px,transparent_1px),linear-gradient(to_bottom,#00e5ff10_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none opacity-60" />
+            <div className="absolute -top-16 -right-16 w-36 h-36 bg-cyan-500/20 blur-2xl pointer-events-none group-hover:bg-cyan-400/35 transition-colors" />
+            <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-blue-600/25 blur-2xl pointer-events-none" />
 
-          {/* CONTINUOUS SMOOTH ENERGY PULSE SWEEP */}
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-cyan-400/15 to-transparent -translate-y-full group-hover:translate-y-full transition-transform duration-1000 ease-in-out" />
-
-          {/* TOP SECTION: INSTITUTE HEADER & SYSTEM CODE */}
-          <div className="relative z-10 w-full flex items-center justify-between border-b border-cyan-500/30 pb-2.5">
-            <div className="flex items-center space-x-2 text-left">
-              <Cpu className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_8px_#00e5ff] shrink-0" />
-              <div>
-                <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-200 leading-none">
-                  THAMIRABHARANI ENGG
-                </p>
-                <p className="text-[8px] font-mono tracking-widest text-cyan-400/80 leading-tight mt-0.5">
-                  LEARN • CREATE • INNOVATE
-                </p>
-              </div>
-            </div>
-            <span className="px-2 py-0.5 rounded bg-blue-950/90 border border-cyan-500/50 text-cyan-300 text-[9px] font-mono font-bold uppercase tracking-wider shadow-[0_0_8px_rgba(0,229,255,0.25)] shrink-0">
-              {sysId}
-            </span>
-          </div>
-
-          {/* LARGE CENTERED OCTAGONAL PROFILE MODULE */}
-          <div className="relative z-10 my-2 group/profile">
-            {/* Ambient Cyan Hologram Aura */}
+            {/* LAYER 4: INNER ILLUMINATED SECONDARY BORDER FRAME */}
             <div 
-              className="absolute -inset-2.5 bg-gradient-to-tr from-cyan-400 via-blue-600 to-cyan-300 opacity-50 group-hover:opacity-90 blur-md transition-all duration-300 pointer-events-none"
+              className="absolute inset-[4px] border border-cyan-400/40 group-hover:border-cyan-300/80 transition-colors pointer-events-none"
               style={{
-                clipPath: "polygon(18px 0%, calc(100% - 18px) 0%, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0% calc(100% - 18px), 0% 18px)"
+                clipPath: "polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(40% - 10px), calc(100% - 5px) 40%, calc(100% - 5px) 60%, 100% calc(60% + 10px), 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% calc(60% + 10px), 5px 60%, 5px 40%, 0% calc(40% - 10px), 0% 22px)"
               }}
             />
 
-            {/* Octagonal Outer Frame */}
-            <div 
-              className="relative w-28 h-28 sm:w-32 sm:h-32 p-[2px] bg-gradient-to-tr from-cyan-400 via-blue-500 to-cyan-300 shadow-[0_0_20px_rgba(0,229,255,0.5)] group-hover:scale-105 transition-transform duration-300"
-              style={{
-                clipPath: "polygon(18px 0%, calc(100% - 18px) 0%, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0% calc(100% - 18px), 0% 18px)"
-              }}
-            >
-              {/* Octagonal Inner Photo Lens */}
+            {/* CONTINUOUS SMOOTH ENERGY PULSE SWEEP */}
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-cyan-400/15 to-transparent -translate-y-full group-hover:translate-y-full transition-transform duration-1000 ease-in-out" />
+
+            {/* TOP SECTION: INSTITUTE HEADER & SYSTEM CODE */}
+            <div className="relative z-10 w-full flex items-center justify-between border-b border-cyan-500/35 pb-2.5">
+              <div className="flex items-center space-x-2 text-left">
+                <Cpu className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_8px_#00e5ff] shrink-0" />
+                <div>
+                  <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-200 leading-none">
+                    THAMIRABHARANI ENGG
+                  </p>
+                  <p className="text-[8px] font-mono tracking-widest text-cyan-400/80 leading-tight mt-0.5">
+                    LEARN • CREATE • INNOVATE
+                  </p>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded bg-blue-950/90 border border-cyan-500/50 text-cyan-300 text-[9px] font-mono font-bold uppercase tracking-wider shadow-[0_0_8px_rgba(0,229,255,0.25)] shrink-0">
+                {sysId}
+              </span>
+            </div>
+
+            {/* LARGE CENTERED OCTAGONAL PROFILE MODULE */}
+            <div className="relative z-10 my-2 group/profile">
+              {/* Ambient Cyan Hologram Aura */}
               <div 
-                className="w-full h-full bg-[#030d21] flex items-center justify-center overflow-hidden relative"
+                className="absolute -inset-2.5 bg-gradient-to-tr from-cyan-400 via-blue-600 to-cyan-300 opacity-50 group-hover:opacity-90 blur-md transition-all duration-300 pointer-events-none"
                 style={{
-                  clipPath: "polygon(17px 0%, calc(100% - 17px) 0%, 100% 17px, 100% calc(100% - 17px), calc(100% - 17px) 100%, 17px 100%, 0% calc(100% - 17px), 0% 17px)"
+                  clipPath: "polygon(18px 0%, calc(100% - 18px) 0%, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0% calc(100% - 18px), 0% 18px)"
+                }}
+              />
+
+              {/* Octagonal Outer Frame */}
+              <div 
+                className="relative w-28 h-28 sm:w-32 sm:h-32 p-[2px] bg-gradient-to-tr from-cyan-400 via-blue-500 to-cyan-300 shadow-[0_0_20px_rgba(0,229,255,0.5)] group-hover:scale-105 transition-transform duration-300"
+                style={{
+                  clipPath: "polygon(18px 0%, calc(100% - 18px) 0%, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0% calc(100% - 18px), 0% 18px)"
                 }}
               >
-                {coord.avatar ? (
-                  <img
-                    src={coord.avatar}
-                    alt={coord.name}
-                    className="w-full h-full object-cover brightness-95 contrast-105 group-hover:scale-110 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#0a2757] via-[#04122d] to-[#010612] flex items-center justify-center text-cyan-300 font-mono text-3xl sm:text-4xl font-black drop-shadow-[0_0_12px_#00e5ff]">
-                    {coord.name.charAt(0)}
-                  </div>
-                )}
+                {/* Octagonal Inner Photo Lens */}
+                <div 
+                  className="w-full h-full bg-[#030d21] flex items-center justify-center overflow-hidden relative"
+                  style={{
+                    clipPath: "polygon(17px 0%, calc(100% - 17px) 0%, 100% 17px, 100% calc(100% - 17px), calc(100% - 17px) 100%, 17px 100%, 0% calc(100% - 17px), 0% 17px)"
+                  }}
+                >
+                  {coord.avatar ? (
+                    <img
+                      src={coord.avatar}
+                      alt={coord.name}
+                      className="w-full h-full object-cover brightness-95 contrast-105 group-hover:scale-110 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-[#0a2757] via-[#04122d] to-[#010612] flex items-center justify-center text-cyan-300 font-mono text-3xl sm:text-4xl font-black drop-shadow-[0_0_12px_#00e5ff]">
+                      {coord.name.charAt(0)}
+                    </div>
+                  )}
 
-                {/* Subtle Scanline Overlay on Image */}
-                <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,229,255,0.1)_51%)] bg-[size:100%_4px] pointer-events-none opacity-40" />
+                  {/* Subtle Scanline Overlay on Image */}
+                  <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,229,255,0.1)_51%)] bg-[size:100%_4px] pointer-events-none opacity-40" />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* NAME & ROLE / DESIGNATION */}
-          <div className="relative z-10 w-full space-y-1 px-1">
-            <h3 className="text-lg sm:text-xl font-black text-white font-sans uppercase tracking-wider drop-shadow-[0_0_12px_rgba(0,229,255,0.4)] group-hover:text-cyan-100 transition-colors line-clamp-1">
-              {coord.name}
-            </h3>
-            <p className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest leading-relaxed">
-              {coord.designation || (isFaculty ? "FACULTY CO-CONVENER" : "STUDENT COORDINATOR")}
-            </p>
-          </div>
+            {/* NAME & ROLE / DESIGNATION */}
+            <div className="relative z-10 w-full space-y-1 px-1">
+              <h3 className="text-lg sm:text-xl font-black text-white font-sans uppercase tracking-wider drop-shadow-[0_0_12px_rgba(0,229,255,0.4)] group-hover:text-cyan-100 transition-colors line-clamp-1">
+                {coord.name}
+              </h3>
+              <p className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest leading-relaxed">
+                {coord.designation || (isFaculty ? "FACULTY CO-CONVENER" : "STUDENT COORDINATOR")}
+              </p>
+            </div>
 
-          {/* HUD INFORMATION ROWS (NO FORM FIELDS / NO INPUT BOXES!) */}
-          <div className="relative z-10 w-full pt-2 border-t border-cyan-500/25 flex items-stretch justify-between gap-3 text-left">
-            {/* Left Column: Data Rows */}
-            <div className="flex-1 space-y-2 text-xs font-mono">
-              {/* Department Row */}
-              <div className="flex items-center space-x-2 text-slate-300">
-                <GraduationCap className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00e5ff]" />
-                <span className="truncate font-semibold text-slate-200">{coord.department}</span>
+            {/* HUD INFORMATION ROWS (NO FORM FIELDS / NO INPUT BOXES!) */}
+            <div className="relative z-10 w-full pt-2 border-t border-cyan-500/25 flex items-stretch justify-between gap-3 text-left">
+              {/* Left Column: Data Rows */}
+              <div className="flex-1 space-y-2 text-xs font-mono">
+                {/* Department Row */}
+                <div className="flex items-center space-x-2 text-slate-300">
+                  <GraduationCap className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00e5ff]" />
+                  <span className="truncate font-semibold text-slate-200">{coord.department}</span>
+                </div>
+
+                {/* Phone Row */}
+                <a
+                  href={`tel:${coord.phone}`}
+                  className="flex items-center space-x-2 text-slate-300 hover:text-cyan-200 transition-colors group/link cursor-pointer"
+                >
+                  <Phone className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00e5ff] group-hover/link:animate-pulse" />
+                  <span className="truncate font-mono">{coord.phone}</span>
+                </a>
+
+                {/* Email Row */}
+                <a
+                  href={`mailto:${coord.email}`}
+                  className="flex items-center space-x-2 text-slate-300 hover:text-cyan-200 transition-colors group/link cursor-pointer"
+                >
+                  <Mail className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00e5ff] group-hover/link:animate-pulse" />
+                  <span className="truncate font-mono">{coord.email}</span>
+                </a>
               </div>
 
-              {/* Phone Row */}
-              <a
-                href={`tel:${coord.phone}`}
-                className="flex items-center space-x-2 text-slate-300 hover:text-cyan-200 transition-colors group/link cursor-pointer"
-              >
-                <Phone className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00e5ff] group-hover/link:animate-pulse" />
-                <span className="truncate font-mono">{coord.phone}</span>
-              </a>
-
-              {/* Email Row */}
-              <a
-                href={`mailto:${coord.email}`}
-                className="flex items-center space-x-2 text-slate-300 hover:text-cyan-200 transition-colors group/link cursor-pointer"
-              >
-                <Mail className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00e5ff] group-hover/link:animate-pulse" />
-                <span className="truncate font-mono">{coord.email}</span>
-              </a>
-            </div>
-
-            {/* Right Column: Micro HUD Scanner Block */}
-            <div className="w-16 border-l border-cyan-500/30 pl-2.5 flex flex-col items-center justify-center space-y-1 text-[8px] font-mono text-cyan-400/80">
-              <Fingerprint className="w-6 h-6 text-cyan-400 drop-shadow-[0_0_8px_#00e5ff] animate-pulse" />
-              <span className="text-[7px] uppercase tracking-tighter text-center leading-tight text-cyan-300/70">
-                SCAN TO VERIFY
-              </span>
-              <div className="w-full flex items-center justify-between px-1">
-                <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping" />
-                <span className="text-[6px] text-cyan-500">HUD</span>
+              {/* Right Column: Micro HUD Scanner Block */}
+              <div className="w-16 border-l border-cyan-500/30 pl-2.5 flex flex-col items-center justify-center space-y-1 text-[8px] font-mono text-cyan-400/80">
+                <Fingerprint className="w-6 h-6 text-cyan-400 drop-shadow-[0_0_8px_#00e5ff] animate-pulse" />
+                <span className="text-[7px] uppercase tracking-tighter text-center leading-tight text-cyan-300/70">
+                  SCAN TO VERIFY
+                </span>
+                <div className="w-full flex items-center justify-between px-1">
+                  <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping" />
+                  <span className="text-[6px] text-cyan-500">HUD</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* BOTTOM FOOTER STRIP */}
-          <div className="relative z-10 w-full pt-2 border-t border-cyan-500/30 flex items-center justify-between text-[9px] font-mono">
-            <div className="flex items-center space-x-1.5 text-cyan-300/80 font-bold tracking-widest uppercase">
-              <Zap className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_5px_#00e5ff]" />
-              <span>IDENTITY // INNOVATION</span>
-            </div>
+            {/* BOTTOM FOOTER STRIP */}
+            <div className="relative z-10 w-full pt-2 border-t border-cyan-500/30 flex items-center justify-between text-[9px] font-mono">
+              <div className="flex items-center space-x-1.5 text-cyan-300/80 font-bold tracking-widest uppercase">
+                <Zap className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_5px_#00e5ff]" />
+                <span>IDENTITY // INNOVATION</span>
+              </div>
 
-            <div className="flex items-center space-x-2">
-              <span className="text-cyan-400/60 font-mono tracking-tighter">/////</span>
-              <span className="px-2.5 py-0.5 rounded-sm bg-cyan-950/90 border border-cyan-400/60 text-cyan-300 font-bold text-[9px] uppercase tracking-wider shadow-[0_0_10px_rgba(0,229,255,0.3)]">
-                {roleBadge}
-              </span>
+              <div className="flex items-center space-x-2">
+                <span className="text-cyan-400/60 font-mono tracking-tighter">/////</span>
+                <span className="px-2.5 py-0.5 rounded-sm bg-cyan-950/90 border border-cyan-400/60 text-cyan-300 font-bold text-[9px] uppercase tracking-wider shadow-[0_0_10px_rgba(0,229,255,0.3)]">
+                  {roleBadge}
+                </span>
+              </div>
             </div>
           </div>
         </div>
