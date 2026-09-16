@@ -522,7 +522,7 @@ export function HomePageClient({
           <div className="flex flex-col items-center text-center space-y-4 sm:space-y-6">
             {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] - Elevated Above with Unique Syne Typography */}
             <div className="space-y-2 pt-1 sm:pt-2">
-              <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold font-syne tracking-wider text-white uppercase drop-shadow-[0_2px_20px_rgba(255,255,255,0.35)] leading-tight">
+              <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold font-syne tracking-[0.1em] text-white uppercase drop-shadow-[0_2px_20px_rgba(255,255,255,0.35)] leading-tight">
                 <span className="text-white">THAMIRABHARANI</span>{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-white drop-shadow-[0_0_20px_rgba(0,240,255,0.45)]">
                   ENGINEERING COLLEGE
@@ -540,13 +540,13 @@ export function HomePageClient({
                 ORGANIZED BY
               </p>
               <div className="flex flex-col items-center justify-center">
-                <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-orbitron font-extrabold tracking-wider uppercase text-slate-100 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-center leading-relaxed">
+                <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-orbitron font-bold tracking-[0.1em] uppercase text-slate-100 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-center leading-relaxed">
                   <span className="text-slate-300 font-bold">DEPARTMENT OF</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-cyan-400 drop-shadow-[0_0_25px_rgba(0,240,255,1)] shadow-cyan-500/50 font-black animate-pulse">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-cyan-400 drop-shadow-[0_0_25px_rgba(0,240,255,1)] shadow-cyan-500/50 font-bold animate-pulse">
                     ECE
                   </span>
-                  <span className="text-cyan-400 font-black px-0.5">&amp;</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-300 drop-shadow-[0_0_25px_rgba(0,114,255,1)] font-black animate-pulse">
+                  <span className="text-cyan-400 font-bold px-0.5">&amp;</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-300 drop-shadow-[0_0_25px_rgba(0,114,255,1)] font-bold animate-pulse">
                     EEE
                   </span>
                 </h2>
@@ -564,10 +564,10 @@ export function HomePageClient({
 
             {/* 4. Grand Main Title: SPARKTRON'2K26 with Orbitron Typography */}
             <div className="py-2 sm:py-3 relative group">
-              <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black italic font-orbitron tracking-tight uppercase select-none leading-none">
+              <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold font-orbitron tracking-wider uppercase select-none leading-none py-4">
                 <span className="text-white drop-shadow-[0_4px_30px_rgba(255,255,255,0.6)]">SPARK</span>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-400 to-blue-500 drop-shadow-[0_0_35px_rgba(0,240,255,0.9)]">TRON</span>
-                <span className="text-cyan-400 drop-shadow-[0_0_40px_rgba(0,240,255,0.95)] animate-sparktron-glow">'2K26</span>
+                <span className="text-cyan-400 drop-shadow-[0_0_40px_rgba(0,240,255,0.95)] animate-sparktron-glow ml-2">'2K26</span>
               </h2>
               {/* Electric Circuit Underline Accent */}
               <div className="flex items-center justify-center gap-2 pt-3 max-w-sm mx-auto opacity-80">
