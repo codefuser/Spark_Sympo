@@ -522,15 +522,17 @@ export function HomePageClient({
           <div className="flex flex-col items-center text-center space-y-4 sm:space-y-6">
             {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] - Elevated Above with Unique Syne Typography */}
             <div className="space-y-2 pt-1 sm:pt-2">
-              <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold font-syne tracking-[0.1em] text-white uppercase drop-shadow-[0_2px_20px_rgba(255,255,255,0.35)] leading-tight">
+              <h1 
+                className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-[0.1em] text-white uppercase drop-shadow-[0_2px_20px_rgba(255,255,255,0.35)] leading-tight"
+                style={{ fontFamily: "'Baskerville Old Face', serif" }}
+              >
                 <span className="text-white">THAMIRABHARANI</span>{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-white drop-shadow-[0_0_20px_rgba(0,240,255,0.45)]">
                   ENGINEERING COLLEGE
                 </span>
               </h1>
               <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-950/50 border border-cyan-400/40 text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-cyan-300 uppercase shadow-[0_0_15px_rgba(0,240,255,0.25)]">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-                <span>[ AN AUTONOMOUS INSTITUTION ]</span>
+                <span>AN AUTONOMOUS INSTITUTION</span>
               </div>
             </div>
 
