@@ -542,12 +542,12 @@ export function HomePageClient({
               <div className="flex flex-col items-center justify-center">
                 <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-orbitron font-extrabold tracking-wider uppercase text-slate-100 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-center leading-relaxed">
                   <span className="text-slate-300 font-bold">DEPARTMENT OF</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-cyan-400 drop-shadow-[0_0_12px_rgba(0,240,255,0.7)] font-black">
-                    ELECTRONICS AND COMMUNICATION
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-cyan-400 drop-shadow-[0_0_25px_rgba(0,240,255,1)] shadow-cyan-500/50 font-black animate-pulse">
+                    ECE
                   </span>
                   <span className="text-cyan-400 font-black px-0.5">&amp;</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-300 drop-shadow-[0_0_12px_rgba(0,114,255,0.7)] font-black">
-                    ELECTRICAL AND ELECTRONICS ENGINEERING
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-300 drop-shadow-[0_0_25px_rgba(0,114,255,1)] font-black animate-pulse">
+                    EEE
                   </span>
                 </h2>
               </div>
