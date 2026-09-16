@@ -453,23 +453,30 @@ export function HomePageClient({
   };
 
   return (
-    <div className="space-y-20 pb-20 pt-10 sm:pt-12">
+    <div className="space-y-20 pb-20 pt-20 sm:pt-24">
       {/* SECTION 1: HERO (High-Brightness, Normal Clean Mode & Vivid Theme Colors) */}
-      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-start items-center pt-2 sm:pt-4 pb-12 sm:pb-16 overflow-hidden border-b border-blue-500/20">
+      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-start items-center pt-4 sm:pt-6 md:pt-8 pb-12 sm:pb-16 overflow-hidden border-b border-blue-500/20">
         {/* Dynamic High-Brightness Background Image: Circuit (Left), Motor (Right), Neon Blue & Orange Waves (Center) */}
         <div className="absolute inset-0 -z-20 overflow-hidden pointer-events-none">
+          {/* Mobile Image: Dedicated 9:16 layout where BOTH Circuit (left) & Motor (right) are fully visible on mobile */}
+          <img
+            src="/hero-bg-mobile.jpg"
+            alt="SPARKTRON Symposium Cyber ECE and EEE Mobile Background"
+            className="w-full h-full object-cover object-center opacity-90 filter brightness-110 contrast-115 saturate-125 block md:hidden"
+          />
+          {/* Desktop/Laptop Image: Wide 16:9 layout for widescreen laptop/desktop monitors */}
           <img
             src="/hero-bg.jpg"
-            alt="SPARKTRON Symposium Cyber ECE and EEE Background"
-            className="w-full h-full object-cover object-center opacity-85 sm:opacity-95 filter brightness-110 contrast-115 saturate-125 transition-transform duration-1000"
+            alt="SPARKTRON Symposium Cyber ECE and EEE Desktop Background"
+            className="w-full h-full object-cover object-center opacity-85 sm:opacity-95 filter brightness-110 contrast-115 saturate-125 hidden md:block"
           />
           {/* Subtle Contrast Gradient Mask: Kept light so the background circuit, motor & waves shine brightly */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#05070F]/55 via-[#05070F]/25 to-[#05070F]/85" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#05070F]/50 via-[#05070F]/20 to-[#05070F]/85" />
           
           {/* Intense Neon Blue Glow Bloom on Left (ECE) & Fiery Orange-Red Bloom on Right (EEE) */}
-          <div className="absolute -left-20 top-1/4 w-[500px] h-[500px] bg-cyan-400/25 rounded-full blur-[130px] pointer-events-none animate-pulse" />
-          <div className="absolute -right-20 top-1/4 w-[500px] h-[500px] bg-gradient-to-br from-orange-500/25 via-red-600/20 to-amber-500/25 rounded-full blur-[130px] pointer-events-none animate-pulse" />
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[600px] h-[260px] bg-blue-600/20 rounded-full blur-[110px] pointer-events-none" />
+          <div className="absolute -left-20 top-1/4 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-cyan-400/25 rounded-full blur-[100px] sm:blur-[130px] pointer-events-none animate-pulse" />
+          <div className="absolute -right-20 top-1/4 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-gradient-to-br from-orange-500/25 via-red-600/20 to-amber-500/25 rounded-full blur-[100px] sm:blur-[130px] pointer-events-none animate-pulse" />
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[400px] sm:w-[600px] h-[200px] sm:h-[260px] bg-blue-600/20 rounded-full blur-[90px] sm:blur-[110px] pointer-events-none" />
         </div>
 
         {/* Glowing Cyan & Amber Circuit Accents Layer */}
@@ -531,32 +538,32 @@ export function HomePageClient({
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-5xl">
           {/* CENTERED HERO MASTER DECK */}
-          <div className="flex flex-col items-center text-center space-y-4 sm:space-y-6">
-            {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] - Clean, Prominent & Ultra-Bright */}
-            <div className="space-y-2 pt-1 sm:pt-2">
+          <div className="flex flex-col items-center text-center space-y-3 sm:space-y-5">
+            {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] - Clean, Prominent & Perfectly Proportioned */}
+            <div className="space-y-1.5 sm:space-y-2 pt-1 sm:pt-2 max-w-3xl mx-auto">
               <h1 
-                className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-[0.08em] uppercase leading-tight"
+                className="text-sm sm:text-lg md:text-2xl lg:text-3xl font-black tracking-[0.04em] sm:tracking-[0.08em] uppercase leading-snug sm:leading-tight text-center"
                 style={{ fontFamily: "'Orbitron', 'Plus Jakarta Sans', sans-serif" }}
               >
-                <span className="text-white drop-shadow-[0_0_25px_rgba(255,255,255,1)] drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+                <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,1)] drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
                   THAMIRABHARANI
                 </span>{" "}
-                <span className="text-cyan-300 drop-shadow-[0_0_25px_rgba(0,240,255,1)] drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+                <span className="text-cyan-300 drop-shadow-[0_0_20px_rgba(0,240,255,1)] drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
                   ENGINEERING COLLEGE
                 </span>
               </h1>
-              <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-[#050b18]/90 border border-cyan-400/60 text-xs sm:text-sm font-mono font-bold tracking-[0.28em] text-cyan-300 uppercase shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+              <div className="inline-flex items-center gap-2 px-3.5 sm:px-5 py-1 rounded-full bg-[#050b18]/90 border border-cyan-400/60 text-[10px] sm:text-xs font-mono font-bold tracking-[0.18em] sm:tracking-[0.28em] text-cyan-300 uppercase shadow-[0_0_20px_rgba(0,240,255,0.4)]">
                 <span>AN AUTONOMOUS INSTITUTION</span>
               </div>
             </div>
 
             {/* 2. Organized By & Departments (ECE Neon Blue & EEE Orange & Red) - Ultra Bright */}
-            <div className="space-y-2 pt-1 sm:pt-2 max-w-4xl mx-auto">
-              <p className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.35em] text-cyan-300 uppercase drop-shadow-[0_0_12px_rgba(0,240,255,0.9)]">
+            <div className="space-y-1.5 pt-0.5 sm:pt-1 max-w-4xl mx-auto">
+              <p className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.25em] sm:tracking-[0.35em] text-cyan-300 uppercase drop-shadow-[0_0_12px_rgba(0,240,255,0.9)]">
                 ORGANIZED BY
               </p>
               <div className="flex flex-col items-center justify-center">
-                <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-orbitron font-bold tracking-[0.1em] uppercase flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-center leading-relaxed">
+                <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-orbitron font-bold tracking-[0.08em] sm:tracking-[0.1em] uppercase flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center leading-relaxed">
                   <span className="text-white font-extrabold drop-shadow-[0_0_12px_rgba(255,255,255,0.8)]">DEPARTMENT OF</span>
                   <span className="text-cyan-300 drop-shadow-[0_0_25px_rgba(0,240,255,1)] font-black px-1">
                     ECE
@@ -571,36 +578,36 @@ export function HomePageClient({
 
             {/* 3. National Level Technical Symposium Pill */}
             <div className="pt-0.5">
-              <div className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-9 py-2.5 rounded-xl border border-cyan-400/70 bg-[#030917]/90 text-cyan-200 font-mono text-xs sm:text-sm tracking-[0.25em] uppercase font-bold shadow-[0_0_30px_rgba(0,240,255,0.4)]">
-                <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
+              <div className="inline-flex items-center justify-center gap-2 px-4 sm:px-8 py-1.5 sm:py-2 rounded-xl border border-cyan-400/70 bg-[#030917]/90 text-cyan-200 font-mono text-[10px] sm:text-xs md:text-sm tracking-[0.15em] sm:tracking-[0.25em] uppercase font-bold shadow-[0_0_30px_rgba(0,240,255,0.4)]">
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400 animate-pulse" />
                 <span className="text-white drop-shadow-[0_0_15px_rgba(0,240,255,1)]">NATIONAL LEVEL TECHNICAL SYMPOSIUM</span>
-                <Sparkles className="w-4 h-4 text-orange-400 animate-pulse" />
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-400 animate-pulse" />
               </div>
             </div>
 
-            {/* 4. Grand Main Title: SPARKTRON 2K26 - Pure Brilliance, High Contrast & Clean Normal Mode */}
-            <div className="py-2 sm:py-3 relative group w-full max-w-4xl mx-auto flex flex-col items-center justify-center">
-              <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-orbitron tracking-widest uppercase select-none leading-none flex flex-col items-center justify-center">
+            {/* 4. Grand Main Title: SPARKTRON 2K26 - Cleanly Scaled to Fit Perfectly Within Frame */}
+            <div className="py-1.5 sm:py-2.5 relative group w-full max-w-xl mx-auto flex flex-col items-center justify-center">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-orbitron tracking-wider sm:tracking-widest uppercase select-none leading-none flex flex-col items-center justify-center">
                 <div className="flex items-center justify-center gap-1 sm:gap-2">
                   {/* SPARK in Brilliant Solid White with Electric Neon Blue Glow */}
-                  <span className="text-white drop-shadow-[0_0_35px_#00f0ff] drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]">
+                  <span className="text-white drop-shadow-[0_0_30px_#00f0ff] drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
                     SPARK
                   </span>
                   {/* TRON in Ultra-Bright Solid Neon Orange-Red */}
-                  <span className="text-[#ff5500] drop-shadow-[0_0_35px_#ff4500] drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]">
+                  <span className="text-[#ff5500] drop-shadow-[0_0_30px_#ff4500] drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
                     TRON
                   </span>
                 </div>
                 {/* 2K26 in Ultra-Bright Neon White/Cyan */}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-amber-300 drop-shadow-[0_0_40px_#00f0ff] drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)] mt-3 sm:mt-5 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-widest">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-amber-300 drop-shadow-[0_0_35px_#00f0ff] drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mt-2 sm:mt-3 text-2xl sm:text-3xl md:text-4xl font-black tracking-widest">
                   2K26
                 </span>
               </h2>
               {/* Dual Cyan to Fire-Red Electric Circuit Underline Accent */}
-              <div className="flex items-center justify-center gap-2 pt-4 max-w-md w-full mx-auto opacity-90">
+              <div className="flex items-center justify-center gap-2 pt-3 max-w-xs sm:max-w-sm w-full mx-auto opacity-90">
                 <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-cyan-400 to-blue-500" />
-                <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_12px_#00f0ff]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-orange-500 shadow-[0_0_12px_#ff5500]" />
+                <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff]" />
+                <div className="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_10px_#ff5500]" />
                 <div className="h-[2px] flex-1 bg-gradient-to-r from-amber-400 via-orange-500 to-red-600" />
               </div>
             </div>
