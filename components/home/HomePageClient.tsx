@@ -18,14 +18,13 @@ import {
   Target,
   Compass,
   BookOpen,
-  HelpCircle,
   FileText,
   Phone,
   Mail,
-  Building2,
   GraduationCap,
   Shield,
   UserCheck,
+  Radio,
   ExternalLink,
   Send,
   Gamepad2,
@@ -40,7 +39,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useRegistrationModal } from "@/components/registration/RegistrationModalContext";
-import { SymposiumEvent, CoordinatorType, SponsorType } from "@/types";
+import { SymposiumEvent, CoordinatorType } from "@/types";
 import { AboutSection } from "@/components/home/AboutSection";
 import { EventCard } from "@/components/home/EventCard";
 import { Hero3DModel } from "@/components/home/Hero3DModel";
@@ -132,14 +131,218 @@ function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: 
   );
 }
 
+function IndustrialCyberIdPass({
+  coord,
+  index,
+  isFaculty = false,
+}: {
+  coord: CoordinatorType;
+  index: number;
+  isFaculty?: boolean;
+}) {
+  return (
+    <div className="relative group p-1 sm:p-1.5 transition-all duration-300 hover:-translate-y-1.5">
+      {/* Heavy Cyber Armor Frame with Chamfered Polygon Cut Corners & Lanyard Slot */}
+      <div
+        className="relative p-4 sm:p-5 bg-gradient-to-br from-[#181b22] via-[#0b0d12] to-[#141720] border-2 border-amber-400/70 hover:border-amber-300 shadow-[0_0_30px_rgba(245,158,11,0.25)] hover:shadow-[0_0_50px_rgba(245,158,11,0.45)] transition-all duration-300 overflow-hidden"
+        style={{
+          clipPath:
+            "polygon(24px 0, calc(50% - 45px) 0, calc(50% - 35px) 10px, calc(50% + 35px) 10px, calc(50% + 45px) 0, calc(100% - 24px) 0, 100% 24px, 100% calc(100% - 24px), calc(100% - 24px) 100%, calc(50% + 50px) 100%, calc(50% + 40px) 100%, 24px 100%, 0 calc(100% - 24px), 0 24px)",
+        }}
+      >
+        {/* Top Lanyard Strap Slot Cutout */}
+        <div className="absolute top-1 left-1/2 -translate-x-1/2 w-20 h-2.5 bg-[#06070a] border border-amber-400/60 rounded-full flex items-center justify-center pointer-events-none z-20 shadow-[0_0_6px_#f59e0b]">
+          <div className="w-12 h-1 bg-amber-400/40 rounded-full" />
+        </div>
+
+        {/* Heavy Gold Corner Brackets Accent */}
+        <div className="absolute top-0 left-0 w-7 h-7 border-t-4 border-l-4 border-amber-400 pointer-events-none z-20" />
+        <div className="absolute top-0 right-0 w-7 h-7 border-t-4 border-r-4 border-amber-400 pointer-events-none z-20" />
+        <div className="absolute bottom-0 left-0 w-7 h-7 border-b-4 border-l-4 border-amber-400 pointer-events-none z-20" />
+        <div className="absolute bottom-0 right-0 w-7 h-7 border-b-4 border-r-4 border-amber-400 pointer-events-none z-20" />
+
+        {/* Metallic Texture Grid Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f59e0b0a_1px,transparent_1px),linear-gradient(to_bottom,#f59e0b0a_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none" />
+
+        {/* MAIN ID LAYOUT (3 Columns: Left Barcode | Center Info & Portrait | Right Verification) */}
+        <div className="relative z-10 pt-2 flex flex-col md:flex-row items-stretch gap-4 sm:gap-5">
+          {/* LEFT COLUMN: Vertical Barcode & ID Label Strip */}
+          <div className="shrink-0 hidden sm:flex flex-col items-center justify-between p-2 rounded bg-[#07080c] border border-amber-500/40 text-amber-400 font-mono text-[10px] tracking-widest uppercase">
+            <div className="writing-mode-vertical rotate-180 font-bold text-amber-300 py-2 tracking-[0.25em]">
+              {isFaculty ? "FACULTY CONVENER ID" : "STUDENT EXECUTIVE ID"}
+            </div>
+
+            {/* Vertical Barcode Lines */}
+            <div className="flex flex-col gap-0.5 my-2 opacity-90">
+              {[3, 1, 4, 2, 5, 2, 4, 1, 3, 5, 2, 4, 1, 3].map((w, i) => (
+                <span
+                  key={i}
+                  className="bg-amber-400 rounded-sm"
+                  style={{
+                    height: i % 2 === 0 ? "2px" : "1px",
+                    width: `${w * 4 + 10}px`,
+                  }}
+                />
+              ))}
+            </div>
+
+            <div className="text-[9px] font-bold text-amber-400/80">
+              0{index + 1}
+            </div>
+          </div>
+
+          {/* CENTER/LEFT PORTRAIT FRAME & MEMBER DETAILS */}
+          <div className="flex-1 flex flex-col sm:flex-row items-center sm:items-start gap-4">
+            {/* PORTRAIT AVATAR FRAME WITH SLASHED CORNERS */}
+            <div className="relative shrink-0">
+              <div
+                className="w-24 h-28 sm:w-28 sm:h-32 bg-gradient-to-br from-[#12151c] via-[#090b0e] to-[#181c26] border-2 border-amber-400 p-1 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.35)] group-hover:scale-105 transition-transform overflow-hidden"
+                style={{
+                  clipPath:
+                    "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)",
+                }}
+              >
+                {coord.avatar ? (
+                  <img
+                    src={coord.avatar}
+                    alt={coord.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-[#0b0e14] border border-amber-400/40 flex items-center justify-center text-amber-300 font-mono text-3xl font-black">
+                    {coord.name.charAt(0)}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* MEMBER DETAILS */}
+            <div className="flex-1 space-y-2 text-center sm:text-left w-full">
+              {/* Institution Header */}
+              <div className="flex items-center justify-center sm:justify-start gap-2 border-b border-amber-500/25 pb-1.5">
+                <div className="w-5 h-5 rounded bg-amber-500/20 border border-amber-400/60 flex items-center justify-center text-amber-300 shadow-[0_0_8px_#f59e0b]">
+                  <Cpu className="w-3 h-3" />
+                </div>
+                <div>
+                  <div className="text-[11px] font-mono font-bold tracking-widest text-amber-300 uppercase leading-none">
+                    THAMIRABHARANI ENGG COLLEGE
+                  </div>
+                  <div className="text-[9px] font-mono text-amber-400/80 uppercase tracking-wider">
+                    CREATE // LEARN // INNOVATE
+                  </div>
+                </div>
+              </div>
+
+              {/* Name & Role Title */}
+              <div>
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-wide uppercase text-amber-300 drop-shadow-[0_0_12px_rgba(245,158,11,0.5)]">
+                  {coord.name}
+                </h3>
+                <p className="text-xs font-mono font-bold tracking-widest text-amber-400 uppercase mt-0.5">
+                  {coord.designation ||
+                    (coord.role === "FACULTY"
+                      ? "FACULTY CONVENER"
+                      : "STUDENT EXECUTIVE LEAD")}
+                </p>
+              </div>
+
+              {/* Info Rows with Metallic Icons */}
+              <div className="space-y-1.5 pt-1 text-xs font-mono text-slate-200">
+                <div className="flex items-center justify-center sm:justify-start gap-2">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span className="text-slate-300">{coord.department}</span>
+                </div>
+
+                <a
+                  href={`tel:${coord.phone}`}
+                  className="flex items-center justify-center sm:justify-start gap-2 text-slate-300 hover:text-amber-300 transition-colors cursor-pointer"
+                >
+                  <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>{coord.phone}</span>
+                </a>
+
+                <a
+                  href={`mailto:${coord.email}`}
+                  className="flex items-center justify-center sm:justify-start gap-2 text-slate-300 hover:text-amber-300 transition-colors cursor-pointer truncate"
+                >
+                  <Mail className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span className="truncate">{coord.email}</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: FINGERPRINT SCANNER & QR CODE VERIFICATION */}
+          <div className="shrink-0 flex flex-col items-center justify-between p-3 rounded-lg bg-[#07080c] border border-amber-500/40 min-w-[120px]">
+            <div className="text-[9px] font-mono text-amber-400/90 uppercase tracking-widest font-bold text-center">
+              A MORE CONNECTED TOMORROW
+            </div>
+
+            {/* Fingerprint Verification Scanner Ring */}
+            <div className="my-2 p-2 rounded-xl border border-amber-400/70 bg-amber-950/50 flex flex-col items-center justify-center text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.35)]">
+              <div className="w-8 h-8 rounded-full border border-amber-400 flex items-center justify-center text-amber-300 animate-pulse">
+                <Radio className="w-4 h-4 text-amber-400" />
+              </div>
+              <span className="text-[8px] font-mono font-bold uppercase tracking-wider text-amber-400 mt-1">
+                SCAN TO VERIFY
+              </span>
+            </div>
+
+            {/* Simulated QR Code Graphic */}
+            <div className="w-12 h-12 bg-white p-1 rounded flex items-center justify-center shadow-[0_0_12px_#f59e0b]">
+              <div className="w-full h-full bg-[#08090d] grid grid-cols-4 gap-0.5 p-0.5">
+                {[1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1].map((val, i) => (
+                  <div
+                    key={i}
+                    className={val ? "bg-amber-400" : "bg-transparent"}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* BOTTOM ACCENT BAR: Identity Text & Slanted Hazard Badge */}
+        <div className="relative z-10 pt-3 mt-3 border-t border-amber-500/30 flex flex-wrap items-center justify-between gap-3">
+          <div className="text-[10px] font-mono tracking-[0.22em] text-slate-400 uppercase font-bold">
+            IDENTITY <span className="text-amber-400">//</span> INTEGRITY{" "}
+            <span className="text-amber-400">//</span> INNOVATION
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Slanted Yellow Hazard Stripes */}
+            <div className="flex items-center gap-1 opacity-90">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <span
+                  key={i}
+                  className="w-1.5 h-3.5 bg-amber-400 -skew-x-12 rounded-sm shadow-[0_0_6px_#f59e0b]"
+                />
+              ))}
+            </div>
+
+            {/* Role Badge Chip */}
+            <div
+              className="px-4 py-1 bg-amber-400 text-black font-black font-mono text-xs uppercase tracking-wider shadow-[0_0_15px_#f59e0b]"
+              style={{
+                clipPath:
+                  "polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)",
+              }}
+            >
+              {isFaculty ? "FACULTY CONVENER" : "STUDENT LEAD"}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface HomePageClientProps {
   events: SymposiumEvent[];
-  sponsors: SponsorType[];
   facultyCoordinators: CoordinatorType[];
   studentCoordinators: CoordinatorType[];
   announcements: any[];
   schedule: { time: string; title: string; venue: string }[];
-  faqs: { q: string; a: string }[];
   symposiumDate: string;
   collegeName: string;
   venue: string;
@@ -149,12 +352,10 @@ interface HomePageClientProps {
 
 export function HomePageClient({
   events,
-  sponsors,
   facultyCoordinators,
   studentCoordinators,
   announcements,
   schedule,
-  faqs,
   symposiumDate,
   collegeName,
   venue,
@@ -417,25 +618,6 @@ export function HomePageClient({
             <ScheduleRow key={idx} item={item} idx={idx} isVisible={isScheduleVisible} isReducedMotion={isReducedMotion} />
           ))}
         </div>
-
-        {/* FAQs */}
-        <div className="space-y-6 max-w-4xl mx-auto">
-          <div className="text-center">
-            <Badge variant="cyan" size="md">FAQ</Badge>
-            <h3 className="text-2xl font-bold text-white mt-2">Frequently Asked Questions</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {faqs.map((faq, idx) => (
-              <Card key={idx}>
-                <h4 className="font-bold text-white text-sm flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4 text-primary shrink-0" /> {faq.q}
-                </h4>
-                <p className="text-xs text-secondary-foreground mt-2 pl-6">{faq.a}</p>
-              </Card>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* SECTION 4: EVENTS CATALOG (Black, Blue, White Sci-Fi Theme) */}
@@ -526,91 +708,55 @@ export function HomePageClient({
       </section>
 
       {/* SECTION 5: COORDINATORS */}
-      <section id="coordinators" className="container mx-auto px-4 sm:px-6 space-y-16">
+      <section id="coordinators" className="container mx-auto px-4 sm:px-6 space-y-12 py-6">
         <SectionHeading
           badge="THE TEAM"
           title="Symposium Coordinators & Conveners"
           description="Our dedicated faculty conveners and student leads for queries."
         />
 
-        {/* Faculty */}
+        {/* Faculty Conveners */}
         <div className="space-y-6">
-          <div className="flex items-center space-x-2 text-primary font-mono text-sm uppercase tracking-widest font-bold">
-            <Shield className="w-4 h-4" />
+          <div className="flex items-center space-x-2.5 text-amber-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
+            <Shield className="w-4 h-4 text-amber-400 drop-shadow-[0_0_8px_#f59e0b]" />
             <span>Faculty Conveners</span>
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-amber-500/40 to-transparent ml-2" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {facultyCoordinators.map((coord) => (
-              <Card key={coord.id} glowOnHover className="flex items-start space-x-4">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 text-primary font-mono text-2xl font-bold flex items-center justify-center shrink-0">
-                  {coord.name.charAt(0)}
-                </div>
-                <div className="space-y-1 text-xs font-mono">
-                  <Badge variant="primary">{coord.department}</Badge>
-                  <h3 className="text-lg font-bold text-white font-sans">{coord.name}</h3>
-                  <p className="text-cyan font-semibold">{coord.designation}</p>
-                  <div className="pt-2 flex flex-wrap gap-4 text-slate-300">
-                    <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5 text-primary" /> {coord.phone}</span>
-                    <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5 text-cyan" /> {coord.email}</span>
-                  </div>
-                </div>
-              </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {facultyCoordinators.map((coord, idx) => (
+              <IndustrialCyberIdPass
+                key={coord.id}
+                coord={coord}
+                index={idx}
+                isFaculty={true}
+              />
             ))}
           </div>
         </div>
 
-        {/* Students */}
-        <div className="space-y-6">
-          <div className="flex items-center space-x-2 text-cyan font-mono text-sm uppercase tracking-widest font-bold">
-            <UserCheck className="w-4 h-4" />
+        {/* Student Executive Committee */}
+        <div className="space-y-6 pt-4">
+          <div className="flex items-center space-x-2.5 text-amber-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
+            <UserCheck className="w-4 h-4 text-amber-400 drop-shadow-[0_0_8px_#f59e0b]" />
             <span>Student Executive Committee</span>
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-amber-500/40 to-transparent ml-2" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {studentCoordinators.map((coord) => (
-              <Card key={coord.id} glowOnHover className="text-center space-y-3">
-                <div className="w-16 h-16 rounded-full bg-cyan/10 border border-cyan/30 text-cyan font-mono text-2xl font-bold flex items-center justify-center mx-auto shadow-cyan-glow">
-                  {coord.name.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-white">{coord.name}</h3>
-                  <p className="text-xs font-mono text-primary mt-0.5">{coord.designation}</p>
-                  <p className="text-xs font-mono text-slate-400 mt-1">{coord.department}</p>
-                </div>
-                <div className="pt-2 border-t border-primary/10 flex justify-center items-center gap-2 text-xs font-mono text-slate-300">
-                  <Phone className="w-3.5 h-3.5 text-primary" />
-                  <span>{coord.phone}</span>
-                </div>
-              </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {studentCoordinators.map((coord, idx) => (
+              <IndustrialCyberIdPass
+                key={coord.id}
+                coord={coord}
+                index={idx}
+                isFaculty={false}
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {/* SECTION 6: SPONSORS */}
-      <section id="sponsors" className="container mx-auto px-4 sm:px-6 space-y-12">
-        <SectionHeading
-          badge="SPONSORS & PARTNERS"
-          title="Sponsored By Industry Leaders"
-          description="SPARKTRON 2K26 is backed by global technology leaders and academic organizations."
-        />
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {sponsors.map((sponsor) => (
-            <div
-              key={sponsor.id}
-              className="flex flex-col items-center justify-center p-6 rounded-xl bg-card/40 border border-primary/15 font-mono text-center hover:border-primary/40 transition-colors"
-            >
-              <Building2 className="w-8 h-8 text-primary mb-2" />
-              <span className="text-white font-bold text-sm">{sponsor.name}</span>
-              <span className="text-[10px] text-cyan uppercase tracking-wider mt-1">{sponsor.tier} PARTNER</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* SECTION 7: CONTACT */}
+      {/* SECTION 6: CONTACT */}
       <section id="contact" className="container mx-auto px-4 sm:px-6 space-y-12 max-w-5xl">
         <SectionHeading
           badge="GET IN TOUCH"
