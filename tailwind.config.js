@@ -16,12 +16,12 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["'Times New Roman'", "Times", "serif"],
-        display: ["'Times New Roman'", "Times", "serif"],
-        syne: ["'Times New Roman'", "Times", "serif"],
-        orbitron: ["'Times New Roman'", "Times", "serif"],
-        tech: ["'Times New Roman'", "Times", "serif"],
-        mono: ["var(--font-mono)", "JetBrains Mono", "ui-monospace", "monospace"],
+        sans: ["'Plus Jakarta Sans'", "Inter", "sans-serif"],
+        display: ["'Outfit'", "'Plus Jakarta Sans'", "sans-serif"],
+        syne: ["'Syne'", "'Orbitron'", "sans-serif"],
+        orbitron: ["'Orbitron'", "'Space Grotesk'", "sans-serif"],
+        tech: ["'Space Grotesk'", "'Outfit'", "sans-serif"],
+        mono: ["'JetBrains Mono'", "ui-monospace", "monospace"],
       },
       colors: {
         background: "#07090E",

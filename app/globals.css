@@ -527,3 +527,85 @@ html.dark,
   animation: slowBreathingCyanGlow 4s ease-in-out infinite;
 }
 
+/* ==========================================================================
+   Electric Vibration, Interactive Reactivity & High-Voltage Spark Effects
+   Theme Palette: White, Deep Black, Neon Blue, Orange & Red Flame, Royal Blue
+   ========================================================================== */
+
+@keyframes electricVibrate {
+  0% { transform: translate(0, 0) scale(1); }
+  15% { transform: translate(-1.5px, 1.2px) scale(1.015); }
+  30% { transform: translate(1.5px, -1.2px) scale(0.995); }
+  45% { transform: translate(-1.2px, -1px) scale(1.01); }
+  60% { transform: translate(1.2px, 1.2px) scale(1.005); }
+  75% { transform: translate(-1px, 1.5px) scale(0.995); }
+  90% { transform: translate(1.2px, -1px) scale(1.01); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes continuousElectricHum {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-0.7px, 0.7px);
+  }
+  40% {
+    transform: translate(0.7px, -0.7px);
+  }
+  60% {
+    transform: translate(-0.5px, -0.5px);
+  }
+  80% {
+    transform: translate(0.6px, 0.5px);
+  }
+}
+
+@keyframes fieryNeonPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.85)) drop-shadow(0 0 30px rgba(0, 102, 255, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 25px rgba(255, 59, 0, 0.95)) drop-shadow(0 0 45px rgba(255, 120, 0, 0.8)) drop-shadow(0 0 60px rgba(255, 0, 60, 0.6));
+  }
+}
+
+.animate-electric-vibrate {
+  animation: electricVibrate 0.35s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-electric-hum {
+  animation: continuousElectricHum 1.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-fiery-neon {
+  animation: fieryNeonPulse 3s ease-in-out infinite alternate;
+  will-change: filter;
+}
+
+.hover-vibrate {
+  transition: transform 0.15s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-vibrate:hover {
+  animation: electricVibrate 0.25s linear infinite;
+  filter: brightness(1.25) contrast(1.1) drop-shadow(0 0 25px rgba(0, 240, 255, 0.8)) drop-shadow(0 0 35px rgba(255, 80, 0, 0.6));
+}
+
+.interactive-react {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.interactive-react:hover {
+  transform: translateY(-2px) scale(1.02);
+  filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.9)) drop-shadow(0 0 35px rgba(255, 70, 0, 0.7));
+}
+
+.interactive-react:active {
+  transform: scale(0.97);
+}
+
+
