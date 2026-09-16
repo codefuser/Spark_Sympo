@@ -131,7 +131,7 @@ function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: 
   );
 }
 
-function SparktronCyberShieldCard({
+function CyberOctagonShieldCard({
   coord,
   index,
   isFaculty = false,
@@ -141,51 +141,48 @@ function SparktronCyberShieldCard({
   isFaculty?: boolean;
 }) {
   return (
-    <div className="relative group p-4 sm:p-5 bg-gradient-to-r from-[#040d21]/95 via-[#020714]/95 to-[#051433]/95 border border-blue-500/35 hover:border-cyan-400 shadow-[0_0_20px_rgba(0,114,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.35)] transition-all duration-300 hover:-translate-y-1.5 [clip-path:polygon(16px_0,_100%_0,_100%_calc(100%-16px),_calc(100%-16px)_100%,_0_100%,_0_16px)] flex flex-col justify-between space-y-3.5 will-change-transform">
-      {/* HUD Corner Tech Accent Ticks */}
-      <span className="absolute top-0 left-0 w-4 h-[2px] bg-cyan-400 shadow-[0_0_6px_#00f0ff]" />
-      <span className="absolute top-0 left-0 w-[2px] h-4 bg-cyan-400 shadow-[0_0_6px_#00f0ff]" />
-      <span className="absolute bottom-0 right-0 w-4 h-[2px] bg-cyan-400 shadow-[0_0_6px_#00f0ff]" />
-      <span className="absolute bottom-0 right-0 w-[2px] h-4 bg-cyan-400 shadow-[0_0_6px_#00f0ff]" />
+    <div className="relative group p-5 bg-gradient-to-b from-[#061433]/95 via-[#030918]/95 to-[#02050e]/95 border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_20px_rgba(0,114,255,0.2)] hover:shadow-[0_0_35px_rgba(0,240,255,0.45)] transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] [clip-path:polygon(20px_0%,_calc(100%-20px)_0%,_100%_20px,_100%_calc(100%-20px),_calc(100%-20px)_100%,_20px_100%,_0%_calc(100%-20px),_0%_20px)] flex flex-col justify-between items-center text-center space-y-4 will-change-transform max-w-[310px] w-full mx-auto">
+      {/* Dual Cyan-Blue Glowing Octagonal Inner Border Lines */}
+      <span className="absolute inset-[2px] border border-cyan-400/20 group-hover:border-cyan-400/60 transition-colors pointer-events-none [clip-path:polygon(19px_0%,_calc(100%-19px)_0%,_100%_19px,_100%_calc(100%-19px),_calc(100%-19px)_100%,_19px_100%,_0%_calc(100%-19px),_0%_19px)]" />
 
-      {/* Cyber Shimmer Light Sweep Effect on Hover (Pure CSS GPU Accelerated) */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
+      {/* Cyber Shimmer Light Sweep on Hover */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
 
-      {/* TOP ROW: Department Badge, Role Code, & Live Indicator Tag */}
-      <div className="relative z-10 flex items-start justify-between gap-3">
-        <div className="space-y-1 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-950/90 border border-blue-500/40 text-[10px] font-mono font-bold uppercase text-cyan-300 tracking-wider shadow-[0_0_8px_rgba(0,114,255,0.25)]">
-              {coord.department}
-            </span>
-            <span className="text-[10px] font-mono text-cyan-400/60 uppercase tracking-widest font-semibold">
-              {isFaculty ? `SYS.FAC // 0${index + 1}` : `SYS.EXEC // 0${index + 1}`}
-            </span>
-          </div>
+      {/* TOP: System Tag & Department Capsule */}
+      <div className="relative z-10 w-full flex items-center justify-between text-[10px] font-mono border-b border-blue-500/25 pb-2.5">
+        <span className="text-cyan-400/70 uppercase tracking-widest font-semibold">
+          {isFaculty ? `SYS.FAC // 0${index + 1}` : `SYS.EXEC // 0${index + 1}`}
+        </span>
+        <span className="px-2.5 py-0.5 rounded-full bg-blue-950/90 border border-cyan-500/40 text-cyan-300 font-bold uppercase tracking-wider shadow-[0_0_8px_rgba(0,240,255,0.25)]">
+          {coord.department}
+        </span>
+      </div>
 
-          <h3 className="text-base sm:text-lg font-bold text-white font-sans tracking-wide group-hover:text-cyan-200 transition-colors drop-shadow-[0_0_8px_rgba(0,240,255,0.2)]">
-            {coord.name}
-          </h3>
-
-          {coord.designation && (
-            <p className="text-xs font-mono font-semibold text-cyan-300/90 tracking-wide">
-              {coord.designation}
-            </p>
-          )}
-        </div>
-
-        {/* Cyber System Status Tag */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#030a1c] border border-cyan-500/40 text-[9px] font-mono font-bold text-cyan-300 uppercase shrink-0 shadow-[0_0_10px_rgba(0,240,255,0.15)]">
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#00f0ff]" />
-          <span>{isFaculty ? "CONVENER" : "STUDENT LEAD"}</span>
+      {/* CENTER: Octagonal Energy Pulse Initial Lens */}
+      <div className="relative z-10 my-1">
+        <div className="absolute -inset-2 rounded-full border border-cyan-400/40 animate-ping opacity-30 pointer-events-none" />
+        <div className="w-16 h-16 sm:w-18 sm:h-18 bg-gradient-to-br from-[#08224d] via-[#030d21] to-[#010612] border-2 border-cyan-400/70 flex items-center justify-center text-cyan-300 font-mono text-2xl font-black shadow-[0_0_20px_rgba(0,240,255,0.4)] group-hover:scale-105 transition-transform [clip-path:polygon(12px_0%,_calc(100%-12px)_0%,_100%_12px,_100%_calc(100%-12px),_calc(100%-12px)_100%,_12px_100%,_0%_calc(100%-12px),_0%_12px)]">
+          {coord.name.charAt(0)}
         </div>
       </div>
 
-      {/* BOTTOM ROW: Interactive Contact Chips */}
-      <div className="relative z-10 pt-2.5 border-t border-blue-500/25 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+      {/* DETAILS: Name & Role */}
+      <div className="relative z-10 space-y-1 w-full px-1">
+        <h3 className="text-base sm:text-lg font-bold text-white font-sans tracking-wide group-hover:text-cyan-200 transition-colors drop-shadow-[0_0_10px_rgba(0,240,255,0.3)] truncate">
+          {coord.name}
+        </h3>
+        {coord.designation && (
+          <p className="text-xs font-mono font-semibold text-cyan-300/90 tracking-wide line-clamp-2">
+            {coord.designation}
+          </p>
+        )}
+      </div>
+
+      {/* BOTTOM: Action Chips */}
+      <div className="relative z-10 w-full pt-3 border-t border-blue-500/25 flex flex-col gap-2 text-xs font-mono">
         <a
           href={`tel:${coord.phone}`}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#020716] border border-blue-500/40 text-slate-200 hover:text-white hover:border-cyan-400 hover:bg-blue-950/40 hover:shadow-[0_0_12px_rgba(0,240,255,0.3)] transition-all duration-200 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg bg-[#020716] border border-blue-500/40 text-slate-200 hover:text-white hover:border-cyan-400 hover:bg-blue-950/50 hover:shadow-[0_0_12px_rgba(0,240,255,0.3)] transition-all duration-200 cursor-pointer w-full"
         >
           <Phone className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00f0ff]" />
           <span>{coord.phone}</span>
@@ -193,7 +190,7 @@ function SparktronCyberShieldCard({
 
         <a
           href={`mailto:${coord.email}`}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#020716] border border-blue-500/40 text-slate-200 hover:text-white hover:border-cyan-400 hover:bg-blue-950/40 hover:shadow-[0_0_12px_rgba(0,240,255,0.3)] transition-all duration-200 truncate max-w-[220px] sm:max-w-none cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg bg-[#020716] border border-blue-500/40 text-slate-200 hover:text-white hover:border-cyan-400 hover:bg-blue-950/50 hover:shadow-[0_0_12px_rgba(0,240,255,0.3)] transition-all duration-200 cursor-pointer w-full truncate"
         >
           <Mail className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00f0ff]" />
           <span className="truncate">{coord.email}</span>
@@ -675,9 +672,9 @@ export function HomePageClient({
             <div className="flex-1 h-[1px] bg-gradient-to-r from-cyan-500/40 to-transparent ml-2" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {facultyCoordinators.map((coord, idx) => (
-              <SparktronCyberShieldCard
+              <CyberOctagonShieldCard
                 key={coord.id}
                 coord={coord}
                 index={idx}
@@ -695,9 +692,9 @@ export function HomePageClient({
             <div className="flex-1 h-[1px] bg-gradient-to-r from-cyan-500/40 to-transparent ml-2" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {studentCoordinators.map((coord, idx) => (
-              <SparktronCyberShieldCard
+              <CyberOctagonShieldCard
                 key={coord.id}
                 coord={coord}
                 index={idx}
