@@ -1,279 +1,423 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+interface LightningArc {
+  points: Point[];
+  alpha: number;
+  decay: number;
+  width: number;
+  color: string;
+}
 
 export function EnergyWaveOverlay() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d", { alpha: true });
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let width = 0;
+    let height = 0;
+    let startTime = performance.now();
+
+    // Lightning arcs state for right-side electricity towers & motor
+    let lightningArcs: LightningArc[] = [];
+    let lastLightningTime = 0;
+
+    // Handle high-DPI scaling & resize
+    const resize = () => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = rect.width;
+      height = rect.height;
+      canvas.width = Math.max(width * dpr, 1);
+      canvas.height = Math.max(height * dpr, 1);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+
+    // Generate procedural jagged lightning path
+    const createLightningBranch = (
+      x1: number,
+      y1: number,
+      x2: number,
+      y2: number,
+      displacement: number
+    ): Point[] => {
+      const points: Point[] = [{ x: x1, y: y1 }];
+      const subDivide = (p1: Point, p2: Point, disp: number) => {
+        if (disp < 5) {
+          points.push(p2);
+          return;
+        }
+        const midX = (p1.x + p2.x) / 2 + (Math.random() - 0.5) * disp;
+        const midY = (p1.y + p2.y) / 2 + (Math.random() - 0.5) * disp;
+        const mid: Point = { x: midX, y: midY };
+        subDivide(p1, mid, disp * 0.52);
+        subDivide(mid, p2, disp * 0.52);
+      };
+      subDivide({ x: x1, y: y1 }, { x: x2, y: y2 }, displacement);
+      return points;
+    };
+
+    // Render loop
+    const render = (currentTime: number) => {
+      animationFrameId = requestAnimationFrame(render);
+      if (width === 0 || height === 0) return;
+
+      const elapsed = (currentTime - startTime) * 0.001; // in seconds
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalCompositeOperation = "screen";
+
+      // -------------------------------------------------------------
+      // PULSE CYCLES (Normal → Bright → Normal → Bright)
+      // -------------------------------------------------------------
+      const cyanPulse = 0.65 + 0.35 * Math.sin(elapsed * 1.8);
+      const orangePulse = 0.65 + 0.35 * Math.sin(elapsed * 1.8 + 1.2);
+      const microJitter = 1 + (Math.random() - 0.5) * 0.08;
+
+      // -------------------------------------------------------------
+      // 1. LEFT SIDE: BLUE / CYAN OSCILLATING ELECTRICAL WAVE
+      // Around the circuit-board & processor (x: 12% to 52%, y: 40% to 62%)
+      // -------------------------------------------------------------
+      const cyanStartX = width * 0.14;
+      const cyanStartY = height * 0.52;
+      const cyanMidX = width * 0.33;
+      const cyanMidY = height * 0.44;
+      const cyanEndX = width * 0.51;
+      const cyanEndY = height * 0.55;
+
+      // Sample 60 points along the dynamic electrical wave
+      const cyanSamples = 60;
+      const cyanPoints: Point[] = [];
+      const cyanPointsHarmonic: Point[] = [];
+
+      for (let i = 0; i <= cyanSamples; i++) {
+        const t = i / cyanSamples;
+        // Base quadratic bezier curve
+        const bx = (1 - t) * (1 - t) * cyanStartX + 2 * (1 - t) * t * cyanMidX + t * t * cyanEndX;
+        const by = (1 - t) * (1 - t) * cyanStartY + 2 * (1 - t) * t * cyanMidY + t * t * cyanEndY;
+
+        // Oscillations: Left-to-right travelling electrical wave + vertical harmonic undulation
+        const envelope = Math.sin(t * Math.PI); // Pin ends, maximum in middle
+        const wave1 = Math.sin(t * Math.PI * 4 - elapsed * 3.2) * 14 * envelope;
+        const wave2 = Math.cos(t * Math.PI * 2.5 + elapsed * 1.4) * 8 * envelope;
+
+        cyanPoints.push({
+          x: bx + Math.cos(t * Math.PI * 3 + elapsed * 2) * 4 * envelope,
+          y: by + wave1 + wave2,
+        });
+
+        // Harmonic secondary wave (slightly offset in frequency & phase)
+        const harmWave = Math.sin(t * Math.PI * 5 - elapsed * 2.6 + 1.5) * 10 * envelope;
+        cyanPointsHarmonic.push({
+          x: bx,
+          y: by + harmWave - 6 * envelope,
+        });
+      }
+
+      // Draw Cyan Plasma Glow Ribbon (Diffuse Aura)
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(cyanPoints[0].x, cyanPoints[0].y);
+      for (let i = 1; i < cyanPoints.length; i++) {
+        ctx.lineTo(cyanPoints[i].x, cyanPoints[i].y);
+      }
+      ctx.lineWidth = 18;
+      ctx.strokeStyle = `rgba(0, 240, 255, ${0.28 * cyanPulse * microJitter})`;
+      ctx.lineCap = "round";
+      ctx.stroke();
+
+      // Draw Cyan Core Wave Ribbon (Sharp electric body)
+      ctx.beginPath();
+      ctx.moveTo(cyanPoints[0].x, cyanPoints[0].y);
+      for (let i = 1; i < cyanPoints.length; i++) {
+        ctx.lineTo(cyanPoints[i].x, cyanPoints[i].y);
+      }
+      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = `rgba(0, 240, 255, ${0.85 * cyanPulse * microJitter})`;
+      ctx.shadowColor = "#00f0ff";
+      ctx.shadowBlur = 18 * cyanPulse;
+      ctx.stroke();
+
+      // Draw Cyan Harmonic Secondary Wave
+      ctx.beginPath();
+      ctx.moveTo(cyanPointsHarmonic[0].x, cyanPointsHarmonic[0].y);
+      for (let i = 1; i < cyanPointsHarmonic.length; i++) {
+        ctx.lineTo(cyanPointsHarmonic[i].x, cyanPointsHarmonic[i].y);
+      }
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = `rgba(56, 189, 248, ${0.7 * cyanPulse})`;
+      ctx.shadowColor = "#38bdf8";
+      ctx.shadowBlur = 12;
+      ctx.stroke();
+      ctx.restore();
+
+      // Draw Moving Bright Highlights Travelling Along the Blue Wave (Electron Packets)
+      const numCyanPackets = 3;
+      for (let p = 0; p < numCyanPackets; p++) {
+        const progress = ((elapsed * 0.32 + (p / numCyanPackets)) % 1.0);
+        const idx = Math.min(Math.floor(progress * cyanSamples), cyanSamples - 1);
+        const pt = cyanPoints[idx];
+        if (pt) {
+          ctx.save();
+          // Outer cyan aura
+          const grad = ctx.createRadialGradient(pt.x, pt.y, 1, pt.x, pt.y, 22);
+          grad.addColorStop(0, "rgba(255, 255, 255, 1)");
+          grad.addColorStop(0.25, "rgba(0, 240, 255, 0.95)");
+          grad.addColorStop(0.65, "rgba(2, 132, 199, 0.5)");
+          grad.addColorStop(1, "rgba(0, 240, 255, 0)");
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 22, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Intense white electrical center spark
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = "#ffffff";
+          ctx.shadowColor = "#ffffff";
+          ctx.shadowBlur = 10;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      // Circuit trace pulses on the left chip area
+      const traceT = (elapsed * 0.45) % 1;
+      const chipX = width * 0.18;
+      const chipY = height * 0.54;
+      ctx.save();
+      ctx.strokeStyle = `rgba(0, 240, 255, ${0.75 * cyanPulse})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(chipX - 80, chipY - 60);
+      ctx.lineTo(chipX + 80 * traceT, chipY - 60);
+      ctx.stroke();
+      ctx.restore();
+
+      // -------------------------------------------------------------
+      // 2. RIGHT SIDE: ORANGE ELECTRICAL ENERGY & LIGHTNING ARCS
+      // Windmill, electricity towers & motor area (x: 60% to 95%, y: 18% to 75%)
+      // -------------------------------------------------------------
+      const orangeStartX = width * 0.86;
+      const orangeStartY = height * 0.58;
+      const orangeMidX = width * 0.67;
+      const orangeMidY = height * 0.46;
+      const orangeEndX = width * 0.49;
+      const orangeEndY = height * 0.55;
+
+      // Sample 60 points along the dynamic orange electrical wave
+      const orangeSamples = 60;
+      const orangePoints: Point[] = [];
+      const orangePointsHarmonic: Point[] = [];
+
+      for (let i = 0; i <= orangeSamples; i++) {
+        const t = i / orangeSamples;
+        // Base quadratic bezier curve
+        const bx = (1 - t) * (1 - t) * orangeStartX + 2 * (1 - t) * t * orangeMidX + t * t * orangeEndX;
+        const by = (1 - t) * (1 - t) * orangeStartY + 2 * (1 - t) * t * orangeMidY + t * t * orangeEndY;
+
+        const envelope = Math.sin(t * Math.PI);
+        const wave1 = Math.sin(t * Math.PI * 4 + elapsed * 3.4) * 14 * envelope;
+        const wave2 = Math.cos(t * Math.PI * 2.5 - elapsed * 1.5) * 8 * envelope;
+
+        orangePoints.push({
+          x: bx + Math.cos(t * Math.PI * 3 - elapsed * 2) * 4 * envelope,
+          y: by + wave1 + wave2,
+        });
+
+        const harmWave = Math.sin(t * Math.PI * 5 + elapsed * 2.8 + 1.2) * 10 * envelope;
+        orangePointsHarmonic.push({
+          x: bx,
+          y: by + harmWave + 6 * envelope,
+        });
+      }
+
+      // Draw Orange Plasma Glow Ribbon (Diffuse Aura)
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(orangePoints[0].x, orangePoints[0].y);
+      for (let i = 1; i < orangePoints.length; i++) {
+        ctx.lineTo(orangePoints[i].x, orangePoints[i].y);
+      }
+      ctx.lineWidth = 18;
+      ctx.strokeStyle = `rgba(255, 85, 0, ${0.28 * orangePulse * microJitter})`;
+      ctx.lineCap = "round";
+      ctx.stroke();
+
+      // Draw Orange Core Wave Ribbon (Sharp electric flame body)
+      ctx.beginPath();
+      ctx.moveTo(orangePoints[0].x, orangePoints[0].y);
+      for (let i = 1; i < orangePoints.length; i++) {
+        ctx.lineTo(orangePoints[i].x, orangePoints[i].y);
+      }
+      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = `rgba(255, 85, 0, ${0.85 * orangePulse * microJitter})`;
+      ctx.shadowColor = "#ff4500";
+      ctx.shadowBlur = 18 * orangePulse;
+      ctx.stroke();
+
+      // Draw Orange Harmonic Secondary Wave
+      ctx.beginPath();
+      ctx.moveTo(orangePointsHarmonic[0].x, orangePointsHarmonic[0].y);
+      for (let i = 1; i < orangePointsHarmonic.length; i++) {
+        ctx.lineTo(orangePointsHarmonic[i].x, orangePointsHarmonic[i].y);
+      }
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = `rgba(251, 191, 36, ${0.7 * orangePulse})`;
+      ctx.shadowColor = "#f59e0b";
+      ctx.shadowBlur = 12;
+      ctx.stroke();
+      ctx.restore();
+
+      // Draw Moving Bright Orange Energy Streaks Travelling from Motor to Center
+      const numOrangeStreaks = 3;
+      for (let s = 0; s < numOrangeStreaks; s++) {
+        const progress = ((elapsed * 0.35 + (s / numOrangeStreaks)) % 1.0);
+        const idx = Math.min(Math.floor(progress * orangeSamples), orangeSamples - 1);
+        const pt = orangePoints[idx];
+        if (pt) {
+          ctx.save();
+          const grad = ctx.createRadialGradient(pt.x, pt.y, 1, pt.x, pt.y, 22);
+          grad.addColorStop(0, "rgba(255, 255, 255, 1)");
+          grad.addColorStop(0.25, "rgba(255, 140, 0, 0.95)");
+          grad.addColorStop(0.65, "rgba(220, 38, 38, 0.5)");
+          grad.addColorStop(1, "rgba(255, 85, 0, 0)");
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 22, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = "#ffffff";
+          ctx.shadowColor = "#ffffff";
+          ctx.shadowBlur = 10;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      // -------------------------------------------------------------
+      // 3. ANIMATED LIGHTNING / ELECTRIC ARCS AROUND TOWERS & WINDMILLS
+      // -------------------------------------------------------------
+      if (currentTime - lastLightningTime > 160 + Math.random() * 220) {
+        lastLightningTime = currentTime;
+
+        // Towers and windmills region: x ~ 0.70 to 0.95, y ~ 0.20 to 0.55
+        const tower1X = width * (0.72 + Math.random() * 0.05);
+        const tower1Y = height * (0.22 + Math.random() * 0.08);
+
+        const tower2X = width * (0.86 + Math.random() * 0.06);
+        const tower2Y = height * (0.24 + Math.random() * 0.08);
+
+        const motorTopX = width * (0.80 + Math.random() * 0.08);
+        const motorTopY = height * (0.52 + Math.random() * 0.08);
+
+        // Tower to tower or tower to motor arc
+        const strikeType = Math.random();
+        let pStart: Point;
+        let pEnd: Point;
+
+        if (strikeType < 0.5) {
+          pStart = { x: tower1X, y: tower1Y };
+          pEnd = { x: motorTopX, y: motorTopY };
+        } else {
+          pStart = { x: tower2X, y: tower2Y };
+          pEnd = { x: motorTopX, y: motorTopY };
+        }
+
+        const arcPoints = createLightningBranch(pStart.x, pStart.y, pEnd.x, pEnd.y, 24);
+        lightningArcs.push({
+          points: arcPoints,
+          alpha: 0.85 + Math.random() * 0.15,
+          decay: 0.045 + Math.random() * 0.035,
+          width: 1.5 + Math.random() * 1.2,
+          color: Math.random() > 0.4 ? "#ffa500" : "#ffffff",
+        });
+
+        // Keep maximum 5 active arcs
+        if (lightningArcs.length > 5) {
+          lightningArcs.shift();
+        }
+      }
+
+      // Draw and update active lightning arcs
+      for (let i = lightningArcs.length - 1; i >= 0; i--) {
+        const arc = lightningArcs[i];
+        if (arc.points.length < 2) continue;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(arc.points[0].x, arc.points[0].y);
+        for (let j = 1; j < arc.points.length; j++) {
+          ctx.lineTo(arc.points[j].x, arc.points[j].y);
+        }
+        ctx.lineWidth = arc.width;
+        ctx.strokeStyle = arc.color === "#ffffff"
+          ? `rgba(255, 255, 255, ${arc.alpha})`
+          : `rgba(255, 140, 0, ${arc.alpha})`;
+        ctx.shadowColor = "#ff7700";
+        ctx.shadowBlur = 14;
+        ctx.stroke();
+        ctx.restore();
+
+        arc.alpha -= arc.decay;
+        if (arc.alpha <= 0) {
+          lightningArcs.splice(i, 1);
+        }
+      }
+
+      // -------------------------------------------------------------
+      // 4. CENTER COLLISION INTERACTION: BLUE & ORANGE ENERGY NEXUS
+      // Behind SPARKTRON where the two dynamic currents collide
+      // -------------------------------------------------------------
+      const nexusX = width * 0.50;
+      const nexusY = height * 0.55;
+      ctx.save();
+      const nexusRadius = 55 + 15 * Math.sin(elapsed * 2.5);
+      const nexusGrad = ctx.createRadialGradient(nexusX, nexusY, 2, nexusX, nexusY, nexusRadius);
+      nexusGrad.addColorStop(0, `rgba(255, 255, 255, ${0.45 * microJitter})`);
+      nexusGrad.addColorStop(0.35, `rgba(0, 240, 255, ${0.3 * cyanPulse})`);
+      nexusGrad.addColorStop(0.7, `rgba(255, 85, 0, ${0.25 * orangePulse})`);
+      nexusGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+      ctx.fillStyle = nexusGrad;
+      ctx.beginPath();
+      ctx.arc(nexusX, nexusY, nexusRadius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    animationFrameId = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10 mix-blend-screen select-none">
-      <svg
-        className="w-full h-full"
-        viewBox="0 0 1440 900"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <defs>
-          {/* Cyan Energy Gradients */}
-          <linearGradient id="cyanWaveGrad1" x1="0%" y1="50%" x2="100%" y2="50%">
-            <stop offset="0%" stopColor="#00f0ff" stopOpacity="0.1" />
-            <stop offset="25%" stopColor="#00f0ff" stopOpacity="0.85" />
-            <stop offset="60%" stopColor="#00d2ff" stopOpacity="0.95" />
-            <stop offset="90%" stopColor="#38bdf8" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.9" />
-          </linearGradient>
-
-          <linearGradient id="cyanWaveGrad2" x1="0%" y1="50%" x2="100%" y2="50%">
-            <stop offset="0%" stopColor="#0284c7" stopOpacity="0.2" />
-            <stop offset="35%" stopColor="#00f0ff" stopOpacity="0.75" />
-            <stop offset="75%" stopColor="#0ea5e9" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#a5f3fc" stopOpacity="0.95" />
-          </linearGradient>
-
-          <linearGradient id="cyanSoftAura" x1="0%" y1="50%" x2="100%" y2="50%">
-            <stop offset="0%" stopColor="#00f0ff" stopOpacity="0" />
-            <stop offset="30%" stopColor="#00f0ff" stopOpacity="0.35" />
-            <stop offset="70%" stopColor="#0284c7" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="#00f0ff" stopOpacity="0.1" />
-          </linearGradient>
-
-          {/* Orange & Amber Energy Gradients */}
-          <linearGradient id="orangeWaveGrad1" x1="100%" y1="50%" x2="0%" y2="50%">
-            <stop offset="0%" stopColor="#ff5500" stopOpacity="0.1" />
-            <stop offset="25%" stopColor="#ff5500" stopOpacity="0.85" />
-            <stop offset="60%" stopColor="#ff7700" stopOpacity="0.95" />
-            <stop offset="90%" stopColor="#fbbf24" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.9" />
-          </linearGradient>
-
-          <linearGradient id="orangeWaveGrad2" x1="100%" y1="50%" x2="0%" y2="50%">
-            <stop offset="0%" stopColor="#ea580c" stopOpacity="0.2" />
-            <stop offset="35%" stopColor="#ff5500" stopOpacity="0.75" />
-            <stop offset="75%" stopColor="#f59e0b" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#fed7aa" stopOpacity="0.95" />
-          </linearGradient>
-
-          <linearGradient id="orangeSoftAura" x1="100%" y1="50%" x2="0%" y2="50%">
-            <stop offset="0%" stopColor="#ff5500" stopOpacity="0" />
-            <stop offset="30%" stopColor="#ff5500" stopOpacity="0.35" />
-            <stop offset="70%" stopColor="#ea580c" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="#ff5500" stopOpacity="0.1" />
-          </linearGradient>
-
-          {/* Central Nexus Blend */}
-          <radialGradient id="nexusRadial" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.6" />
-            <stop offset="35%" stopColor="#38bdf8" stopOpacity="0.35" />
-            <stop offset="65%" stopColor="#ff7700" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#000000" stopOpacity="0" />
-          </radialGradient>
-
-          {/* Filters for subtle organic diffusion */}
-          <filter id="softGlowFilter" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="8" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-
-        {/* =========================================================================
-            LEFT SIDE: BLUE / CYAN FLOWING ELECTRICAL ENERGY WAVES
-            Tracing naturally from the Circuit Board on the left toward center
-            ========================================================================= */}
-        <g className="animate-wave-cyan origin-center">
-          {/* Layer 1: Wide Breathing Cyan Plasma Aurora */}
-          <path
-            d="M 120 490 Q 280 410, 440 450 T 720 540"
-            stroke="url(#cyanSoftAura)"
-            strokeWidth="24"
-            strokeLinecap="round"
-            filter="url(#softGlowFilter)"
-          />
-          <path
-            d="M 160 540 Q 320 580, 500 500 T 720 520"
-            stroke="url(#cyanSoftAura)"
-            strokeWidth="20"
-            strokeLinecap="round"
-            filter="url(#softGlowFilter)"
-          />
-
-          {/* Layer 2: Main Cyan Plasma Ribbon Curves */}
-          <path
-            d="M 140 480 C 280 400, 420 440, 560 480 S 680 535, 720 540"
-            stroke="url(#cyanWaveGrad1)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            opacity="0.85"
-          />
-          <path
-            d="M 180 530 C 300 570, 440 520, 580 480 S 680 515, 720 520"
-            stroke="url(#cyanWaveGrad2)"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            opacity="0.8"
-          />
-          <path
-            d="M 100 440 C 260 360, 400 410, 540 460 S 660 505, 700 510"
-            stroke="url(#cyanWaveGrad1)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            opacity="0.65"
-          />
-
-          {/* Layer 3: Flowing Electrical Current Pulses (Fast Pulse) */}
-          <path
-            d="M 140 480 C 280 400, 420 440, 560 480 S 680 535, 720 540"
-            stroke="#ffffff"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeDasharray="25 65"
-            className="animate-flow-cyan"
-            opacity="0.9"
-          />
-          <path
-            d="M 180 530 C 300 570, 440 520, 580 480 S 680 515, 720 520"
-            stroke="#38bdf8"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeDasharray="18 50"
-            className="animate-flow-cyan-slow"
-            opacity="0.85"
-          />
-
-          {/* Layer 4: Micro Electric Arc Filaments */}
-          <path
-            d="M 220 460 Q 360 420, 480 460 T 660 515"
-            stroke="#a5f3fc"
-            strokeWidth="1.2"
-            strokeDasharray="12 40"
-            className="animate-flow-cyan"
-            opacity="0.75"
-          />
-          <path
-            d="M 200 560 Q 380 610, 540 540 T 700 535"
-            stroke="#00f0ff"
-            strokeWidth="1.4"
-            strokeDasharray="30 70"
-            className="animate-flow-cyan-slow"
-            opacity="0.7"
-          />
-        </g>
-
-        {/* =========================================================================
-            RIGHT SIDE: FIERY ORANGE / AMBER FLOWING ELECTRICAL ENERGY WAVES
-            Tracing naturally from the Electric Motor on the right toward center
-            ========================================================================= */}
-        <g className="animate-wave-orange origin-center">
-          {/* Layer 1: Wide Breathing Orange Plasma Aurora */}
-          <path
-            d="M 1320 490 Q 1160 410, 1000 450 T 720 540"
-            stroke="url(#orangeSoftAura)"
-            strokeWidth="24"
-            strokeLinecap="round"
-            filter="url(#softGlowFilter)"
-          />
-          <path
-            d="M 1280 550 Q 1120 590, 940 500 T 720 520"
-            stroke="url(#orangeSoftAura)"
-            strokeWidth="20"
-            strokeLinecap="round"
-            filter="url(#softGlowFilter)"
-          />
-
-          {/* Layer 2: Main Orange Plasma Ribbon Curves */}
-          <path
-            d="M 1300 480 C 1160 400, 1020 440, 880 480 S 760 535, 720 540"
-            stroke="url(#orangeWaveGrad1)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            opacity="0.85"
-          />
-          <path
-            d="M 1260 530 C 1140 570, 1000 520, 860 480 S 760 515, 720 520"
-            stroke="url(#orangeWaveGrad2)"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            opacity="0.8"
-          />
-          <path
-            d="M 1340 440 C 1180 360, 1040 410, 900 460 S 780 505, 740 510"
-            stroke="url(#orangeWaveGrad1)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            opacity="0.65"
-          />
-
-          {/* Layer 3: Flowing Electrical Current Pulses (Fast Pulse) */}
-          <path
-            d="M 1300 480 C 1160 400, 1020 440, 880 480 S 760 535, 720 540"
-            stroke="#ffffff"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeDasharray="25 65"
-            className="animate-flow-orange"
-            opacity="0.9"
-          />
-          <path
-            d="M 1260 530 C 1140 570, 1000 520, 860 480 S 760 515, 720 520"
-            stroke="#fbbf24"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeDasharray="18 50"
-            className="animate-flow-orange-slow"
-            opacity="0.85"
-          />
-
-          {/* Layer 4: Micro Electric Arc Filaments */}
-          <path
-            d="M 1220 460 Q 1080 420, 960 460 T 780 515"
-            stroke="#fed7aa"
-            strokeWidth="1.2"
-            strokeDasharray="12 40"
-            className="animate-flow-orange"
-            opacity="0.75"
-          />
-          <path
-            d="M 1240 570 Q 1060 620, 900 550 T 740 535"
-            stroke="#ff5500"
-            strokeWidth="1.4"
-            strokeDasharray="30 70"
-            className="animate-flow-orange-slow"
-            opacity="0.7"
-          />
-        </g>
-
-        {/* =========================================================================
-            CENTER NEXUS: SUBTLE ELECTRICAL COLLISION AURA
-            Where the blue and orange electrical currents converge
-            ========================================================================= */}
-        <g className="animate-nexus-pulse origin-center">
-          <ellipse
-            cx="720"
-            cy="530"
-            rx="110"
-            ry="45"
-            fill="url(#nexusRadial)"
-          />
-          {/* Subtle intertwining electrical nexus threads */}
-          <path
-            d="M 670 525 Q 720 500, 770 535"
-            stroke="#ffffff"
-            strokeWidth="1.5"
-            strokeDasharray="8 20"
-            className="animate-flow-cyan"
-            opacity="0.8"
-          />
-          <path
-            d="M 670 540 Q 720 560, 770 525"
-            stroke="#ffffff"
-            strokeWidth="1.5"
-            strokeDasharray="8 20"
-            className="animate-flow-orange"
-            opacity="0.8"
-          />
-        </g>
-      </svg>
+    <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10 select-none">
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full block"
+      />
     </div>
   );
 }
