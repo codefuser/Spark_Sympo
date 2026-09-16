@@ -634,49 +634,7 @@ export function HomePageClient({
         </div>
       </section>
 
-      {/* QUICK STATS - High-Tech Cyber Vault Cards */}
-      <section className="container mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
-          {/* Card 1: Prize Pool */}
-          <div className="relative group text-center p-6 rounded-2xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_25px_rgba(0,114,255,0.2)] hover:shadow-[0_0_35px_rgba(0,240,255,0.4)] transition-all hover:-translate-y-1 overflow-hidden">
-            <span className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
-            <span className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
-            <Trophy className="w-9 h-9 text-cyan-400 mx-auto mb-2 drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]" />
-            <div className="text-3xl sm:text-4xl font-black font-orbitron text-white mb-1 tracking-tight drop-shadow-md">
-              ₹20,000+
-            </div>
-            <div className="text-[11px] font-mono text-cyan-300 tracking-[0.2em] uppercase font-bold">
-              TOTAL CASH PRIZES
-            </div>
-          </div>
 
-          {/* Card 2: Free Registration */}
-          <div className="relative group text-center p-6 rounded-2xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_25px_rgba(0,114,255,0.2)] hover:shadow-[0_0_35px_rgba(0,240,255,0.4)] transition-all hover:-translate-y-1 overflow-hidden">
-            <span className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
-            <span className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
-            <ShieldCheck className="w-9 h-9 text-cyan-400 mx-auto mb-2 drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]" />
-            <div className="text-3xl sm:text-4xl font-black font-orbitron text-white mb-1 tracking-tight drop-shadow-md">
-              ₹0 FREE
-            </div>
-            <div className="text-[11px] font-mono text-cyan-300 tracking-[0.2em] uppercase font-bold">
-              REGISTRATION &amp; ENTRY
-            </div>
-          </div>
-
-          {/* Card 3: Events Catalog */}
-          <div className="relative group text-center p-6 rounded-2xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_25px_rgba(0,114,255,0.2)] hover:shadow-[0_0_35px_rgba(0,240,255,0.4)] transition-all hover:-translate-y-1 overflow-hidden">
-            <span className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
-            <span className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
-            <Cpu className="w-9 h-9 text-cyan-400 mx-auto mb-2 drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]" />
-            <div className="text-3xl sm:text-4xl font-black font-orbitron text-white mb-1 tracking-tight drop-shadow-md">
-              {validEvents.length} TRACKS
-            </div>
-            <div className="text-[11px] font-mono text-cyan-300 tracking-[0.2em] uppercase font-bold">
-              TECH &amp; NON-TECH ARENAS
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* SECTION 2: ABOUT */}
       <AboutSection />
