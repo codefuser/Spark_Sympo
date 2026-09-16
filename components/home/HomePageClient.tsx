@@ -453,9 +453,9 @@ export function HomePageClient({
   };
 
   return (
-    <div className="space-y-24 pb-20 pt-20">
-      {/* SECTION 1: HERO (High-Brightness, Electric Reactivity & Vibrant Theme Colors) */}
-      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-start items-center pt-4 sm:pt-6 lg:pt-8 pb-12 sm:pb-16 overflow-hidden border-b border-blue-500/20">
+    <div className="space-y-20 pb-20 pt-10 sm:pt-12">
+      {/* SECTION 1: HERO (High-Brightness, Normal Clean Mode & Vivid Theme Colors) */}
+      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-start items-center pt-2 sm:pt-4 pb-12 sm:pb-16 overflow-hidden border-b border-blue-500/20">
         {/* Dynamic High-Brightness Background Image: Circuit (Left), Motor (Right), Neon Blue & Orange Waves (Center) */}
         <div className="absolute inset-0 -z-20 overflow-hidden pointer-events-none">
           <img
@@ -532,35 +532,37 @@ export function HomePageClient({
         <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-5xl">
           {/* CENTERED HERO MASTER DECK */}
           <div className="flex flex-col items-center text-center space-y-4 sm:space-y-6">
-            {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] - Reactive & Vibrating */}
+            {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] - Clean, Prominent & Ultra-Bright */}
             <div className="space-y-2 pt-1 sm:pt-2">
               <h1 
-                className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-[0.08em] text-white uppercase leading-tight hover-vibrate interactive-react cursor-pointer"
+                className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-[0.08em] uppercase leading-tight"
                 style={{ fontFamily: "'Orbitron', 'Plus Jakarta Sans', sans-serif" }}
               >
-                <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.9)]">THAMIRABHARANI</span>{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-blue-400 drop-shadow-[0_0_25px_rgba(0,240,255,0.85)]">
+                <span className="text-white drop-shadow-[0_0_25px_rgba(255,255,255,1)] drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+                  THAMIRABHARANI
+                </span>{" "}
+                <span className="text-cyan-300 drop-shadow-[0_0_25px_rgba(0,240,255,1)] drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
                   ENGINEERING COLLEGE
                 </span>
               </h1>
-              <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-[#050b18]/90 border border-cyan-400/60 text-xs sm:text-sm font-mono font-bold tracking-[0.28em] text-cyan-300 uppercase shadow-[0_0_20px_rgba(0,240,255,0.4)] hover-vibrate interactive-react cursor-pointer">
+              <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-[#050b18]/90 border border-cyan-400/60 text-xs sm:text-sm font-mono font-bold tracking-[0.28em] text-cyan-300 uppercase shadow-[0_0_20px_rgba(0,240,255,0.4)]">
                 <span>AN AUTONOMOUS INSTITUTION</span>
               </div>
             </div>
 
-            {/* 2. Organized By & Departments (ECE Neon Blue & EEE Orange & Red) */}
-            <div className="space-y-2.5 pt-1 sm:pt-2 max-w-4xl mx-auto">
-              <p className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.35em] text-cyan-400 uppercase drop-shadow-[0_0_10px_rgba(0,240,255,0.7)] hover-vibrate interactive-react cursor-pointer">
+            {/* 2. Organized By & Departments (ECE Neon Blue & EEE Orange & Red) - Ultra Bright */}
+            <div className="space-y-2 pt-1 sm:pt-2 max-w-4xl mx-auto">
+              <p className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.35em] text-cyan-300 uppercase drop-shadow-[0_0_12px_rgba(0,240,255,0.9)]">
                 ORGANIZED BY
               </p>
               <div className="flex flex-col items-center justify-center">
-                <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-orbitron font-bold tracking-[0.1em] uppercase text-slate-100 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-center leading-relaxed">
-                  <span className="text-white font-bold drop-shadow-sm">DEPARTMENT OF</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-blue-500 drop-shadow-[0_0_30px_rgba(0,240,255,1)] font-extrabold animate-electric-hum hover-vibrate cursor-pointer px-1">
+                <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-orbitron font-bold tracking-[0.1em] uppercase flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-center leading-relaxed">
+                  <span className="text-white font-extrabold drop-shadow-[0_0_12px_rgba(255,255,255,0.8)]">DEPARTMENT OF</span>
+                  <span className="text-cyan-300 drop-shadow-[0_0_25px_rgba(0,240,255,1)] font-black px-1">
                     ECE
                   </span>
                   <span className="text-white font-bold px-0.5">&amp;</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-500 to-red-600 drop-shadow-[0_0_30px_rgba(255,60,0,1)] font-extrabold animate-electric-hum hover-vibrate cursor-pointer px-1">
+                  <span className="text-[#ff7700] drop-shadow-[0_0_25px_rgba(255,119,0,1)] font-black px-1">
                     EEE
                   </span>
                 </h2>
@@ -569,54 +571,52 @@ export function HomePageClient({
 
             {/* 3. National Level Technical Symposium Pill */}
             <div className="pt-0.5">
-              <div className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-9 py-2.5 rounded-xl border border-cyan-400/60 bg-[#030917]/90 text-cyan-200 font-mono text-xs sm:text-sm tracking-[0.25em] uppercase font-bold shadow-[0_0_30px_rgba(0,240,255,0.35)] hover-vibrate interactive-react cursor-pointer">
+              <div className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-9 py-2.5 rounded-xl border border-cyan-400/70 bg-[#030917]/90 text-cyan-200 font-mono text-xs sm:text-sm tracking-[0.25em] uppercase font-bold shadow-[0_0_30px_rgba(0,240,255,0.4)]">
                 <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
-                <span className="text-white drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]">NATIONAL LEVEL TECHNICAL SYMPOSIUM</span>
+                <span className="text-white drop-shadow-[0_0_15px_rgba(0,240,255,1)]">NATIONAL LEVEL TECHNICAL SYMPOSIUM</span>
                 <Sparkles className="w-4 h-4 text-orange-400 animate-pulse" />
               </div>
             </div>
 
-            {/* 4. Grand Main Title: SPARKTRON 2K26 - Crystal Clear, High Vibrancy & Electric Vibration */}
-            <div className="py-2 sm:py-4 relative group w-full max-w-3xl mx-auto">
-              <div className="relative px-6 sm:px-12 py-4 sm:py-6 rounded-3xl bg-black/40 backdrop-blur-md border border-cyan-500/30 shadow-[0_0_50px_rgba(0,0,0,0.8),0_0_30px_rgba(0,240,255,0.15)] hover-vibrate cursor-pointer interactive-react">
-                <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-orbitron tracking-widest uppercase select-none leading-none flex flex-col items-center justify-center">
-                  <div className="flex items-center justify-center gap-1 sm:gap-2">
-                    {/* SPARK in Brilliant White & Neon Blue */}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-cyan-100 to-cyan-400 drop-shadow-[0_0_40px_rgba(0,240,255,1)]">
-                      SPARK
-                    </span>
-                    {/* TRON in Fiery Orange & Red Combination */}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-orange-500 to-red-600 drop-shadow-[0_0_45px_rgba(255,60,0,1)] animate-sparktron-glow">
-                      TRON
-                    </span>
-                  </div>
-                  {/* 2K26 in Ultra-Bright White with Dual Cyan & Fiery Red-Orange Glow */}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-orange-500 drop-shadow-[0_0_50px_rgba(0,240,255,1)] drop-shadow-[0_0_60px_rgba(255,60,0,0.9)] mt-3 sm:mt-5 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-widest animate-electric-hum">
-                    2K26
+            {/* 4. Grand Main Title: SPARKTRON 2K26 - Pure Brilliance, High Contrast & Clean Normal Mode */}
+            <div className="py-2 sm:py-3 relative group w-full max-w-4xl mx-auto flex flex-col items-center justify-center">
+              <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-orbitron tracking-widest uppercase select-none leading-none flex flex-col items-center justify-center">
+                <div className="flex items-center justify-center gap-1 sm:gap-2">
+                  {/* SPARK in Brilliant Solid White with Electric Neon Blue Glow */}
+                  <span className="text-white drop-shadow-[0_0_35px_#00f0ff] drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]">
+                    SPARK
                   </span>
-                </h2>
-                {/* Dual Cyan to Fire-Red Electric Circuit Underline Accent */}
-                <div className="flex items-center justify-center gap-2 pt-4 max-w-md mx-auto opacity-90">
-                  <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-cyan-400 to-blue-500" />
-                  <div className="w-3 h-3 rounded-full bg-white shadow-[0_0_15px_#00f0ff] animate-ping" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-orange-400 shadow-[0_0_15px_#ff5500]" />
-                  <div className="h-[2px] flex-1 bg-gradient-to-r from-amber-400 via-orange-500 to-red-600" />
+                  {/* TRON in Ultra-Bright Solid Neon Orange-Red */}
+                  <span className="text-[#ff5500] drop-shadow-[0_0_35px_#ff4500] drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]">
+                    TRON
+                  </span>
                 </div>
+                {/* 2K26 in Ultra-Bright Neon White/Cyan */}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-amber-300 drop-shadow-[0_0_40px_#00f0ff] drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)] mt-3 sm:mt-5 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-widest">
+                  2K26
+                </span>
+              </h2>
+              {/* Dual Cyan to Fire-Red Electric Circuit Underline Accent */}
+              <div className="flex items-center justify-center gap-2 pt-4 max-w-md w-full mx-auto opacity-90">
+                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-cyan-400 to-blue-500" />
+                <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_12px_#00f0ff]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-orange-500 shadow-[0_0_12px_#ff5500]" />
+                <div className="h-[2px] flex-1 bg-gradient-to-r from-amber-400 via-orange-500 to-red-600" />
               </div>
             </div>
 
             {/* 5. Date & Venue */}
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2.5 px-6 py-2 rounded-full bg-[#05070F]/90 border border-cyan-400/50 shadow-[0_0_20px_rgba(0,240,255,0.3)] hover-vibrate interactive-react cursor-pointer">
-                <Calendar className="w-4 h-4 text-cyan-400 shrink-0 animate-pulse" />
-                <span className="text-xs sm:text-sm md:text-base font-orbitron font-bold tracking-[0.25em] text-white uppercase drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+              <div className="inline-flex items-center gap-2.5 px-6 py-2 rounded-full bg-[#05070F]/90 border border-cyan-400/50 shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+                <Calendar className="w-4 h-4 text-cyan-400 shrink-0" />
+                <span className="text-xs sm:text-sm md:text-base font-orbitron font-bold tracking-[0.25em] text-white uppercase drop-shadow-[0_0_15px_rgba(255,255,255,0.9)]">
                   {symposiumDate || "SEPTEMBER 16, 2026"}
                 </span>
               </div>
             </div>
 
             {/* 6. 4-Unit Cyber Countdown Timer */}
-            <div className="w-full flex justify-center pt-1 hover-vibrate interactive-react">
+            <div className="w-full flex justify-center pt-1">
               <CountdownTimer targetDate="2026-09-16T09:00:00" />
             </div>
 
@@ -627,7 +627,7 @@ export function HomePageClient({
                 variant="primary"
                 onClick={() => openRegistrationModal()}
                 leftIcon={<Zap className="w-4 h-4 fill-black text-black" />}
-                className="bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-black font-orbitron tracking-wider uppercase px-8 sm:px-10 py-4 text-sm sm:text-base rounded-xl shadow-[0_0_35px_rgba(0,240,255,0.9)] hover-vibrate interactive-react active:scale-95 border-0 cursor-pointer"
+                className="bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-black font-orbitron tracking-wider uppercase px-8 sm:px-10 py-4 text-sm sm:text-base rounded-xl shadow-[0_0_35px_rgba(0,240,255,0.9)] transition-all duration-300 hover:scale-105 border-0 cursor-pointer"
               >
                 REGISTER NOW
               </Button>
@@ -635,8 +635,8 @@ export function HomePageClient({
                 <Button
                   size="lg"
                   variant="outline"
-                  leftIcon={<Cpu className="w-4 h-4 text-orange-400 animate-pulse" />}
-                  className="bg-[#05070F]/90 text-orange-400 border-2 border-orange-500/80 hover:border-red-500 hover:bg-gradient-to-r hover:from-orange-500/20 hover:to-red-600/20 hover:text-white px-8 sm:px-10 py-4 text-sm sm:text-base font-orbitron font-bold tracking-wider rounded-xl shadow-[0_0_25px_rgba(255,90,0,0.4)] hover-vibrate interactive-react active:scale-95 cursor-pointer"
+                  leftIcon={<Cpu className="w-4 h-4 text-orange-400" />}
+                  className="bg-[#05070F]/90 text-orange-400 border-2 border-orange-500/80 hover:border-red-500 hover:bg-gradient-to-r hover:from-orange-500/20 hover:to-red-600/20 hover:text-white px-8 sm:px-10 py-4 text-sm sm:text-base font-orbitron font-bold tracking-wider rounded-xl shadow-[0_0_25px_rgba(255,90,0,0.4)] transition-all duration-300 hover:scale-105 cursor-pointer"
                 >
                   EXPLORE EVENTS
                 </Button>
