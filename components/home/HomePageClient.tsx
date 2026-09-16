@@ -131,7 +131,7 @@ function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: 
   );
 }
 
-function CompactCyberCard({
+function SparktronCyberShieldCard({
   coord,
   index,
   isFaculty = false,
@@ -141,61 +141,61 @@ function CompactCyberCard({
   isFaculty?: boolean;
 }) {
   return (
-    <div className="relative group p-4 sm:p-5 bg-gradient-to-r from-[#12151c]/95 via-[#0b0d12]/95 to-[#161a24]/95 backdrop-blur-xl border border-amber-400/50 hover:border-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.18)] hover:shadow-[0_0_35px_rgba(245,158,11,0.35)] transition-all duration-300 hover:-translate-y-1 [clip-path:polygon(16px_0,_100%_0,_100%_calc(100%-16px),_calc(100%-16px)_100%,_0_100%,_0_16px)] flex flex-col justify-between space-y-3">
+    <div className="relative group p-4 sm:p-5 bg-gradient-to-r from-[#040d21]/95 via-[#020714]/95 to-[#051433]/95 border border-blue-500/35 hover:border-cyan-400 shadow-[0_0_20px_rgba(0,114,255,0.15)] hover:shadow-[0_0_30px_rgba(0,240,255,0.35)] transition-all duration-300 hover:-translate-y-1.5 [clip-path:polygon(16px_0,_100%_0,_100%_calc(100%-16px),_calc(100%-16px)_100%,_0_100%,_0_16px)] flex flex-col justify-between space-y-3.5 will-change-transform">
       {/* HUD Corner Tech Accent Ticks */}
-      <span className="absolute top-0 left-0 w-4 h-[2px] bg-amber-400 shadow-[0_0_6px_#f59e0b]" />
-      <span className="absolute top-0 left-0 w-[2px] h-4 bg-amber-400 shadow-[0_0_6px_#f59e0b]" />
-      <span className="absolute bottom-0 right-0 w-4 h-[2px] bg-amber-400 shadow-[0_0_6px_#f59e0b]" />
-      <span className="absolute bottom-0 right-0 w-[2px] h-4 bg-amber-400 shadow-[0_0_6px_#f59e0b]" />
+      <span className="absolute top-0 left-0 w-4 h-[2px] bg-cyan-400 shadow-[0_0_6px_#00f0ff]" />
+      <span className="absolute top-0 left-0 w-[2px] h-4 bg-cyan-400 shadow-[0_0_6px_#00f0ff]" />
+      <span className="absolute bottom-0 right-0 w-4 h-[2px] bg-cyan-400 shadow-[0_0_6px_#00f0ff]" />
+      <span className="absolute bottom-0 right-0 w-[2px] h-4 bg-cyan-400 shadow-[0_0_6px_#00f0ff]" />
 
-      {/* Subdued Background Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f59e0b0a_1px,transparent_1px),linear-gradient(to_bottom,#f59e0b0a_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none" />
+      {/* Cyber Shimmer Light Sweep Effect on Hover (Pure CSS GPU Accelerated) */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
 
-      {/* TOP ROW: Header Info & System Badge */}
+      {/* TOP ROW: Department Badge, Role Code, & Live Indicator Tag */}
       <div className="relative z-10 flex items-start justify-between gap-3">
         <div className="space-y-1 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-2 py-0.5 rounded bg-amber-950/80 border border-amber-500/40 text-[10px] font-mono font-bold uppercase text-amber-300 tracking-wider shadow-[0_0_8px_rgba(245,158,11,0.2)]">
+            <span className="px-2.5 py-0.5 rounded-full bg-blue-950/90 border border-blue-500/40 text-[10px] font-mono font-bold uppercase text-cyan-300 tracking-wider shadow-[0_0_8px_rgba(0,114,255,0.25)]">
               {coord.department}
             </span>
-            <span className="text-[10px] font-mono text-amber-400/70 uppercase tracking-widest">
-              {isFaculty ? `FAC.ID // 0${index + 1}` : `EXEC.ID // 0${index + 1}`}
+            <span className="text-[10px] font-mono text-cyan-400/60 uppercase tracking-widest font-semibold">
+              {isFaculty ? `SYS.FAC // 0${index + 1}` : `SYS.EXEC // 0${index + 1}`}
             </span>
           </div>
 
-          <h3 className="text-base sm:text-lg font-bold text-white font-sans tracking-wide group-hover:text-amber-300 transition-colors drop-shadow-sm">
+          <h3 className="text-base sm:text-lg font-bold text-white font-sans tracking-wide group-hover:text-cyan-200 transition-colors drop-shadow-[0_0_8px_rgba(0,240,255,0.2)]">
             {coord.name}
           </h3>
 
           {coord.designation && (
-            <p className="text-xs font-mono font-semibold text-amber-400 tracking-wide">
+            <p className="text-xs font-mono font-semibold text-cyan-300/90 tracking-wide">
               {coord.designation}
             </p>
           )}
         </div>
 
-        {/* Small Cyber System Tag (No Photo) */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#07080c] border border-amber-500/30 text-[9px] font-mono font-bold text-amber-400/90 uppercase shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_6px_#f59e0b]" />
+        {/* Cyber System Status Tag */}
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#030a1c] border border-cyan-500/40 text-[9px] font-mono font-bold text-cyan-300 uppercase shrink-0 shadow-[0_0_10px_rgba(0,240,255,0.15)]">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#00f0ff]" />
           <span>{isFaculty ? "CONVENER" : "STUDENT LEAD"}</span>
         </div>
       </div>
 
-      {/* BOTTOM ROW: Interactive Contact Action Chips */}
-      <div className="relative z-10 pt-2.5 border-t border-amber-500/20 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+      {/* BOTTOM ROW: Interactive Contact Chips */}
+      <div className="relative z-10 pt-2.5 border-t border-blue-500/25 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
         <a
           href={`tel:${coord.phone}`}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#07080d] border border-amber-500/30 text-slate-200 hover:text-white hover:border-amber-400 hover:bg-amber-950/40 hover:shadow-[0_0_12px_rgba(245,158,11,0.3)] transition-all cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#020716] border border-blue-500/40 text-slate-200 hover:text-white hover:border-cyan-400 hover:bg-blue-950/40 hover:shadow-[0_0_12px_rgba(0,240,255,0.3)] transition-all duration-200 cursor-pointer"
         >
-          <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <Phone className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00f0ff]" />
           <span>{coord.phone}</span>
         </a>
 
         <a
           href={`mailto:${coord.email}`}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#07080d] border border-amber-500/30 text-slate-200 hover:text-white hover:border-amber-400 hover:bg-amber-950/40 hover:shadow-[0_0_12px_rgba(245,158,11,0.3)] transition-all truncate max-w-[220px] sm:max-w-none cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#020716] border border-blue-500/40 text-slate-200 hover:text-white hover:border-cyan-400 hover:bg-blue-950/40 hover:shadow-[0_0_12px_rgba(0,240,255,0.3)] transition-all duration-200 truncate max-w-[220px] sm:max-w-none cursor-pointer"
         >
-          <Mail className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <Mail className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00f0ff]" />
           <span className="truncate">{coord.email}</span>
         </a>
       </div>
@@ -669,15 +669,15 @@ export function HomePageClient({
 
         {/* Faculty Conveners */}
         <div className="space-y-6">
-          <div className="flex items-center space-x-2.5 text-amber-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
-            <Shield className="w-4 h-4 text-amber-400 drop-shadow-[0_0_8px_#f59e0b]" />
+          <div className="flex items-center space-x-2.5 text-cyan-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
+            <Shield className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_8px_#00f0ff]" />
             <span>Faculty Conveners</span>
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-amber-500/40 to-transparent ml-2" />
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-cyan-500/40 to-transparent ml-2" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {facultyCoordinators.map((coord, idx) => (
-              <CompactCyberCard
+              <SparktronCyberShieldCard
                 key={coord.id}
                 coord={coord}
                 index={idx}
@@ -689,15 +689,15 @@ export function HomePageClient({
 
         {/* Student Executive Committee */}
         <div className="space-y-6 pt-4">
-          <div className="flex items-center space-x-2.5 text-amber-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
-            <UserCheck className="w-4 h-4 text-amber-400 drop-shadow-[0_0_8px_#f59e0b]" />
+          <div className="flex items-center space-x-2.5 text-cyan-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
+            <UserCheck className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_8px_#00f0ff]" />
             <span>Student Executive Committee</span>
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-amber-500/40 to-transparent ml-2" />
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-cyan-500/40 to-transparent ml-2" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {studentCoordinators.map((coord, idx) => (
-              <CompactCyberCard
+              <SparktronCyberShieldCard
                 key={coord.id}
                 coord={coord}
                 index={idx}
