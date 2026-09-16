@@ -600,37 +600,21 @@ export function HomePageClient({
                 size="lg"
                 variant="primary"
                 onClick={() => openRegistrationModal()}
-                className="bg-gradient-to-r from-cyan-400 via-sky-400 to-cyan-500 hover:from-cyan-300 hover:to-sky-400 text-black font-black font-orbitron tracking-wider uppercase px-8 py-3.5 text-sm sm:text-base rounded-xl shadow-[0_0_30px_rgba(0,240,255,0.75)] transition-all hover:scale-105 border-0 cursor-pointer flex items-center gap-2"
+                leftIcon={<Zap className="w-4 h-4 fill-black" />}
+                className="bg-gradient-to-r from-cyan-400 via-sky-400 to-cyan-500 hover:from-cyan-300 hover:to-sky-400 text-black font-black font-orbitron tracking-wider uppercase px-8 py-3.5 text-sm sm:text-base rounded-xl shadow-[0_0_30px_rgba(0,240,255,0.75)] transition-all hover:scale-105 border-0 cursor-pointer"
               >
-                <Zap className="w-4 h-4 fill-black" />
-                <span>REGISTER NOW</span>
+                REGISTER NOW
               </Button>
               <a href="#events" className="inline-flex">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="bg-[#02050f]/90 text-cyan-400 border border-cyan-400/80 hover:bg-cyan-500/15 hover:border-cyan-300 hover:text-white px-8 py-3.5 text-sm sm:text-base font-orbitron tracking-wider rounded-xl transition-all hover:scale-105 shadow-[0_0_20px_rgba(0,240,255,0.25)] cursor-pointer flex items-center gap-2"
+                  leftIcon={<Cpu className="w-4 h-4 text-cyan-400" />}
+                  className="bg-[#02050f]/90 text-cyan-400 border border-cyan-400/80 hover:bg-cyan-500/15 hover:border-cyan-300 hover:text-white px-8 py-3.5 text-sm sm:text-base font-orbitron tracking-wider rounded-xl transition-all hover:scale-105 shadow-[0_0_20px_rgba(0,240,255,0.25)] cursor-pointer"
                 >
-                  <Cpu className="w-4 h-4 text-cyan-400" />
-                  <span>EXPLORE EVENTS</span>
+                  EXPLORE EVENTS
                 </Button>
               </a>
-            </div>
-
-            {/* 8. Telemetry Status Chips */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2 font-mono text-xs">
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#060e1d]/80 border border-blue-500/30 text-slate-300">
-                <Trophy className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span>Prize Pool: <strong className="text-white font-bold">₹20,000+ Cash</strong></span>
-              </div>
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#060e1d]/80 border border-blue-500/30 text-slate-300">
-                <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span>Entry: <strong className="text-cyan-300 font-bold">100% Free Entry</strong></span>
-              </div>
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#060e1d]/80 border border-blue-500/30 text-slate-300">
-                <Award className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span>Certification: <strong className="text-white font-bold">All Participants</strong></span>
-              </div>
             </div>
           </div>
         </div>
