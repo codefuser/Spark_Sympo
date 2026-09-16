@@ -320,8 +320,8 @@ export function HomePageClient({
           {/* CENTERED HERO MASTER DECK */}
           <div className="flex flex-col items-center text-center space-y-4 sm:space-y-6">
             {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] - Elevated Above with Unique Syne Typography */}
-            <div className="space-y-2.5 pt-1 sm:pt-2">
-              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold font-syne tracking-wider text-white uppercase drop-shadow-[0_2px_25px_rgba(255,255,255,0.4)] leading-tight">
+            <div className="space-y-2 pt-1 sm:pt-2">
+              <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold font-syne tracking-wider text-white uppercase drop-shadow-[0_2px_20px_rgba(255,255,255,0.35)] leading-tight">
                 <span className="text-white">THAMIRABHARANI</span>{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-white drop-shadow-[0_0_20px_rgba(0,240,255,0.45)]">
                   ENGINEERING COLLEGE
