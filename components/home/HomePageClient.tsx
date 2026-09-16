@@ -564,14 +564,14 @@ export function HomePageClient({
               </div>
             </div>
 
-            {/* 4. Grand Main Title: SPARKTRON'2K26 with Orbitron Typography */}
+            {/* 4. Grand Main Title: SPARKTRON 2K26 with Syne Typography & Ultra Glow */}
             <div className="py-2 sm:py-3 relative group">
-              <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold font-orbitron tracking-wider uppercase select-none leading-none py-4 flex flex-col items-center justify-center">
+              <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-syne tracking-wider uppercase select-none leading-none py-4 flex flex-col items-center justify-center">
                 <div className="flex items-center justify-center">
-                  <span className="text-white drop-shadow-[0_4px_30px_rgba(255,255,255,0.6)]">SPARK</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-400 to-blue-500 drop-shadow-[0_0_35px_rgba(0,240,255,0.9)]">TRON</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-100 to-slate-400 drop-shadow-[0_0_40px_rgba(255,255,255,0.8)] animate-pulse">SPARK</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 drop-shadow-[0_0_50px_rgba(0,240,255,1)] animate-sparktron-glow">TRON</span>
                 </div>
-                <span className="text-cyan-400 drop-shadow-[0_0_40px_rgba(0,240,255,0.95)] animate-sparktron-glow mt-3 sm:mt-5 text-4xl sm:text-5xl md:text-6xl lg:text-7xl">'2K26</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-blue-400 drop-shadow-[0_0_60px_rgba(0,240,255,1)] animate-sparktron-glow mt-3 sm:mt-5 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black">2K26</span>
               </h2>
               {/* Electric Circuit Underline Accent */}
               <div className="flex items-center justify-center gap-2 pt-3 max-w-sm mx-auto opacity-80">
