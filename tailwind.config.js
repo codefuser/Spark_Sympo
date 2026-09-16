@@ -18,6 +18,9 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-sans)", "Plus Jakarta Sans", "Inter", "system-ui", "-apple-system", "sans-serif"],
         display: ["var(--font-display)", "Outfit", "Plus Jakarta Sans", "sans-serif"],
+        syne: ["var(--font-syne)", "Syne", "sans-serif"],
+        orbitron: ["var(--font-orbitron)", "Orbitron", "sans-serif"],
+        tech: ["var(--font-tech)", "Space Grotesk", "sans-serif"],
         mono: ["var(--font-mono)", "JetBrains Mono", "ui-monospace", "monospace"],
       },
       colors: {

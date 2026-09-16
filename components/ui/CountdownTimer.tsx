@@ -33,43 +33,32 @@ export function CountdownTimer({ targetDate }: { targetDate: string }) {
   }, [targetDate]);
 
   const units = [
-    { label: "DAYS", value: timeLeft.days, code: "T-01" },
-    { label: "HOURS", value: timeLeft.hours, code: "T-02" },
-    { label: "MINS", value: timeLeft.minutes, code: "T-03" },
-    { label: "SECS", value: timeLeft.seconds, code: "T-04" },
+    { label: "DAYS", value: timeLeft.days },
+    { label: "HOURS", value: timeLeft.hours },
+    { label: "MIN", value: timeLeft.minutes },
+    { label: "SEC", value: timeLeft.seconds },
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-2 sm:gap-3 max-w-lg w-full">
+    <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-md w-full mx-auto">
       {units.map((unit) => (
         <div
           key={unit.label}
-          className="relative group flex flex-col items-center justify-center p-2 sm:p-3 rounded-xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/30 hover:border-cyan-400 shadow-[0_0_15px_rgba(0,114,255,0.15)] hover:shadow-[0_0_25px_rgba(0,240,255,0.35)] transition-all duration-300 hover:-translate-y-0.5 overflow-hidden"
+          className="relative group flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl bg-[#030917]/90 border border-cyan-500/40 hover:border-cyan-400 shadow-[0_0_15px_rgba(0,114,255,0.15)] hover:shadow-[0_0_25px_rgba(0,240,255,0.35)] transition-all duration-300 hover:-translate-y-0.5 overflow-hidden"
         >
-          {/* Cyber Corner Notches */}
-          <span className="absolute top-0 left-0 w-1.5 h-1.5 border-t-2 border-l-2 border-cyan-400/80 pointer-events-none" />
-          <span className="absolute top-0 right-0 w-1.5 h-1.5 border-t-2 border-r-2 border-cyan-400/80 pointer-events-none" />
-          <span className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b-2 border-l-2 border-cyan-400/80 pointer-events-none" />
-          <span className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b-2 border-r-2 border-cyan-400/80 pointer-events-none" />
+          {/* Subtle Cyber Corner Accents */}
+          <span className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-cyan-400 pointer-events-none" />
+          <span className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-cyan-400 pointer-events-none" />
+          <span className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-cyan-400 pointer-events-none" />
+          <span className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-cyan-400 pointer-events-none" />
 
-          {/* Ambient Glow Aura */}
-          <div className="absolute -top-4 -right-4 w-12 h-12 bg-cyan-500/10 rounded-full blur-lg group-hover:bg-cyan-500/25 transition-colors pointer-events-none" />
-
-          {/* Micro Tech Module ID */}
-          <span className="text-[7px] sm:text-[8px] font-mono text-cyan-400/70 font-bold self-end tracking-wider mb-0.5">
-            {unit.code}
-          </span>
-
-          {/* High-Tech Number Display */}
-          <span className="text-xl sm:text-3xl lg:text-4xl font-black font-mono tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-cyan-200 to-blue-400 drop-shadow-[0_0_12px_rgba(0,240,255,0.55)]">
+          {/* High-Tech Digital Number Display */}
+          <span className="text-2xl sm:text-4xl lg:text-5xl font-black font-orbitron tracking-tight text-white drop-shadow-[0_0_15px_rgba(0,240,255,0.6)] group-hover:text-cyan-300 transition-colors">
             {unit.value.toString().padStart(2, "0")}
           </span>
 
-          {/* Subline Divider */}
-          <div className="w-6 sm:w-8 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/70 to-transparent my-0.5 sm:my-1" />
-
           {/* Pure White Tracking Label */}
-          <span className="text-[9px] sm:text-[10px] font-mono font-bold text-white tracking-[0.2em] uppercase drop-shadow-sm">
+          <span className="text-[10px] sm:text-xs font-mono font-bold text-cyan-400/90 tracking-[0.25em] uppercase mt-1 drop-shadow-sm">
             {unit.label}
           </span>
         </div>
