@@ -585,11 +585,6 @@ export function HomePageClient({
                   {symposiumDate || "SEPTEMBER 16, 2026"}
                 </span>
               </div>
-              <br />
-              <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-mono text-slate-300 bg-[#030917]/70 px-4 py-1.5 rounded-full border border-blue-500/25">
-                <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span className="truncate max-w-[280px] sm:max-w-none">{venue}</span>
-              </div>
             </div>
 
             {/* 6. 4-Unit Cyber Countdown Timer */}
