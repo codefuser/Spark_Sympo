@@ -454,14 +454,27 @@ export function HomePageClient({
 
   return (
     <div className="space-y-24 pb-20 pt-20">
-      {/* SECTION 1: HERO (Matching Reference Image 1) */}
+      {/* SECTION 1: HERO (Matching Reference Image 1 with Circuit, Motor & Waves) */}
       <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-start items-center pt-4 sm:pt-6 lg:pt-8 pb-12 sm:pb-16 overflow-hidden border-b border-blue-500/15">
-        {/* Deep 3D Ambient Lighting Glow - Static & GPU optimized */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[380px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+        {/* Dynamic Background Image: Circuit (Left), Motor (Right), Neon Blue & Orange Waves (Center) */}
+        <div className="absolute inset-0 -z-20 overflow-hidden pointer-events-none">
+          <img
+            src="/hero-bg.jpg"
+            alt="SPARKTRON Symposium Cyber ECE and EEE Background"
+            className="w-full h-full object-cover object-center opacity-60 sm:opacity-70 scale-100"
+          />
+          {/* Subtle Radial & Linear Gradients for contrast and readable typography */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#07090E]/85 via-[#07090E]/60 to-[#07090E]" />
+          <div className="absolute inset-0 bg-radial-vignette opacity-80" />
+          
+          {/* Side Ambient Glows: Cyan for ECE on Left, Amber/Orange for EEE on Right */}
+          <div className="absolute -left-20 top-1/4 w-[450px] h-[450px] bg-cyan-500/20 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute -right-20 top-1/4 w-[450px] h-[450px] bg-orange-500/20 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[500px] h-[250px] bg-blue-600/15 rounded-full blur-[120px] pointer-events-none" />
+        </div>
 
-        {/* Glowing Cyan Circuit Traces Background (Matching Image 1) */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10 opacity-70">
+        {/* Glowing Cyan & Amber Circuit Accents Layer */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10 opacity-40">
           <svg
             className="w-full h-full"
             viewBox="0 0 1440 900"
@@ -477,13 +490,13 @@ export function HomePageClient({
             <path d="M 0 260 L 100 260 L 140 220 L 220 220" stroke="#00f0ff" strokeWidth="1.5" opacity="0.45" />
             <circle cx="220" cy="220" r="3" fill="#00f0ff" />
 
-            {/* Top Right Circuit Traces */}
-            <path d="M 1440 100 L 1260 100 L 1180 180 L 1020 180" stroke="#00f0ff" strokeWidth="1.75" opacity="0.65" />
-            <circle cx="1020" cy="180" r="3.5" fill="#00f0ff" />
-            <path d="M 1360 0 L 1360 80 L 1280 160 L 1280 260" stroke="#00f0ff" strokeWidth="1.75" opacity="0.5" />
-            <circle cx="1280" cy="260" r="3.5" fill="#00f0ff" />
-            <path d="M 1440 220 L 1340 220 L 1280 280 L 1120 280" stroke="#00f0ff" strokeWidth="1.5" opacity="0.45" />
-            <circle cx="1120" cy="280" r="3" fill="#00f0ff" />
+            {/* Top Right Circuit Traces (Amber/Orange accent) */}
+            <path d="M 1440 100 L 1260 100 L 1180 180 L 1020 180" stroke="#ff9900" strokeWidth="1.75" opacity="0.65" />
+            <circle cx="1020" cy="180" r="3.5" fill="#ff9900" />
+            <path d="M 1360 0 L 1360 80 L 1280 160 L 1280 260" stroke="#ffaa00" strokeWidth="1.75" opacity="0.5" />
+            <circle cx="1280" cy="260" r="3.5" fill="#ffaa00" />
+            <path d="M 1440 220 L 1340 220 L 1280 280 L 1120 280" stroke="#ff8800" strokeWidth="1.5" opacity="0.45" />
+            <circle cx="1120" cy="280" r="3" fill="#ff8800" />
 
             {/* Mid Left Circuit Traces */}
             <path d="M 0 460 L 140 460 L 220 540 L 360 540" stroke="#00f0ff" strokeWidth="1.75" opacity="0.6" />
@@ -492,10 +505,10 @@ export function HomePageClient({
             <circle cx="280" cy="420" r="3" fill="#00f0ff" />
 
             {/* Mid Right Circuit Traces */}
-            <path d="M 1440 480 L 1300 480 L 1220 400 L 1080 400" stroke="#00f0ff" strokeWidth="1.75" opacity="0.6" />
-            <circle cx="1080" cy="400" r="3.5" fill="#00f0ff" />
-            <path d="M 1400 580 L 1320 580 L 1260 520 L 1160 520" stroke="#00f0ff" strokeWidth="1.5" opacity="0.45" />
-            <circle cx="1160" cy="520" r="3" fill="#00f0ff" />
+            <path d="M 1440 480 L 1300 480 L 1220 400 L 1080 400" stroke="#ff9900" strokeWidth="1.75" opacity="0.6" />
+            <circle cx="1080" cy="400" r="3.5" fill="#ff9900" />
+            <path d="M 1400 580 L 1320 580 L 1260 520 L 1160 520" stroke="#ffaa00" strokeWidth="1.5" opacity="0.45" />
+            <circle cx="1160" cy="520" r="3" fill="#ffaa00" />
 
             {/* Bottom Left Circuit Traces */}
             <path d="M 0 720 L 160 720 L 240 640 L 400 640" stroke="#00f0ff" strokeWidth="1.75" opacity="0.55" />
@@ -504,18 +517,18 @@ export function HomePageClient({
             <circle cx="320" cy="720" r="3.5" fill="#00f0ff" />
 
             {/* Bottom Right Circuit Traces */}
-            <path d="M 1440 760 L 1280 760 L 1200 840 L 1060 840" stroke="#00f0ff" strokeWidth="1.75" opacity="0.55" />
-            <circle cx="1060" cy="840" r="3.5" fill="#00f0ff" />
-            <path d="M 1340 900 L 1340 820 L 1260 740 L 1120 740" stroke="#00f0ff" strokeWidth="1.75" opacity="0.5" />
-            <circle cx="1120" cy="740" r="3.5" fill="#00f0ff" />
+            <path d="M 1440 760 L 1280 760 L 1200 840 L 1060 840" stroke="#ff9900" strokeWidth="1.75" opacity="0.55" />
+            <circle cx="1060" cy="840" r="3.5" fill="#ff9900" />
+            <path d="M 1340 900 L 1340 820 L 1260 740 L 1120 740" stroke="#ffaa00" strokeWidth="1.75" opacity="0.5" />
+            <circle cx="1120" cy="740" r="3.5" fill="#ffaa00" />
           </svg>
         </div>
 
         {/* Floating Cyber Particle Accents */}
         <div className="absolute top-1/4 left-1/6 w-2 h-2 rounded-full bg-cyan-400/60 blur-[1px] animate-cyber-particle-1 pointer-events-none hidden md:block" />
-        <div className="absolute top-1/3 right-1/6 w-2.5 h-2.5 rounded-full bg-blue-400/60 blur-[1px] animate-cyber-particle-2 pointer-events-none hidden md:block" />
+        <div className="absolute top-1/3 right-1/6 w-2.5 h-2.5 rounded-full bg-orange-400/60 blur-[1px] animate-cyber-particle-2 pointer-events-none hidden md:block" />
         <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 rounded-full bg-cyan-300/60 blur-[1px] animate-cyber-particle-3 pointer-events-none hidden md:block" />
-        <div className="absolute top-2/3 right-1/4 w-2 h-2 rounded-full bg-white/60 blur-[1px] animate-cyber-particle-1 pointer-events-none hidden md:block" />
+        <div className="absolute top-2/3 right-1/4 w-2 h-2 rounded-full bg-amber-400/60 blur-[1px] animate-cyber-particle-1 pointer-events-none hidden md:block" />
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-5xl">
           {/* CENTERED HERO MASTER DECK */}
@@ -536,7 +549,7 @@ export function HomePageClient({
               </div>
             </div>
 
-            {/* 2. Organized By & Departments (Full official title requested by user) */}
+            {/* 2. Organized By & Departments (ECE Cyan & EEE Amber/Orange) */}
             <div className="space-y-2.5 pt-1 sm:pt-2 max-w-4xl mx-auto">
               <p className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.35em] text-cyan-400/90 uppercase">
                 ORGANIZED BY
@@ -548,7 +561,7 @@ export function HomePageClient({
                     ECE
                   </span>
                   <span className="text-cyan-400 font-bold px-0.5">&amp;</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-300 drop-shadow-[0_0_25px_rgba(0,114,255,1)] font-bold animate-pulse">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-400 to-amber-500 drop-shadow-[0_0_25px_rgba(255,140,0,1)] font-bold animate-pulse">
                     EEE
                   </span>
                 </h2>
@@ -564,20 +577,26 @@ export function HomePageClient({
               </div>
             </div>
 
-            {/* 4. Grand Main Title: SPARKTRON 2K26 with Syne Typography & Ultra Glow */}
+            {/* 4. Grand Main Title: SPARKTRON 2K26 with Syne Typography & Dual Cyan/Orange Glow */}
             <div className="py-2 sm:py-3 relative group">
               <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-syne tracking-wider uppercase select-none leading-none py-4 flex flex-col items-center justify-center">
                 <div className="flex items-center justify-center">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-100 to-slate-400 drop-shadow-[0_0_40px_rgba(255,255,255,0.8)] animate-pulse">SPARK</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 drop-shadow-[0_0_50px_rgba(0,240,255,1)] animate-sparktron-glow">TRON</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-sky-300 to-blue-400 drop-shadow-[0_0_40px_rgba(0,240,255,0.9)] animate-pulse">
+                    SPARK
+                  </span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-400 to-amber-500 drop-shadow-[0_0_45px_rgba(255,140,0,1)] animate-sparktron-glow">
+                    TRON
+                  </span>
                 </div>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-blue-400 drop-shadow-[0_0_60px_rgba(0,240,255,1)] animate-sparktron-glow mt-3 sm:mt-5 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black">2K26</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-white to-amber-300 drop-shadow-[0_0_55px_rgba(0,240,255,0.85)] animate-sparktron-glow mt-3 sm:mt-5 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-widest">
+                  2K26
+                </span>
               </h2>
-              {/* Electric Circuit Underline Accent */}
+              {/* Dual Cyan & Amber Electric Circuit Underline Accent */}
               <div className="flex items-center justify-center gap-2 pt-3 max-w-sm mx-auto opacity-80">
                 <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-cyan-500 to-cyan-400" />
-                <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff]" />
-                <div className="h-[2px] flex-1 bg-gradient-to-r from-cyan-400 via-cyan-500 to-transparent" />
+                <div className="w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_12px_#00f0ff]" />
+                <div className="h-[2px] flex-1 bg-gradient-to-r from-amber-400 via-orange-500 to-transparent" />
               </div>
             </div>
 
