@@ -4,8 +4,6 @@ import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Cpu, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
-import { useRegistrationModal } from "@/components/registration/RegistrationModalContext";
 
 const navLinks = [
   { name: "Home", href: "#hero" },
@@ -21,7 +19,6 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
   const [isScrolled, setIsScrolled] = useState(false);
-  const { openRegistrationModal } = useRegistrationModal();
 
   // Hide public navbar on admin portal routes
   if (pathname?.startsWith("/admin")) return null;
@@ -90,9 +87,7 @@ export function Navbar() {
           <div className="flex flex-col">
             <span className="text-xl font-black tracking-widest text-white font-mono flex items-center drop-shadow-sm">
               SPARK<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]">TRON</span>
-              <span className="text-[11px] ml-2 px-2 py-0.5 rounded-md bg-blue-950/80 text-cyan-300 border border-blue-400/50 shadow-[0_0_10px_rgba(0,114,255,0.3)] font-bold">2K26</span>
             </span>
-            <span className="text-[10px] text-slate-400 tracking-[0.15em] uppercase font-semibold">ECE &amp; EEE Symposium</span>
           </div>
         </a>
 
@@ -131,25 +126,10 @@ export function Navbar() {
 
         {/* Action Button */}
         <div className="hidden xl:flex items-center space-x-3">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => openRegistrationModal()}
-            className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 hover:from-blue-500 hover:to-cyan-400 text-black font-extrabold shadow-[0_0_20px_rgba(0,114,255,0.4)] cursor-pointer rounded-xl px-5 transition-all hover:scale-105"
-          >
-            Register Now
-          </Button>
         </div>
 
         {/* Mobile Menu Trigger */}
         <div className="flex xl:hidden items-center space-x-2">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => openRegistrationModal()}
-          >
-            Register
-          </Button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 text-secondary-foreground hover:text-primary rounded-lg border border-primary/20 bg-card"
