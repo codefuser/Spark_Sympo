@@ -42,6 +42,7 @@ import { useRegistrationModal } from "@/components/registration/RegistrationModa
 import { SymposiumEvent, CoordinatorType } from "@/types";
 import { AboutSection } from "@/components/home/AboutSection";
 import { EventCard } from "@/components/home/EventCard";
+import { EnergyWaveOverlay } from "@/components/home/EnergyWaveOverlay";
 
 function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: string; title: string; venue: string }; idx: number; isVisible: boolean; isReducedMotion: boolean }) {
   const rowRef = React.useRef<HTMLDivElement>(null);
@@ -478,6 +479,9 @@ export function HomePageClient({
           <div className="absolute -right-20 top-1/4 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-gradient-to-br from-orange-500/25 via-red-600/20 to-amber-500/25 rounded-full blur-[100px] sm:blur-[130px] pointer-events-none animate-pulse" />
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[400px] sm:w-[600px] h-[200px] sm:h-[260px] bg-blue-600/20 rounded-full blur-[90px] sm:blur-[110px] pointer-events-none" />
         </div>
+
+        {/* Transparent Animated Live Energy-Wave Layer (Smooth flowing electricity on blue left & orange right) */}
+        <EnergyWaveOverlay />
 
         {/* Glowing Cyan & Amber Circuit Accents Layer */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10 opacity-50">

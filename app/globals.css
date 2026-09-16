@@ -585,4 +585,120 @@ html.dark,
   transform: scale(0.98);
 }
 
+/* ==========================================================================
+   Live Electrical Energy Waves Layer
+   Smooth, gentle flowing plasma currents & breathing electrical auras
+   ========================================================================== */
+
+@keyframes energyGlowCyan {
+  0%, 100% {
+    opacity: 0.45;
+    filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.6)) drop-shadow(0 0 20px rgba(0, 150, 255, 0.4));
+  }
+  50% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.95)) drop-shadow(0 0 45px rgba(0, 180, 255, 0.7));
+  }
+}
+
+@keyframes energyGlowOrange {
+  0%, 100% {
+    opacity: 0.45;
+    filter: drop-shadow(0 0 10px rgba(255, 85, 0, 0.6)) drop-shadow(0 0 20px rgba(255, 140, 0, 0.4));
+  }
+  50% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 25px rgba(255, 85, 0, 0.95)) drop-shadow(0 0 45px rgba(255, 150, 0, 0.7));
+  }
+}
+
+/* Flowing electrical current pulses along wave paths */
+@keyframes electricFlowLeft {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes electricFlowRight {
+  0% {
+    stroke-dashoffset: -1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Subtle continuous organic wave undulation */
+@keyframes waveUndulateCyan {
+  0%, 100% {
+    transform: translateY(0px) scaleY(1);
+  }
+  35% {
+    transform: translateY(-5px) scaleY(1.02) skewY(-0.4deg);
+  }
+  70% {
+    transform: translateY(4px) scaleY(0.98) skewY(0.3deg);
+  }
+}
+
+@keyframes waveUndulateOrange {
+  0%, 100% {
+    transform: translateY(0px) scaleY(1);
+  }
+  35% {
+    transform: translateY(4px) scaleY(0.98) skewY(0.4deg);
+  }
+  70% {
+    transform: translateY(-5px) scaleY(1.02) skewY(-0.4deg);
+  }
+}
+
+/* Central nexus collision pulse */
+@keyframes nexusPulse {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.55;
+    filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.5)) drop-shadow(0 0 15px rgba(255, 85, 0, 0.5));
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.85;
+    filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.85)) drop-shadow(0 0 30px rgba(255, 85, 0, 0.85));
+  }
+}
+
+.animate-wave-cyan {
+  animation: energyGlowCyan 6s ease-in-out infinite, waveUndulateCyan 9s ease-in-out infinite;
+  will-change: transform, opacity, filter;
+}
+
+.animate-wave-orange {
+  animation: energyGlowOrange 6s ease-in-out 1s infinite, waveUndulateOrange 9s ease-in-out 1s infinite;
+  will-change: transform, opacity, filter;
+}
+
+.animate-flow-cyan {
+  animation: electricFlowLeft 4.5s linear infinite;
+}
+
+.animate-flow-cyan-slow {
+  animation: electricFlowLeft 7s linear infinite;
+}
+
+.animate-flow-orange {
+  animation: electricFlowRight 4.5s linear infinite;
+}
+
+.animate-flow-orange-slow {
+  animation: electricFlowRight 7s linear infinite;
+}
+
+.animate-nexus-pulse {
+  animation: nexusPulse 5s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
 
