@@ -42,6 +42,7 @@ import { useRegistrationModal } from "@/components/registration/RegistrationModa
 import { SymposiumEvent, CoordinatorType } from "@/types";
 import { AboutSection } from "@/components/home/AboutSection";
 import { EventCard } from "@/components/home/EventCard";
+import { EnergyWaveOverlay } from "@/components/home/EnergyWaveOverlay";
 
 function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: string; title: string; venue: string }; idx: number; isVisible: boolean; isReducedMotion: boolean }) {
   const rowRef = React.useRef<HTMLDivElement>(null);
@@ -453,15 +454,37 @@ export function HomePageClient({
   };
 
   return (
-    <div className="space-y-24 pb-20 pt-20">
-      {/* SECTION 1: HERO (Matching Reference Image 1) */}
-      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-start items-center pt-4 sm:pt-6 lg:pt-8 pb-12 sm:pb-16 overflow-hidden border-b border-blue-500/15">
-        {/* Deep 3D Ambient Lighting Glow - Static & GPU optimized */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[380px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+    <div className="space-y-20 pb-20 pt-20 sm:pt-24">
+      {/* SECTION 1: HERO (High-Brightness, Normal Clean Mode & Vivid Theme Colors) */}
+      <section id="hero" className="relative min-h-[calc(100vh-80px)] flex flex-col justify-start items-center pt-4 sm:pt-6 md:pt-8 pb-12 sm:pb-16 overflow-hidden border-b border-blue-500/20">
+        {/* Dynamic High-Brightness Background Image: Circuit (Left), Motor (Right), Neon Blue & Orange Waves (Center) */}
+        <div className="absolute inset-0 -z-20 overflow-hidden pointer-events-none">
+          {/* Mobile Image: Dedicated 9:16 layout where BOTH Circuit (left) & Motor (right) are fully visible on mobile */}
+          <img
+            src="/hero-bg-mobile.jpg"
+            alt="SPARKTRON Symposium Cyber ECE and EEE Mobile Background"
+            className="w-full h-full object-cover object-center opacity-90 filter brightness-110 contrast-115 saturate-125 block md:hidden"
+          />
+          {/* Desktop/Laptop Image: Wide 16:9 layout for widescreen laptop/desktop monitors */}
+          <img
+            src="/hero-bg.jpg"
+            alt="SPARKTRON Symposium Cyber ECE and EEE Desktop Background"
+            className="w-full h-full object-cover object-center opacity-85 sm:opacity-95 filter brightness-110 contrast-115 saturate-125 hidden md:block"
+          />
+          {/* Subtle Contrast Gradient Mask: Kept light so the background circuit, motor & waves shine brightly */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#05070F]/50 via-[#05070F]/20 to-[#05070F]/85" />
+          
+          {/* Intense Neon Blue Glow Bloom on Left (ECE) & Fiery Orange-Red Bloom on Right (EEE) */}
+          <div className="absolute -left-20 top-1/4 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-cyan-400/25 rounded-full blur-[100px] sm:blur-[130px] pointer-events-none animate-pulse" />
+          <div className="absolute -right-20 top-1/4 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-gradient-to-br from-orange-500/25 via-red-600/20 to-amber-500/25 rounded-full blur-[100px] sm:blur-[130px] pointer-events-none animate-pulse" />
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[400px] sm:w-[600px] h-[200px] sm:h-[260px] bg-blue-600/20 rounded-full blur-[90px] sm:blur-[110px] pointer-events-none" />
+        </div>
 
-        {/* Glowing Cyan Circuit Traces Background (Matching Image 1) */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10 opacity-70">
+        {/* Transparent Animated Live Energy-Wave Layer (Smooth flowing electricity on blue left & orange right) */}
+        <EnergyWaveOverlay />
+
+        {/* Glowing Cyan & Amber Circuit Accents Layer */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10 opacity-50">
           <svg
             className="w-full h-full"
             viewBox="0 0 1440 900"
@@ -470,84 +493,88 @@ export function HomePageClient({
             preserveAspectRatio="xMidYMid slice"
           >
             {/* Top Left Circuit Traces */}
-            <path d="M 0 140 L 180 140 L 260 60 L 440 60" stroke="#00f0ff" strokeWidth="1.75" opacity="0.65" />
-            <circle cx="440" cy="60" r="3.5" fill="#00f0ff" />
-            <path d="M 80 0 L 80 100 L 160 180 L 160 300 L 240 380" stroke="#00f0ff" strokeWidth="1.75" opacity="0.55" />
+            <path d="M 0 140 L 180 140 L 260 60 L 440 60" stroke="#00f0ff" strokeWidth="2" opacity="0.8" />
+            <circle cx="440" cy="60" r="4" fill="#00f0ff" className="animate-ping" />
+            <path d="M 80 0 L 80 100 L 160 180 L 160 300 L 240 380" stroke="#00f0ff" strokeWidth="2" opacity="0.7" />
             <circle cx="240" cy="380" r="3.5" fill="#00f0ff" />
-            <path d="M 0 260 L 100 260 L 140 220 L 220 220" stroke="#00f0ff" strokeWidth="1.5" opacity="0.45" />
+            <path d="M 0 260 L 100 260 L 140 220 L 220 220" stroke="#00f0ff" strokeWidth="1.75" opacity="0.6" />
             <circle cx="220" cy="220" r="3" fill="#00f0ff" />
 
-            {/* Top Right Circuit Traces */}
-            <path d="M 1440 100 L 1260 100 L 1180 180 L 1020 180" stroke="#00f0ff" strokeWidth="1.75" opacity="0.65" />
-            <circle cx="1020" cy="180" r="3.5" fill="#00f0ff" />
-            <path d="M 1360 0 L 1360 80 L 1280 160 L 1280 260" stroke="#00f0ff" strokeWidth="1.75" opacity="0.5" />
-            <circle cx="1280" cy="260" r="3.5" fill="#00f0ff" />
-            <path d="M 1440 220 L 1340 220 L 1280 280 L 1120 280" stroke="#00f0ff" strokeWidth="1.5" opacity="0.45" />
-            <circle cx="1120" cy="280" r="3" fill="#00f0ff" />
+            {/* Top Right Circuit Traces (Fiery Orange & Red accent) */}
+            <path d="M 1440 100 L 1260 100 L 1180 180 L 1020 180" stroke="#ff5500" strokeWidth="2" opacity="0.8" />
+            <circle cx="1020" cy="180" r="4" fill="#ff3300" className="animate-ping" />
+            <path d="M 1360 0 L 1360 80 L 1280 160 L 1280 260" stroke="#ff8800" strokeWidth="2" opacity="0.7" />
+            <circle cx="1280" cy="260" r="3.5" fill="#ffaa00" />
+            <path d="M 1440 220 L 1340 220 L 1280 280 L 1120 280" stroke="#ff3b00" strokeWidth="1.75" opacity="0.6" />
+            <circle cx="1120" cy="280" r="3" fill="#ff5500" />
 
             {/* Mid Left Circuit Traces */}
-            <path d="M 0 460 L 140 460 L 220 540 L 360 540" stroke="#00f0ff" strokeWidth="1.75" opacity="0.6" />
+            <path d="M 0 460 L 140 460 L 220 540 L 360 540" stroke="#00f0ff" strokeWidth="2" opacity="0.75" />
             <circle cx="360" cy="540" r="3.5" fill="#00f0ff" />
-            <path d="M 40 360 L 120 360 L 180 420 L 280 420" stroke="#00f0ff" strokeWidth="1.5" opacity="0.45" />
+            <path d="M 40 360 L 120 360 L 180 420 L 280 420" stroke="#00f0ff" strokeWidth="1.5" opacity="0.55" />
             <circle cx="280" cy="420" r="3" fill="#00f0ff" />
 
             {/* Mid Right Circuit Traces */}
-            <path d="M 1440 480 L 1300 480 L 1220 400 L 1080 400" stroke="#00f0ff" strokeWidth="1.75" opacity="0.6" />
-            <circle cx="1080" cy="400" r="3.5" fill="#00f0ff" />
-            <path d="M 1400 580 L 1320 580 L 1260 520 L 1160 520" stroke="#00f0ff" strokeWidth="1.5" opacity="0.45" />
-            <circle cx="1160" cy="520" r="3" fill="#00f0ff" />
+            <path d="M 1440 480 L 1300 480 L 1220 400 L 1080 400" stroke="#ff5500" strokeWidth="2" opacity="0.75" />
+            <circle cx="1080" cy="400" r="3.5" fill="#ff3300" />
+            <path d="M 1400 580 L 1320 580 L 1260 520 L 1160 520" stroke="#ff9900" strokeWidth="1.5" opacity="0.55" />
+            <circle cx="1160" cy="520" r="3" fill="#ffaa00" />
 
             {/* Bottom Left Circuit Traces */}
-            <path d="M 0 720 L 160 720 L 240 640 L 400 640" stroke="#00f0ff" strokeWidth="1.75" opacity="0.55" />
+            <path d="M 0 720 L 160 720 L 240 640 L 400 640" stroke="#00f0ff" strokeWidth="2" opacity="0.7" />
             <circle cx="400" cy="640" r="3.5" fill="#00f0ff" />
-            <path d="M 100 900 L 100 800 L 180 720 L 320 720" stroke="#00f0ff" strokeWidth="1.75" opacity="0.5" />
+            <path d="M 100 900 L 100 800 L 180 720 L 320 720" stroke="#00f0ff" strokeWidth="2" opacity="0.65" />
             <circle cx="320" cy="720" r="3.5" fill="#00f0ff" />
 
             {/* Bottom Right Circuit Traces */}
-            <path d="M 1440 760 L 1280 760 L 1200 840 L 1060 840" stroke="#00f0ff" strokeWidth="1.75" opacity="0.55" />
-            <circle cx="1060" cy="840" r="3.5" fill="#00f0ff" />
-            <path d="M 1340 900 L 1340 820 L 1260 740 L 1120 740" stroke="#00f0ff" strokeWidth="1.75" opacity="0.5" />
-            <circle cx="1120" cy="740" r="3.5" fill="#00f0ff" />
+            <path d="M 1440 760 L 1280 760 L 1200 840 L 1060 840" stroke="#ff3b00" strokeWidth="2" opacity="0.7" />
+            <circle cx="1060" cy="840" r="3.5" fill="#ff5500" />
+            <path d="M 1340 900 L 1340 820 L 1260 740 L 1120 740" stroke="#ff8800" strokeWidth="2" opacity="0.65" />
+            <circle cx="1120" cy="740" r="3.5" fill="#ffaa00" />
           </svg>
         </div>
 
-        {/* Floating Cyber Particle Accents */}
-        <div className="absolute top-1/4 left-1/6 w-2 h-2 rounded-full bg-cyan-400/60 blur-[1px] animate-cyber-particle-1 pointer-events-none hidden md:block" />
-        <div className="absolute top-1/3 right-1/6 w-2.5 h-2.5 rounded-full bg-blue-400/60 blur-[1px] animate-cyber-particle-2 pointer-events-none hidden md:block" />
-        <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 rounded-full bg-cyan-300/60 blur-[1px] animate-cyber-particle-3 pointer-events-none hidden md:block" />
-        <div className="absolute top-2/3 right-1/4 w-2 h-2 rounded-full bg-white/60 blur-[1px] animate-cyber-particle-1 pointer-events-none hidden md:block" />
+        {/* Floating Cyber Particle Accents with Vibrancy */}
+        <div className="absolute top-1/4 left-1/6 w-2.5 h-2.5 rounded-full bg-cyan-300 blur-[1px] animate-cyber-particle-1 pointer-events-none hidden md:block" />
+        <div className="absolute top-1/3 right-1/6 w-3 h-3 rounded-full bg-orange-400 blur-[1px] animate-cyber-particle-2 pointer-events-none hidden md:block" />
+        <div className="absolute bottom-1/4 left-1/4 w-2 h-2 rounded-full bg-cyan-400 blur-[1px] animate-cyber-particle-3 pointer-events-none hidden md:block" />
+        <div className="absolute top-2/3 right-1/4 w-2.5 h-2.5 rounded-full bg-red-500 blur-[1px] animate-cyber-particle-1 pointer-events-none hidden md:block" />
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-5xl">
           {/* CENTERED HERO MASTER DECK */}
-          <div className="flex flex-col items-center text-center space-y-4 sm:space-y-6">
-            {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] - Elevated Above with Unique Syne Typography */}
-            <div className="space-y-2 pt-1 sm:pt-2">
-              <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold font-syne tracking-wider text-white uppercase drop-shadow-[0_2px_20px_rgba(255,255,255,0.35)] leading-tight">
-                <span className="text-white">THAMIRABHARANI</span>{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-white drop-shadow-[0_0_20px_rgba(0,240,255,0.45)]">
+          <div className="flex flex-col items-center text-center space-y-3 sm:space-y-5">
+            {/* 1. College Name & [AN AUTONOMOUS INSTITUTION] - Clean, Prominent & Perfectly Proportioned */}
+            <div className="space-y-1.5 sm:space-y-2 pt-1 sm:pt-2 max-w-3xl mx-auto">
+              <h1 
+                className="text-sm sm:text-lg md:text-2xl lg:text-3xl font-black tracking-[0.04em] sm:tracking-[0.08em] uppercase leading-snug sm:leading-tight text-center"
+                style={{ fontFamily: "'Orbitron', 'Plus Jakarta Sans', sans-serif" }}
+              >
+                <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,1)] drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+                  THAMIRABHARANI
+                </span>{" "}
+                <span className="text-cyan-300 drop-shadow-[0_0_20px_rgba(0,240,255,1)] drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
                   ENGINEERING COLLEGE
                 </span>
               </h1>
-              <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-950/50 border border-cyan-400/40 text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-cyan-300 uppercase shadow-[0_0_15px_rgba(0,240,255,0.25)]">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-                <span>[ AN AUTONOMOUS INSTITUTION ]</span>
+              <div className="inline-flex items-center gap-2 px-3.5 sm:px-5 py-1 rounded-full bg-[#050b18]/90 border border-cyan-400/60 text-[10px] sm:text-xs font-mono font-bold tracking-[0.18em] sm:tracking-[0.28em] text-cyan-300 uppercase shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+                <span>AN AUTONOMOUS INSTITUTION</span>
               </div>
             </div>
 
-            {/* 2. Organized By & Departments (Full official title requested by user) */}
-            <div className="space-y-2.5 pt-1 sm:pt-2 max-w-4xl mx-auto">
-              <p className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.35em] text-cyan-400/90 uppercase">
+            {/* 2. Organized By & Departments (ECE Neon Blue & EEE Orange & Red) - Ultra Bright */}
+            <div className="space-y-1.5 pt-0.5 sm:pt-1 max-w-4xl mx-auto">
+              <p className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.25em] sm:tracking-[0.35em] text-cyan-300 uppercase drop-shadow-[0_0_12px_rgba(0,240,255,0.9)]">
                 ORGANIZED BY
               </p>
               <div className="flex flex-col items-center justify-center">
-                <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-orbitron font-extrabold tracking-wider uppercase text-slate-100 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-center leading-relaxed">
-                  <span className="text-slate-300 font-bold">DEPARTMENT OF</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-200 to-cyan-400 drop-shadow-[0_0_12px_rgba(0,240,255,0.7)] font-black">
-                    ELECTRONICS AND COMMUNICATION
+                <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-orbitron font-bold tracking-[0.08em] sm:tracking-[0.1em] uppercase flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center leading-relaxed">
+                  <span className="text-white font-extrabold drop-shadow-[0_0_12px_rgba(255,255,255,0.8)]">DEPARTMENT OF</span>
+                  <span className="text-cyan-300 drop-shadow-[0_0_25px_rgba(0,240,255,1)] font-black px-1">
+                    ECE
                   </span>
-                  <span className="text-cyan-400 font-black px-0.5">&amp;</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-300 drop-shadow-[0_0_12px_rgba(0,114,255,0.7)] font-black">
-                    ELECTRICAL AND ELECTRONICS ENGINEERING
+                  <span className="text-white font-bold px-0.5">&amp;</span>
+                  <span className="text-[#ff7700] drop-shadow-[0_0_25px_rgba(255,119,0,1)] font-black px-1">
+                    EEE
                   </span>
                 </h2>
               </div>
@@ -555,40 +582,47 @@ export function HomePageClient({
 
             {/* 3. National Level Technical Symposium Pill */}
             <div className="pt-0.5">
-              <div className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-8 py-2 rounded-xl border border-cyan-500/50 bg-[#040e22]/90 text-cyan-300 font-mono text-xs sm:text-sm tracking-[0.25em] uppercase font-bold shadow-[0_0_25px_rgba(0,240,255,0.25)]">
-                <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
-                <span>NATIONAL LEVEL TECHNICAL SYMPOSIUM</span>
-                <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
+              <div className="inline-flex items-center justify-center gap-2 px-4 sm:px-8 py-1.5 sm:py-2 rounded-xl border border-cyan-400/70 bg-[#030917]/90 text-cyan-200 font-mono text-[10px] sm:text-xs md:text-sm tracking-[0.15em] sm:tracking-[0.25em] uppercase font-bold shadow-[0_0_30px_rgba(0,240,255,0.4)]">
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400 animate-pulse" />
+                <span className="text-white drop-shadow-[0_0_15px_rgba(0,240,255,1)]">NATIONAL LEVEL TECHNICAL SYMPOSIUM</span>
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-400 animate-pulse" />
               </div>
             </div>
 
-            {/* 4. Grand Main Title: SPARKTRON'2K26 with Orbitron Typography */}
-            <div className="py-2 sm:py-3 relative group">
-              <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black italic font-orbitron tracking-tight uppercase select-none leading-none">
-                <span className="text-white drop-shadow-[0_4px_30px_rgba(255,255,255,0.6)]">SPARK</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-400 to-blue-500 drop-shadow-[0_0_35px_rgba(0,240,255,0.9)]">TRON</span>
-                <span className="text-cyan-400 drop-shadow-[0_0_40px_rgba(0,240,255,0.95)] animate-sparktron-glow">'2K26</span>
+            {/* 4. Grand Main Title: SPARKTRON 2K26 - Cleanly Scaled to Fit Perfectly Within Frame */}
+            <div className="py-1.5 sm:py-2.5 relative group w-full max-w-xl mx-auto flex flex-col items-center justify-center">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-orbitron tracking-wider sm:tracking-widest uppercase select-none leading-none flex flex-col items-center justify-center">
+                <div className="flex items-center justify-center gap-1 sm:gap-2">
+                  {/* SPARK in Brilliant Solid White with Electric Neon Blue Glow */}
+                  <span className="text-white drop-shadow-[0_0_30px_#00f0ff] drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
+                    SPARK
+                  </span>
+                  {/* TRON in Ultra-Bright Solid Neon Orange-Red */}
+                  <span className="text-[#ff5500] drop-shadow-[0_0_30px_#ff4500] drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
+                    TRON
+                  </span>
+                </div>
+                {/* 2K26 in Ultra-Bright Neon White/Cyan */}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-amber-300 drop-shadow-[0_0_35px_#00f0ff] drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] mt-2 sm:mt-3 text-2xl sm:text-3xl md:text-4xl font-black tracking-widest">
+                  2K26
+                </span>
               </h2>
-              {/* Electric Circuit Underline Accent */}
-              <div className="flex items-center justify-center gap-2 pt-3 max-w-sm mx-auto opacity-80">
-                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-cyan-500 to-cyan-400" />
-                <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff]" />
-                <div className="h-[2px] flex-1 bg-gradient-to-r from-cyan-400 via-cyan-500 to-transparent" />
+              {/* Dual Cyan to Fire-Red Electric Circuit Underline Accent */}
+              <div className="flex items-center justify-center gap-2 pt-3 max-w-xs sm:max-w-sm w-full mx-auto opacity-90">
+                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-cyan-400 to-blue-500" />
+                <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff]" />
+                <div className="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_10px_#ff5500]" />
+                <div className="h-[2px] flex-1 bg-gradient-to-r from-amber-400 via-orange-500 to-red-600" />
               </div>
             </div>
 
             {/* 5. Date & Venue */}
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2.5 px-5 py-1.5 rounded-full bg-[#030917]/80 border border-cyan-500/30 shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+              <div className="inline-flex items-center gap-2.5 px-6 py-2 rounded-full bg-[#05070F]/90 border border-cyan-400/50 shadow-[0_0_20px_rgba(0,240,255,0.3)]">
                 <Calendar className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span className="text-xs sm:text-sm md:text-base font-orbitron font-bold tracking-[0.25em] text-slate-200 uppercase">
+                <span className="text-xs sm:text-sm md:text-base font-orbitron font-bold tracking-[0.25em] text-white uppercase drop-shadow-[0_0_15px_rgba(255,255,255,0.9)]">
                   {symposiumDate || "SEPTEMBER 16, 2026"}
                 </span>
-              </div>
-              <br />
-              <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-mono text-slate-300 bg-[#030917]/70 px-4 py-1.5 rounded-full border border-blue-500/25">
-                <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span className="truncate max-w-[280px] sm:max-w-none">{venue}</span>
               </div>
             </div>
 
@@ -597,91 +631,33 @@ export function HomePageClient({
               <CountdownTimer targetDate="2026-09-16T09:00:00" />
             </div>
 
-            {/* 7. Action Buttons: REGISTER NOW & VIEW EVENTS */}
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            {/* 7. Action Buttons with Requested Theme Palette: Neon Blue + Orange/Red */}
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-3">
               <Button
                 size="lg"
                 variant="primary"
                 onClick={() => openRegistrationModal()}
-                className="bg-gradient-to-r from-cyan-400 via-sky-400 to-cyan-500 hover:from-cyan-300 hover:to-sky-400 text-black font-black font-orbitron tracking-wider uppercase px-8 py-3.5 text-sm sm:text-base rounded-xl shadow-[0_0_30px_rgba(0,240,255,0.75)] transition-all hover:scale-105 border-0 cursor-pointer flex items-center gap-2"
+                leftIcon={<Zap className="w-4 h-4 fill-black text-black" />}
+                className="bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-black font-orbitron tracking-wider uppercase px-8 sm:px-10 py-4 text-sm sm:text-base rounded-xl shadow-[0_0_35px_rgba(0,240,255,0.9)] transition-all duration-300 hover:scale-105 border-0 cursor-pointer"
               >
-                <Zap className="w-4 h-4 fill-black" />
-                <span>REGISTER NOW</span>
+                REGISTER NOW
               </Button>
               <a href="#events" className="inline-flex">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="bg-[#02050f]/90 text-cyan-400 border border-cyan-400/80 hover:bg-cyan-500/15 hover:border-cyan-300 hover:text-white px-8 py-3.5 text-sm sm:text-base font-orbitron tracking-wider rounded-xl transition-all hover:scale-105 shadow-[0_0_20px_rgba(0,240,255,0.25)] cursor-pointer flex items-center gap-2"
+                  leftIcon={<Cpu className="w-4 h-4 text-orange-400" />}
+                  className="bg-[#05070F]/90 text-orange-400 border-2 border-orange-500/80 hover:border-red-500 hover:bg-gradient-to-r hover:from-orange-500/20 hover:to-red-600/20 hover:text-white px-8 sm:px-10 py-4 text-sm sm:text-base font-orbitron font-bold tracking-wider rounded-xl shadow-[0_0_25px_rgba(255,90,0,0.4)] transition-all duration-300 hover:scale-105 cursor-pointer"
                 >
-                  <Cpu className="w-4 h-4 text-cyan-400" />
-                  <span>EXPLORE EVENTS</span>
+                  EXPLORE EVENTS
                 </Button>
               </a>
             </div>
-
-            {/* 8. Telemetry Status Chips */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2 font-mono text-xs">
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#060e1d]/80 border border-blue-500/30 text-slate-300">
-                <Trophy className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span>Prize Pool: <strong className="text-white font-bold">₹20,000+ Cash</strong></span>
-              </div>
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#060e1d]/80 border border-blue-500/30 text-slate-300">
-                <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span>Entry: <strong className="text-cyan-300 font-bold">100% Free Entry</strong></span>
-              </div>
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#060e1d]/80 border border-blue-500/30 text-slate-300">
-                <Award className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span>Certification: <strong className="text-white font-bold">All Participants</strong></span>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* QUICK STATS - High-Tech Cyber Vault Cards */}
-      <section className="container mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
-          {/* Card 1: Prize Pool */}
-          <div className="relative group text-center p-6 rounded-2xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_25px_rgba(0,114,255,0.2)] hover:shadow-[0_0_35px_rgba(0,240,255,0.4)] transition-all hover:-translate-y-1 overflow-hidden">
-            <span className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
-            <span className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
-            <Trophy className="w-9 h-9 text-cyan-400 mx-auto mb-2 drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]" />
-            <div className="text-3xl sm:text-4xl font-black font-orbitron text-white mb-1 tracking-tight drop-shadow-md">
-              ₹20,000+
-            </div>
-            <div className="text-[11px] font-mono text-cyan-300 tracking-[0.2em] uppercase font-bold">
-              TOTAL CASH PRIZES
-            </div>
-          </div>
 
-          {/* Card 2: Free Registration */}
-          <div className="relative group text-center p-6 rounded-2xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_25px_rgba(0,114,255,0.2)] hover:shadow-[0_0_35px_rgba(0,240,255,0.4)] transition-all hover:-translate-y-1 overflow-hidden">
-            <span className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
-            <span className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
-            <ShieldCheck className="w-9 h-9 text-cyan-400 mx-auto mb-2 drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]" />
-            <div className="text-3xl sm:text-4xl font-black font-orbitron text-white mb-1 tracking-tight drop-shadow-md">
-              ₹0 FREE
-            </div>
-            <div className="text-[11px] font-mono text-cyan-300 tracking-[0.2em] uppercase font-bold">
-              REGISTRATION &amp; ENTRY
-            </div>
-          </div>
-
-          {/* Card 3: Events Catalog */}
-          <div className="relative group text-center p-6 rounded-2xl bg-gradient-to-b from-[#060e1d]/95 via-[#030712]/95 to-[#010206] border border-blue-500/40 hover:border-cyan-400 shadow-[0_0_25px_rgba(0,114,255,0.2)] hover:shadow-[0_0_35px_rgba(0,240,255,0.4)] transition-all hover:-translate-y-1 overflow-hidden">
-            <span className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
-            <span className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
-            <Cpu className="w-9 h-9 text-cyan-400 mx-auto mb-2 drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]" />
-            <div className="text-3xl sm:text-4xl font-black font-orbitron text-white mb-1 tracking-tight drop-shadow-md">
-              {validEvents.length} TRACKS
-            </div>
-            <div className="text-[11px] font-mono text-cyan-300 tracking-[0.2em] uppercase font-bold">
-              TECH &amp; NON-TECH ARENAS
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* SECTION 2: ABOUT */}
       <AboutSection />

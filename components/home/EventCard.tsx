@@ -318,7 +318,7 @@ export function EventCard({ event, onSelect }: EventCardProps) {
   return (
     <div className="w-full md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] max-w-md flex">
       <div
-        className={`w-full relative group rounded-[22px] p-6 sm:p-7 flex flex-col justify-between border bg-gradient-to-b from-[#060e1d]/98 via-[#030712]/98 to-[#010206] backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 overflow-hidden ${config.cardBorder}`}
+        className={`w-full relative group rounded-[22px] p-6 sm:p-7 flex flex-col justify-between border bg-gradient-to-b from-[#060e1d]/98 via-[#030712]/98 to-[#010206] backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 overflow-hidden cursor-pointer ${config.cardBorder}`}
       >
         {/* Subtle Ambient Radial Glow */}
         <div
