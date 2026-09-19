@@ -11,11 +11,15 @@ export async function POST(request: Request) {
 
     const normEmail = email.trim().toLowerCase();
 
-    // 1. Fail-Safe Super Admin Check (Guarantees Vercel & Production Login works without Database dependency)
-    if (
-      (normEmail === "admin@sparktron.ece" || normEmail === "sparktron@ece.edu") &&
-      password === "sparktron2k26#admin"
-    ) {
+    // 1. Fail-Safe Super Admin Check (Server-side only, never exposed to client or browser inspection)
+    const envAdminEmail = (process.env.ADMIN_EMAIL || "admin@sparktron.ece").trim().toLowerCase();
+    const envAdminPassword = process.env.ADMIN_PASSWORD || "sparktron2k26#admin";
+
+    const isMatch =
+      (normEmail === envAdminEmail || normEmail === "admin@sparktron.ece" || normEmail === "sparktron@ece.edu") &&
+      password === envAdminPassword;
+
+    if (isMatch) {
       const token = await signAdminToken({
         id: "super-admin-001",
         email: normEmail,

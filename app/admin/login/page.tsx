@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
   } = useForm({
     resolver: zodResolver(adminLoginSchema),
     defaultValues: {
-      email: "admin@sparktron.ece",
+      email: "",
       password: "",
     },
   });
@@ -72,7 +72,7 @@ export default function AdminLoginPage() {
             <Input
               label="Admin Email *"
               type="email"
-              placeholder="admin@sparktron.ece"
+              placeholder="Enter admin email address"
               leftIcon={<Lock className="w-4 h-4" />}
               {...register("email")}
               error={errors.email?.message}
@@ -96,12 +96,6 @@ export default function AdminLoginPage() {
               Sign In to Admin Console →
             </Button>
           </form>
-
-          <div className="p-3 rounded-lg bg-card/80 border border-primary/20 text-[11px] font-mono text-slate-400 space-y-1">
-            <p className="text-primary font-bold">Default Demo Credentials:</p>
-            <p>Email: <span className="text-white">admin@sparktron.ece</span></p>
-            <p>Password: <span className="text-white">sparktron2k26#admin</span></p>
-          </div>
         </Card>
       </div>
     </div>

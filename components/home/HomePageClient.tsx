@@ -29,6 +29,8 @@ import {
   Send,
   Gamepad2,
   Music,
+  Fingerprint,
+  QrCode,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardTitle, CardDescription } from "@/components/ui/Card";
@@ -132,7 +134,7 @@ function ScheduleRow({ item, idx, isVisible, isReducedMotion }: { item: { time: 
   );
 }
 
-function CompactCyberCard({
+function CyberOctagonShieldCard({
   coord,
   index,
   isFaculty = false,
@@ -141,64 +143,183 @@ function CompactCyberCard({
   index: number;
   isFaculty?: boolean;
 }) {
+  const sysId = isFaculty
+    ? `SYS.FAC // 0${index + 1}`
+    : `SYS.EXEC // 0${index + 1}`;
+  const roleBadge = isFaculty ? "FACULTY CONVENER" : "STUDENT LEAD";
+
   return (
-    <div className="relative group p-4 sm:p-5 bg-gradient-to-r from-[#12151c]/95 via-[#0b0d12]/95 to-[#161a24]/95 backdrop-blur-xl border border-amber-400/50 hover:border-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.18)] hover:shadow-[0_0_35px_rgba(245,158,11,0.35)] transition-all duration-300 hover:-translate-y-1 [clip-path:polygon(16px_0,_100%_0,_100%_calc(100%-16px),_calc(100%-16px)_100%,_0_100%,_0_16px)] flex flex-col justify-between space-y-3">
-      {/* HUD Corner Tech Accent Ticks */}
-      <span className="absolute top-0 left-0 w-4 h-[2px] bg-amber-400 shadow-[0_0_6px_#f59e0b]" />
-      <span className="absolute top-0 left-0 w-[2px] h-4 bg-amber-400 shadow-[0_0_6px_#f59e0b]" />
-      <span className="absolute bottom-0 right-0 w-4 h-[2px] bg-amber-400 shadow-[0_0_6px_#f59e0b]" />
-      <span className="absolute bottom-0 right-0 w-[2px] h-4 bg-amber-400 shadow-[0_0_6px_#f59e0b]" />
-
-      {/* Subdued Background Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f59e0b0a_1px,transparent_1px),linear-gradient(to_bottom,#f59e0b0a_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none" />
-
-      {/* TOP ROW: Header Info & System Badge */}
-      <div className="relative z-10 flex items-start justify-between gap-3">
-        <div className="space-y-1 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-2 py-0.5 rounded bg-amber-950/80 border border-amber-500/40 text-[10px] font-mono font-bold uppercase text-amber-300 tracking-wider shadow-[0_0_8px_rgba(245,158,11,0.2)]">
-              {coord.department}
-            </span>
-            <span className="text-[10px] font-mono text-amber-400/70 uppercase tracking-widest">
-              {isFaculty ? `FAC.ID // 0${index + 1}` : `EXEC.ID // 0${index + 1}`}
-            </span>
-          </div>
-
-          <h3 className="text-base sm:text-lg font-bold text-white font-sans tracking-wide group-hover:text-amber-300 transition-colors drop-shadow-sm">
-            {coord.name}
-          </h3>
-
-          {coord.designation && (
-            <p className="text-xs font-mono font-semibold text-amber-400 tracking-wide">
-              {coord.designation}
-            </p>
-          )}
-        </div>
-
-        {/* Small Cyber System Tag (No Photo) */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#07080c] border border-amber-500/30 text-[9px] font-mono font-bold text-amber-400/90 uppercase shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_6px_#f59e0b]" />
-          <span>{isFaculty ? "CONVENER" : "STUDENT LEAD"}</span>
-        </div>
+    <div className="group relative w-full flex flex-col justify-between transition-all duration-300 ease-out hover:-translate-y-2.5 will-change-transform select-none max-w-[320px] mx-auto">
+      {/* TOP RECESSED METALLIC LANYARD CLIP ATTACHMENT */}
+      <div className="relative z-30 w-24 h-3.5 bg-gradient-to-r from-[#030a17] via-[#0d2e5c] to-[#030a17] border-x-2 border-b-2 border-cyan-400/80 rounded-b-md shadow-[0_3px_10px_rgba(0,229,255,0.4)] flex items-center justify-center mx-auto -mb-1.5">
+        <div className="w-9 h-1 rounded-full bg-cyan-300 shadow-[0_0_8px_#00e5ff]" />
       </div>
 
-      {/* BOTTOM ROW: Interactive Contact Action Chips */}
-      <div className="relative z-10 pt-2.5 border-t border-amber-500/20 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-        <a
-          href={`tel:${coord.phone}`}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#07080d] border border-amber-500/30 text-slate-200 hover:text-white hover:border-amber-400 hover:bg-amber-950/40 hover:shadow-[0_0_12px_rgba(245,158,11,0.3)] transition-all cursor-pointer"
+      {/* LAYER 1: HEAVY PROMINENT OUTER METALLIC CYBER SHELL */}
+      <div 
+        className="relative z-10 w-full p-[3.5px] bg-gradient-to-b from-[#1b4b8a] via-[#0e2c59] to-[#030d21] shadow-[0_0_24px_rgba(0,229,255,0.4)] group-hover:shadow-[0_0_42px_rgba(0,229,255,0.8)] transition-all duration-300"
+        style={{
+          clipPath: "polygon(26px 0%, calc(100% - 26px) 0%, 100% 26px, 100% calc(40% - 14px), calc(100% - 8px) 40%, calc(100% - 8px) 60%, 100% calc(60% + 14px), 100% calc(100% - 26px), calc(100% - 26px) 100%, 26px 100%, 0% calc(100% - 26px), 0% calc(60% + 14px), 8px 60%, 8px 40%, 0% calc(40% - 14px), 0% 26px)"
+        }}
+      >
+        {/* LAYER 2: PRIMARY CYAN & ELECTRIC BLUE GLOWING OUTER RIM EDGE */}
+        <div 
+          className="w-full h-full p-[2.5px] bg-gradient-to-b from-[#00e5ff] via-[#168bff] to-[#0044cc] group-hover:from-cyan-300 group-hover:via-cyan-400 transition-colors duration-300"
+          style={{
+            clipPath: "polygon(25px 0%, calc(100% - 25px) 0%, 100% 25px, 100% calc(40% - 13px), calc(100% - 7px) 40%, calc(100% - 7px) 60%, 100% calc(60% + 13px), 100% calc(100% - 25px), calc(100% - 25px) 100%, 25px 100%, 0% calc(100% - 25px), 0% calc(60% + 13px), 7px 60%, 7px 40%, 0% calc(40% - 13px), 0% 25px)"
+          }}
         >
-          <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <span>{coord.phone}</span>
-        </a>
+          {/* LAYER 3: SECONDARY DARK METALLIC BLUE STEEL RIM */}
+          <div 
+            className="w-full h-full p-4 sm:p-5 bg-gradient-to-b from-[#081e3d] via-[#041229] to-[#020817] flex flex-col justify-between items-center text-center space-y-4 overflow-hidden relative"
+            style={{
+              clipPath: "polygon(24px 0%, calc(100% - 24px) 0%, 100% 24px, 100% calc(40% - 12px), calc(100% - 6px) 40%, calc(100% - 6px) 60%, 100% calc(60% + 12px), 100% calc(100% - 24px), calc(100% - 24px) 100%, 24px 100%, 0% calc(100% - 24px), 0% calc(60% + 12px), 6px 60%, 6px 40%, 0% calc(40% - 12px), 0% 24px)"
+            }}
+          >
+            {/* Subtle HUD Grid Overlay & Radial Glow Accent */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#00e5ff10_1px,transparent_1px),linear-gradient(to_bottom,#00e5ff10_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none opacity-60" />
+            <div className="absolute -top-16 -right-16 w-36 h-36 bg-cyan-500/20 blur-2xl pointer-events-none group-hover:bg-cyan-400/35 transition-colors" />
+            <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-blue-600/25 blur-2xl pointer-events-none" />
 
-        <a
-          href={`mailto:${coord.email}`}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#07080d] border border-amber-500/30 text-slate-200 hover:text-white hover:border-amber-400 hover:bg-amber-950/40 hover:shadow-[0_0_12px_rgba(245,158,11,0.3)] transition-all truncate max-w-[220px] sm:max-w-none cursor-pointer"
-        >
-          <Mail className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <span className="truncate">{coord.email}</span>
-        </a>
+            {/* LAYER 4: INNER ILLUMINATED SECONDARY BORDER FRAME */}
+            <div 
+              className="absolute inset-[4px] border border-cyan-400/40 group-hover:border-cyan-300/80 transition-colors pointer-events-none"
+              style={{
+                clipPath: "polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(40% - 10px), calc(100% - 5px) 40%, calc(100% - 5px) 60%, 100% calc(60% + 10px), 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% calc(60% + 10px), 5px 60%, 5px 40%, 0% calc(40% - 10px), 0% 22px)"
+              }}
+            />
+
+            {/* CONTINUOUS SMOOTH ENERGY PULSE SWEEP */}
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-cyan-400/15 to-transparent -translate-y-full group-hover:translate-y-full transition-transform duration-1000 ease-in-out" />
+
+            {/* TOP SECTION: INSTITUTE HEADER & SYSTEM CODE */}
+            <div className="relative z-10 w-full flex items-center justify-between border-b border-cyan-500/35 pb-2.5">
+              <div className="flex items-center space-x-2 text-left">
+                <Cpu className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_8px_#00e5ff] shrink-0" />
+                <div>
+                  <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-200 leading-none">
+                    THAMIRABHARANI ENGG
+                  </p>
+                  <p className="text-[8px] font-mono tracking-widest text-cyan-400/80 leading-tight mt-0.5">
+                    LEARN • CREATE • INNOVATE
+                  </p>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded bg-blue-950/90 border border-cyan-500/50 text-cyan-300 text-[9px] font-mono font-bold uppercase tracking-wider shadow-[0_0_8px_rgba(0,229,255,0.25)] shrink-0">
+                {sysId}
+              </span>
+            </div>
+
+            {/* LARGE CENTERED OCTAGONAL PROFILE MODULE */}
+            <div className="relative z-10 my-2 group/profile">
+              {/* Ambient Cyan Hologram Aura */}
+              <div 
+                className="absolute -inset-2.5 bg-gradient-to-tr from-cyan-400 via-blue-600 to-cyan-300 opacity-50 group-hover:opacity-90 blur-md transition-all duration-300 pointer-events-none"
+                style={{
+                  clipPath: "polygon(18px 0%, calc(100% - 18px) 0%, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0% calc(100% - 18px), 0% 18px)"
+                }}
+              />
+
+              {/* Octagonal Outer Frame */}
+              <div 
+                className="relative w-28 h-28 sm:w-32 sm:h-32 p-[2px] bg-gradient-to-tr from-cyan-400 via-blue-500 to-cyan-300 shadow-[0_0_20px_rgba(0,229,255,0.5)] group-hover:scale-105 transition-transform duration-300"
+                style={{
+                  clipPath: "polygon(18px 0%, calc(100% - 18px) 0%, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0% calc(100% - 18px), 0% 18px)"
+                }}
+              >
+                {/* Octagonal Inner Photo Lens */}
+                <div 
+                  className="w-full h-full bg-[#030d21] flex items-center justify-center overflow-hidden relative"
+                  style={{
+                    clipPath: "polygon(17px 0%, calc(100% - 17px) 0%, 100% 17px, 100% calc(100% - 17px), calc(100% - 17px) 100%, 17px 100%, 0% calc(100% - 17px), 0% 17px)"
+                  }}
+                >
+                  {coord.avatar ? (
+                    <img
+                      src={coord.avatar}
+                      alt={coord.name}
+                      className="w-full h-full object-cover brightness-95 contrast-105 group-hover:scale-110 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-[#0a2757] via-[#04122d] to-[#010612] flex items-center justify-center text-cyan-300 font-mono text-3xl sm:text-4xl font-black drop-shadow-[0_0_12px_#00e5ff]">
+                      {coord.name.charAt(0)}
+                    </div>
+                  )}
+
+                  {/* Subtle Scanline Overlay on Image */}
+                  <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,229,255,0.1)_51%)] bg-[size:100%_4px] pointer-events-none opacity-40" />
+                </div>
+              </div>
+            </div>
+
+            {/* NAME & ROLE / DESIGNATION */}
+            <div className="relative z-10 w-full space-y-1 px-1">
+              <h3 className="text-lg sm:text-xl font-black text-white font-sans uppercase tracking-wider drop-shadow-[0_0_12px_rgba(0,229,255,0.4)] group-hover:text-cyan-100 transition-colors line-clamp-1">
+                {coord.name}
+              </h3>
+              <p className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest leading-relaxed">
+                {coord.designation || (isFaculty ? "FACULTY CO-CONVENER" : "STUDENT COORDINATOR")}
+              </p>
+            </div>
+
+            {/* HUD INFORMATION ROWS (NO FORM FIELDS / NO INPUT BOXES!) */}
+            <div className="relative z-10 w-full pt-2 border-t border-cyan-500/25 flex items-stretch justify-between gap-3 text-left">
+              {/* Left Column: Data Rows */}
+              <div className="flex-1 space-y-2 text-xs font-mono">
+                {/* Department Row */}
+                <div className="flex items-center space-x-2 text-slate-300">
+                  <GraduationCap className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00e5ff]" />
+                  <span className="truncate font-semibold text-slate-200">{coord.department}</span>
+                </div>
+
+                {/* Phone Row */}
+                <a
+                  href={`tel:${coord.phone}`}
+                  className="flex items-center space-x-2 text-slate-300 hover:text-cyan-200 transition-colors group/link cursor-pointer"
+                >
+                  <Phone className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00e5ff] group-hover/link:animate-pulse" />
+                  <span className="truncate font-mono">{coord.phone}</span>
+                </a>
+
+                {/* Email Row */}
+                <a
+                  href={`mailto:${coord.email}`}
+                  className="flex items-center space-x-2 text-slate-300 hover:text-cyan-200 transition-colors group/link cursor-pointer"
+                >
+                  <Mail className="w-4 h-4 text-cyan-400 shrink-0 drop-shadow-[0_0_6px_#00e5ff] group-hover/link:animate-pulse" />
+                  <span className="truncate font-mono">{coord.email}</span>
+                </a>
+              </div>
+
+              {/* Right Column: Micro HUD Scanner Block */}
+              <div className="w-16 border-l border-cyan-500/30 pl-2.5 flex flex-col items-center justify-center space-y-1 text-[8px] font-mono text-cyan-400/80">
+                <Fingerprint className="w-6 h-6 text-cyan-400 drop-shadow-[0_0_8px_#00e5ff] animate-pulse" />
+                <span className="text-[7px] uppercase tracking-tighter text-center leading-tight text-cyan-300/70">
+                  SCAN TO VERIFY
+                </span>
+                <div className="w-full flex items-center justify-between px-1">
+                  <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping" />
+                  <span className="text-[6px] text-cyan-500">HUD</span>
+                </div>
+              </div>
+            </div>
+
+            {/* BOTTOM FOOTER STRIP */}
+            <div className="relative z-10 w-full pt-2 border-t border-cyan-500/30 flex items-center justify-between text-[9px] font-mono">
+              <div className="flex items-center space-x-1.5 text-cyan-300/80 font-bold tracking-widest uppercase">
+                <Zap className="w-3.5 h-3.5 text-cyan-400 shrink-0 drop-shadow-[0_0_5px_#00e5ff]" />
+                <span>IDENTITY // INNOVATION</span>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <span className="text-cyan-400/60 font-mono tracking-tighter">/////</span>
+                <span className="px-2.5 py-0.5 rounded-sm bg-cyan-950/90 border border-cyan-400/60 text-cyan-300 font-bold text-[9px] uppercase tracking-wider shadow-[0_0_10px_rgba(0,229,255,0.3)]">
+                  {roleBadge}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -645,15 +766,15 @@ export function HomePageClient({
 
         {/* Faculty Conveners */}
         <div className="space-y-6">
-          <div className="flex items-center space-x-2.5 text-amber-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
-            <Shield className="w-4 h-4 text-amber-400 drop-shadow-[0_0_8px_#f59e0b]" />
+          <div className="flex items-center space-x-2.5 text-cyan-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
+            <Shield className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_8px_#00f0ff]" />
             <span>Faculty Conveners</span>
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-amber-500/40 to-transparent ml-2" />
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-cyan-500/40 to-transparent ml-2" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {facultyCoordinators.map((coord, idx) => (
-              <CompactCyberCard
+              <CyberOctagonShieldCard
                 key={coord.id}
                 coord={coord}
                 index={idx}
@@ -665,15 +786,15 @@ export function HomePageClient({
 
         {/* Student Executive Committee */}
         <div className="space-y-6 pt-4">
-          <div className="flex items-center space-x-2.5 text-amber-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
-            <UserCheck className="w-4 h-4 text-amber-400 drop-shadow-[0_0_8px_#f59e0b]" />
+          <div className="flex items-center space-x-2.5 text-cyan-400 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] font-bold">
+            <UserCheck className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_8px_#00f0ff]" />
             <span>Student Executive Committee</span>
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-amber-500/40 to-transparent ml-2" />
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-cyan-500/40 to-transparent ml-2" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {studentCoordinators.map((coord, idx) => (
-              <CompactCyberCard
+              <CyberOctagonShieldCard
                 key={coord.id}
                 coord={coord}
                 index={idx}
